@@ -19,4 +19,5 @@ public class Index {
         log.info("用户想要请求首页被跳转到www.yapei.cool");
         return "redirect:http://www.yapei.cool";
     }
+
 }

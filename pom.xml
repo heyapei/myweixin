@@ -237,7 +237,7 @@
     </dependencies>
 
     <build>
-        <finalName>videoImg</finalName>
+        <finalName>myweixin</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
