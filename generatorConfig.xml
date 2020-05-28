@@ -9,27 +9,28 @@
         <property name="endingDelimiter" value="`"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="com.hyp.utils.MyMapper"/>
+            <property name="mappers" value="com.hyp.myweixin.utils.MyMapper"/>
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://115.29.178.227:3306/video_img"
+                        connectionURL="jdbc:mysql://localhost:3306/weixin"
                         userId="root"
-                        password="hyplove">
+                        password="123456">
         </jdbcConnection>
 
         <!-- 对于生成的pojo所在包 -->
-        <javaModelGenerator targetPackage="com.hyp.dataobject" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.hyp.myweixin.pojo.dto" targetProject="src/main/java"/>
 
 		<!-- 对于生成的mapper所在目录 -->
         <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
 
 		<!-- 配置mapper对应的java映射 -->
-        <javaClientGenerator targetPackage="com.hyp.mapper" targetProject="src/main/java"
+        <javaClientGenerator targetPackage="com.hyp.myweixin.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
 
-		<table tableName="picture_wall"></table>
+		<table tableName="weixin_resource"></table>
+		<!--<table tableName="weixin_resource_config"></table>-->
 		<!--<table tableName="user1"></table>-->
 
     </context>

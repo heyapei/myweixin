@@ -241,6 +241,13 @@
         </dependency>
 
 
+        <!--HTTP请求-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>
