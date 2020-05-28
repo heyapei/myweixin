@@ -3,11 +3,11 @@ package com.hyp.myweixin.aspect;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.aspectj.lang.reflect.MethodSignature;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,6 +22,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Aspect
 @Component
@@ -55,41 +57,82 @@ public class HttpAspect {
         log.info("控制层[class] = {" + joinPoint.getSignature().getDeclaringTypeName() + "}");
         //方法
         log.info("请求服务[method] = {" + joinPoint.getSignature().getName() + "}");*/
-        //参数
-        Object[] objects = joinPoint.getArgs();
-        // 参数名
-        String[] argNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
-        if (objects.length > 0) {
-            logString = logString + ",参数[";
-        }
-        for (int i = 0; i < objects.length; i++) {
-            //log.info("参数[" + argNames[i] + "] = {" + objects[i].toString() + "}");
-            logString = logString + argNames[i] + "= {" + objects[i].toString() + "}";
-        }
-        if (objects.length > 0) {
-            logString = logString + "]";
-        }
+
+        String ua = request.getHeader("User-Agent").toLowerCase();
+        String deviceType = this.check(ua) ? "mobile" : "pc";
+        String deviceName = this.getDeviceName(ua);
+        logString = logString + "，请求设备类型：" + deviceType + "，请求设备名：" + deviceName;
         //获取请求参数
         try {
             String reqBody = this.getReqBody();
-            logString = logString +",请求参数:" + reqBody;
+            logString = logString + ",请求参数:" + reqBody;
         } catch (Exception ex) {
             log.error("get Request Error: " + ex.getMessage());
         }
         log.info(logString);
     }
 
-    //@Before 在方法执行之前执行
-    /*@Before("pointcut()")
-    public void doBefore(JoinPoint joinPoint) {
 
-    }*/
+    /**
+     *  \b 是单词边界(连着的两个(字母字符 与 非字母字符) 之间的逻辑上的间隔),
+     *      字符串在编译时会被转码一次,所以是 "\\b"
+     *   \B 是单词内部逻辑间隔(连着的两个字母字符之间的逻辑上的间隔)
+     */
+    static String phoneReg = "\\b(ip(hone|od)|android|opera m(ob|in)i" + "|windows (phone|ce)|blackberry" + "|s(ymbian|eries60|amsung)|p(laybook|alm|rofile/midp"
+            + "|laystation portable)|nokia|fennec|htc[-_]" + "|mobile|up.browser|[1-4][0-9]{2}x[1-4][0-9]{2})\\b";
+    /**
+     *
+     */
+    static String tableReg = "\\b(ipad|tablet|(Nexus 7)|up.browser" + "|[1-4][0-9]{2}x[1-4][0-9]{2})\\b";
 
-    //    //@After在方法执行之后执行
-   /* @After("pointcut()")
-    public void doAfter() {
-        System.out.println("doAfter");
-    }*/
+    /**移动设备正则匹配：手机端、平板*/
+    static Pattern phonePat = Pattern.compile(phoneReg, Pattern.CASE_INSENSITIVE);
+    static Pattern tablePat = Pattern.compile(tableReg, Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 检测是否是移动设备访问
+     *
+     * @param userAgent 浏览器标识
+     * @return true:移动设备接入，false:pc端接入
+     * @Title: check
+     * @Date : 2014-7-7 下午01:29:07
+     */
+    protected boolean check(String userAgent) {
+        if (null == userAgent) {
+            userAgent = "";
+        }
+        // 匹配
+        Matcher matcherPhone = phonePat.matcher(userAgent);
+        Matcher matcherTable = tablePat.matcher(userAgent);
+        if (matcherPhone.find() || matcherTable.find()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取设备名称
+     *
+     * @param userAgent
+     * @return
+     */
+    protected String getDeviceName(String userAgent) {
+        if (null == userAgent) {
+            userAgent = "";
+        }
+        // 匹配
+        Matcher matcherPhone = phonePat.matcher(userAgent);
+        Matcher matcherTable = tablePat.matcher(userAgent);
+        if (matcherPhone.find()) {
+            return matcherPhone.group();
+        } else if (matcherTable.find()) {
+            return matcherTable.group();
+        } else {
+            return "pc";
+        }
+    }
+
 
     /**
      * 后置通知，切点后执行
@@ -104,7 +147,6 @@ public class HttpAspect {
             log.error("get Response Error: " + ex.getMessage());
         }
     }
-
 
 
     private final String REQUEST_GET = "GET";
@@ -175,7 +217,7 @@ public class HttpAspect {
                 stringBuilder.append(charBuffer, 0, bytesRead);
             }
         } catch (IOException e) {
-           log.error("get Post Request Parameter err : " + e.getMessage());
+            log.error("get Post Request Parameter err : " + e.getMessage());
         }
         return stringBuilder.toString();
     }
