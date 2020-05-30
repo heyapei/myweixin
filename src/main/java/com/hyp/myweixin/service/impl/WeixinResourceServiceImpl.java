@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service.impl;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinResourceConfigMapper;
 import com.hyp.myweixin.mapper.WeixinResourceMapper;
 import com.hyp.myweixin.pojo.dto.WeixinResource;
@@ -39,6 +40,11 @@ public class WeixinResourceServiceImpl implements WeixinResourceService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("status", status);
         criteria.andEqualTo("resourceConfigId", configId);
-        return weixinResourceMapper.selectByExample(example);
+        try {
+            return weixinResourceMapper.selectByExample(example);
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new MyDefinitionException("执行错误异常");
+        }
     }
 }
