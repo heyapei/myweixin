@@ -1,7 +1,7 @@
 package com.hyp.myweixin.controller.wechat.page;
 
-import com.hyp.myweixin.pojo.dto.WeixinResource;
-import com.hyp.myweixin.pojo.dto.WeixinResourceConfig;
+import com.hyp.myweixin.pojo.modal.WeixinResource;
+import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import com.hyp.myweixin.pojo.vo.page.IndexImg;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinResourceService;

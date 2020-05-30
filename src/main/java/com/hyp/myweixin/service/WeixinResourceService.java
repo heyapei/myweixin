@@ -1,6 +1,6 @@
 package com.hyp.myweixin.service;
 
-import com.hyp.myweixin.pojo.dto.WeixinResource;
+import com.hyp.myweixin.pojo.modal.WeixinResource;
 
 import java.util.List;
 

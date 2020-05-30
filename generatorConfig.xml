@@ -19,7 +19,7 @@
         </jdbcConnection>
 
         <!-- 对于生成的pojo所在包 -->
-        <javaModelGenerator targetPackage="com.hyp.myweixin.pojo.dto" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.hyp.myweixin.pojo.modal" targetProject="src/main/java"/>
 
 		<!-- 对于生成的mapper所在目录 -->
         <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>

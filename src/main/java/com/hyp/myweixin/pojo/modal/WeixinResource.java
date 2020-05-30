@@ -1,4 +1,4 @@
-package com.hyp.myweixin.pojo.dto;
+package com.hyp.myweixin.pojo.modal;
 
 import lombok.Data;
 import org.apache.ibatis.annotations.Mapper;

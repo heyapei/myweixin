@@ -3,7 +3,7 @@ package com.hyp.myweixin.service.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinResourceConfigMapper;
 import com.hyp.myweixin.mapper.WeixinResourceMapper;
-import com.hyp.myweixin.pojo.dto.WeixinResource;
+import com.hyp.myweixin.pojo.modal.WeixinResource;
 import com.hyp.myweixin.service.WeixinResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

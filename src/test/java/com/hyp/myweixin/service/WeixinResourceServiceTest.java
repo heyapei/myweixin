@@ -1,7 +1,7 @@
 package com.hyp.myweixin.service;
 
-import com.hyp.myweixin.pojo.dto.WeixinResource;
-import com.hyp.myweixin.pojo.dto.WeixinResourceConfig;
+import com.hyp.myweixin.pojo.modal.WeixinResource;
+import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
