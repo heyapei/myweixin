@@ -202,29 +202,29 @@ public class Result<T> {
         /**
          * 状态码,长度固定为6位的字符串.
          */
-        private String code;
+        private String statusCode;
 
         /**
          * 错误信息.
          */
-        private String reason;
+        private String statusMessage;
 
-        Status(String code, String reason) {
-            this.code = code;
-            this.reason = reason;
+        Status(String statusCode, String statusMessage) {
+            this.statusCode = statusCode;
+            this.statusMessage = statusMessage;
         }
 
         public String getCode() {
-            return code;
+            return statusCode;
         }
 
         public String getReason() {
-            return reason;
+            return statusMessage;
         }
 
         @Override
         public String toString() {
-            return code + ": " + reason;
+            return statusCode + ": " + statusMessage;
         }
 
     }
