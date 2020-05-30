@@ -1,6 +1,9 @@
 package com.hyp.myweixin.controller.wechat;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,17 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @Slf4j
+@Api(value = "首页地址")
 public class Index {
 
     @RequestMapping("/")
+    @ApiOperation(value="根据用户编号获取用户姓名")
     public String redirect() {
         log.info("用户想要请求首页被跳转到www.yapei.cool");
         return "redirect:http://www.yapei.cool";
     }
 
 
-    @RequestMapping("/1")
-    public String Myredirect() {
+    @RequestMapping("/testError")
+    public String testError() {
         log.info("用户想要请求首页被跳转到www.yapei.cool");
         try {
             Integer.parseInt("nihao");
