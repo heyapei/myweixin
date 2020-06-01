@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress ALL-->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -308,8 +309,11 @@
         </div>
     </div>
 </main>
+
+<th:block th:include="/inc/copyright" />
+
 <!-- partial -->
-<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.1.1/gsap.min.js'></script>
+<script src='/static/page/error/gsap/gsap.min.js'></script>
 <script src="/static/page/error/gsap/script.js"></script>
 </body>
 </html>

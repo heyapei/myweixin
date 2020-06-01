@@ -29,13 +29,19 @@ public class Index {
 
     @RequestMapping("/testError")
     public String testError() {
-        log.info("用户想要请求首页被跳转到www.yapei.cool");
+        log.info("请求错误示例页面");
         try {
             Integer.parseInt("nihao");
         } catch (NumberFormatException e) {
             throw new MyDefinitionException("该地址请求失败");
         }
         return "redirect:http://www.yapei.cool";
+    }
+
+    @RequestMapping("/testIndex")
+    public String testIndex() {
+        log.info("请求首页示例页面");
+        return "index";
     }
 
 }
