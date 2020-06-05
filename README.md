@@ -66,3 +66,34 @@ public class SecretKeyPropertiesValue {
         return weixinVoteUser.getId();
     }
 ```
+
+```$xslt
+修改了打包过程中不对test进行检查
+只需要在properties中添加skip就行
+ <skipTests>true</skipTests>
+
+
+后端服务器 添加了允许跨域请求的代码 这样本地更好测试吧
+
+还有就是我发现 浏览器会自动整出来一个跨域请求
+跨域请求过程中，ajax会自动省略'X-Requested-With'请求头 这样后端很难做判断了
+所以如果需要的 我们需要设置一下
+1. 将ajax的跨域请求关掉
+2. 在ajax请求中添加head，如： headers: {'X-Requested-With': 'XMLHttpRequest'}
+$.ajax({
+            type: "GET",
+           /* url: "http://localhost:8099/page/index/carousel/image",*/
+            url: "https://yapei.cool/wechat/v1/user/add",
+            dataType: "json",
+            crossDomain: false,
+            timeout: 5000,
+            success: function (data) {
+                alert(data.code);
+            },
+            error: function (data, type, err) {  // 以下依次是返回过来的数据，错误类型，错误码
+                console.log("ajax错误类型：" + type);
+                console.log(err);
+            }
+        });
+跨域请求真的很烦，毕竟暂时不知道有什么用，等有时间研究一下
+```
