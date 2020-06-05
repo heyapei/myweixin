@@ -34,3 +34,5 @@ build/
 /.idea/
 /*.log
 /src/main/resources/application-dev.properties
+
+generatorConfig.xml
