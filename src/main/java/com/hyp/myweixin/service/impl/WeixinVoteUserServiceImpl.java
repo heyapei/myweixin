@@ -7,6 +7,7 @@ import com.hyp.myweixin.service.WeixinVoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
@@ -24,6 +25,37 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
 
     @Autowired
     private WeixinVoteUserMapper weixinVoteUserMapper;
+
+    /**
+     * 测试结果为正确的 可以有效地进行事务上的回滚
+     */
+    @Override
+    @Transactional
+    public int testTransactional(WeixinVoteUser weixinVoteUser) {
+        /*try {
+            weixinVoteUserMapper.insertUseGeneratedKeys(weixinVoteUser);
+        } catch (Exception e) {
+            log.info(e.toString());
+            throw new MyDefinitionException("保存微信用户数错误");
+        }
+
+        if (true) {
+            try {
+                Example example = new Example(WeixinVoteUser.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("ope3411nId", "openId");
+                List<WeixinVoteUser> weixinVoteUsers = weixinVoteUserMapper.selectByExample(example);
+                if (weixinVoteUsers != null && weixinVoteUsers.size() > 0) {
+                    weixinVoteUser = weixinVoteUsers.get(0);
+                }
+            } catch (Exception e) {
+                log.info(e.toString());
+                throw new MyDefinitionException("通过openId查询用户数据失败");
+            }
+        }*/
+
+        return 0;
+    }
 
     /**
      * 添加用户信息

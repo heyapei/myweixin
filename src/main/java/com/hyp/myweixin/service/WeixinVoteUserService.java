@@ -9,6 +9,16 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
  * @Description: TODO
  */
 public interface WeixinVoteUserService {
+
+    /**
+     * 测试事务
+     *
+     * @param weixinVoteUser 微信用户信息
+     * @return 主键
+     */
+    int testTransactional(WeixinVoteUser weixinVoteUser);
+
+
     /**
      * 添加用户信息
      *
@@ -25,4 +35,6 @@ public interface WeixinVoteUserService {
      * @return 信息详情
      */
     WeixinVoteUser getUserByOpenId(String openId);
+
+
 }
