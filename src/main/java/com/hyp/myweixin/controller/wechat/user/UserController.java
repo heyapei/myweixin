@@ -2,6 +2,7 @@ package com.hyp.myweixin.controller.wechat.user;
 
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
+import com.hyp.myweixin.config.weixin.PropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.vo.result.Result;
@@ -10,7 +11,6 @@ import com.hyp.myweixin.utils.MyRequestValidateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,13 +29,15 @@ public class UserController {
 
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
+    @Autowired
+    private MyRequestValidateUtil myRequestValidateUtil;
 
     @RequestMapping("/add")
     public Result addWechatInfo(WeixinVoteUser weixinVoteUser, HttpServletRequest httpServletRequest) {
 
         log.info("其中对应的weixin数据：" + weixinVoteUser.toString());
 
-        MyRequestValidateUtil myRequestValidateUtil = new MyRequestValidateUtil();
+        /* MyRequestValidateUtil myRequestValidateUtil = new MyRequestValidateUtil();*/
         boolean b = myRequestValidateUtil.validateSign(httpServletRequest);
         log.info("验证结果：" + b);
         if (!b) {
@@ -76,8 +78,29 @@ public class UserController {
         return "567890";
     }
 
-    @PostMapping("")
-    public String sendTextMail2() {
+
+    @Autowired
+    private PropertiesValue propertiesValue;
+
+
+    /**
+     * 麻痹呀 突然又自己好了
+     *
+     * @return
+     */
+    @GetMapping("testWeixin")
+    public String sendTextMail2(HttpServletRequest httpServletRequest) {
+
+
+        boolean b = myRequestValidateUtil.validateSign(httpServletRequest);
+        log.info("验证结果：" + b);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        String appid = propertiesValue.getAppid();
+        log.info("微信：ci" + appid + "32");
+
         return "AAAAA";
     }
 }

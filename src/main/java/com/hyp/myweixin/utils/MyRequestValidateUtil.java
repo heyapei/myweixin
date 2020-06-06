@@ -4,6 +4,7 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  * @Date 2020/6/5 19:34
  * @Description: TODO
  */
+@Component
 @Slf4j
 public class MyRequestValidateUtil {
 
@@ -50,8 +52,8 @@ public class MyRequestValidateUtil {
         linkString = StringUtils.substring(linkString, 0, linkString.length() - 1);
         //混合密钥md5
         String sign = DigestUtils.md5Hex(linkString + secretKeyPropertiesValue.getMd5Key());
-        log.info("测试阶段需要知道原始字符串："+linkString + secretKeyPropertiesValue.getMd5Key());
-        log.info("加密后："+sign+"==请求过来的数据："+requestSign);
+        log.info("测试阶段需要知道原始字符串：" + linkString + secretKeyPropertiesValue.getMd5Key());
+        log.info("加密后：" + sign + "==请求过来的数据：" + requestSign);
         //比较
         return StringUtils.equals(sign, requestSign);
     }
