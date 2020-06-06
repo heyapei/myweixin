@@ -1,10 +1,13 @@
 package com.hyp.myweixin.controller.wechat.page;
 
+import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinResource;
 import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import com.hyp.myweixin.pojo.vo.page.IndexImg;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinResourceService;
+import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +31,19 @@ public class IndexController {
 
     @Autowired
     WeixinResourceService weixinResourceService;
-
+    @Autowired
+    private MyRequestVailDateUtil myRequestValidateUtil;
+    @Autowired
+    private SecretKeyPropertiesValue secretKeyPropertiesValue;
 
     @GetMapping("/carousel/image")
     public Result getIndexCarousel(HttpServletRequest request) {
+
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
         /*todo 2020年5月28日 好像还要加上端口号 不知道以后服务器上不需要加上*/
         String path = request.getContextPath();
         String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";

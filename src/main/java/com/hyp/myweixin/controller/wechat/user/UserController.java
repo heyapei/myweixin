@@ -7,10 +7,11 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteUserService;
-import com.hyp.myweixin.utils.MyRequestValidateUtil;
+import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,26 +31,22 @@ public class UserController {
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
     @Autowired
-    private MyRequestValidateUtil myRequestValidateUtil;
+    private MyRequestVailDateUtil myRequestValidateUtil;
+    @Autowired
+    private SecretKeyPropertiesValue secretKeyPropertiesValue;
 
-    @RequestMapping("/add")
+    @PostMapping("/add")
     public Result addWechatInfo(WeixinVoteUser weixinVoteUser, HttpServletRequest httpServletRequest) {
-
         log.info("其中对应的weixin数据：" + weixinVoteUser.toString());
-
-        /* MyRequestValidateUtil myRequestValidateUtil = new MyRequestValidateUtil();*/
-        boolean b = myRequestValidateUtil.validateSign(httpServletRequest);
-        log.info("验证结果：" + b);
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-
         if (weixinVoteUser.getOpenId() == null) {
             throw new MyDefinitionException(
                     Integer.parseInt(Result.Status.PARAM_IS_BLANK.getCode()),
                     "微信用户的openId不可以为空");
         }
-
         WeixinVoteUser userByOpenId = weixinVoteUserService.getUserByOpenId(weixinVoteUser.getOpenId());
         if (userByOpenId != null) {
             return Result.buildResult(Result.Status.OK,
@@ -66,22 +63,14 @@ public class UserController {
                         + "！我们的第" + i + "用户！");
     }
 
-    @Autowired
-    private SecretKeyPropertiesValue secretKeyPropertiesValue;
 
-    @GetMapping("")
-    public String sendTextMail1() {
 
-        log.info("md5数据" + secretKeyPropertiesValue.getMd5Key());
-        System.out.println(secretKeyPropertiesValue.getMd5Key());
 
-        return "567890";
-    }
+    /*下面是一个测试*/
 
 
     @Autowired
     private PropertiesValue propertiesValue;
-
 
     /**
      * 麻痹呀 突然又自己好了
@@ -91,13 +80,11 @@ public class UserController {
     @GetMapping("testWeixin")
     public String sendTextMail2(HttpServletRequest httpServletRequest) {
 
-
-        boolean b = myRequestValidateUtil.validateSign(httpServletRequest);
+        boolean b = myRequestValidateUtil.validateSignMd5(httpServletRequest, secretKeyPropertiesValue.getMd5Key());
         log.info("验证结果：" + b);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-
         String appid = propertiesValue.getAppid();
         log.info("微信：ci" + appid + "32");
 

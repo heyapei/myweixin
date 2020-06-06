@@ -51,7 +51,6 @@ public class DefaultExceptionHandler implements HandlerExceptionResolver {
         String ret = ex.getMessage();
 
         if (isAjax(handler, request)) {
-            log.info("ajax错误类型");
             try {
                 response.setContentType("application/json;charset=UTF-8");
                 response.getWriter().print(JSON.toJSONString(Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, ret)));

@@ -3,6 +3,7 @@ package com.hyp.myweixin.service;
 import com.hyp.myweixin.pojo.modal.WeixinResource;
 import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,13 @@ public class WeixinResourceServiceTest {
         weixinResourceByConfigId.stream().forEach(string -> {
             log.info(string.toString());
         });
+    }
+
+    @Test
+    public void testDate() {
+        boolean parsable = NumberUtils.isParsable("123121222222222222222222222");
+        log.info("信息："+parsable);
+         parsable = NumberUtils.isParsable("1sdff");
+        log.info("信息2："+parsable);
     }
 }
