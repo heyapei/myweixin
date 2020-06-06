@@ -8,6 +8,19 @@
 2020年6月6日 
 今天下午为项目添加了日期工具类
 为所有的请求都加上了请求密钥限制 采用很简单的md5（含有key）加密方式
+HttpAspect.java 无法拦截post请求中x-www-form-urlencoded类型的数据 所以加了一点代码用这个去获取
+不知道会不会导致输出流出现问题
+if (reqBody == null || reqBody.length() <= 0) {
+                reqBody += "{";
+                Map<String, String[]> parameterMap = request.getParameterMap();
+                for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+                    reqBody += "\""+entry.getKey() + "\":";
+                    for (String s : entry.getValue()) {
+                        reqBody += s + ";";
+                    }
+                }
+                reqBody += "}";
+            }
 ```
 
 
