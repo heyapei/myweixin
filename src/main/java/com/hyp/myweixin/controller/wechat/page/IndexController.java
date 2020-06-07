@@ -1,5 +1,6 @@
 package com.hyp.myweixin.controller.wechat.page;
 
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinResource;
@@ -7,12 +8,11 @@ import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import com.hyp.myweixin.pojo.vo.page.IndexImg;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinResourceService;
+import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -35,7 +35,41 @@ public class IndexController {
     private MyRequestVailDateUtil myRequestValidateUtil;
     @Autowired
     private SecretKeyPropertiesValue secretKeyPropertiesValue;
+    @Autowired
+    private WeixinVoteBaseService weixinVoteBaseService;
 
+
+    /**
+     * 分页返回投票活动的信息
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/vote/works")
+    public Result getVoteWorkByPage(HttpServletRequest request,
+                                    @RequestParam(defaultValue = "1") int pageNo,
+                                    @RequestParam(defaultValue = "5") int pageSize) {
+
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(pageNo);
+        pageInfo.setPageSize(pageSize);
+        PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(null, pageInfo);
+
+        return Result.buildResult(Result.Status.OK, voteWorkByPage);
+    }
+
+
+    /**
+     * 获取轮播图的内容
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/carousel/image")
     public Result getIndexCarousel(HttpServletRequest request) {
 
@@ -46,7 +80,7 @@ public class IndexController {
 
         /*todo 2020年5月28日 好像还要加上端口号 不知道以后服务器上不需要加上*/
         String path = request.getContextPath();
-        String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+        String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 
 
         List<WeixinResource> weixinResourceList = weixinResourceService.getWeixinResourceByConfigId(

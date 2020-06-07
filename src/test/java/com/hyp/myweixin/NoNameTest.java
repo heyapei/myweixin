@@ -1,5 +1,6 @@
 package com.hyp.myweixin;
 
+import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -25,6 +26,10 @@ public class NoNameTest {
 
     @Test
     public void contextLoads() {
+
+        WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
+        System.out.println("查看是否可以有默认值："+weixinVoteBase.toString());
+
         String code = "071XkLoW0ChBy02B5RlW0x2qoW0XkLoj";
         String appId = "wx09609fe79142649a";
         String secret = "9eb2c3ea68055398afb0280fbbcd6ebe";

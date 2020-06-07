@@ -7,6 +7,24 @@
 今天上午遇到一个错误
 Null return value from advice does not match primitive return type for:
 网上说是aop的错误，是返回值类型不是aop需要的，然后我就给返回值都改成了包装类 就Ok了
+
+今天下午又遇到一个pageHelp方法总是没有分页结果
+然后我就升级了一下这个
+ <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.5</version>
+ </dependency>
+pagehelper一定要在查询前面
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
+        //TODO　weixinVoteBase用于条件查询
+        List<WeixinVoteBase> weixinVoteBases = weixinVoteBaseMapper.selectByExample(example);
+        log.info("这里呢？" + weixinVoteBases.toString());
+
+        //log.info("这里没有查询出来数据：" + weixinVoteBases.toString());
+        pageInfo = new PageInfo(weixinVoteBases);
+具体的实现可以看一下WeixinVoteBaseServiceImpl.java中getVoteWorkByPage这个实现方法
+
 ```
 
 ```$xslt

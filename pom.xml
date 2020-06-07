@@ -123,11 +123,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
@@ -163,7 +163,7 @@
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.5</version>
         </dependency>
 
         <dependency>
