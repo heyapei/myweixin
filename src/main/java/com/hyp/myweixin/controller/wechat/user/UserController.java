@@ -2,7 +2,7 @@ package com.hyp.myweixin.controller.wechat.user;
 
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
-import com.hyp.myweixin.config.weixin.PropertiesValue;
+import com.hyp.myweixin.config.weixin.WeChatPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinUserOptionConfig;
 import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
@@ -97,7 +97,7 @@ public class UserController {
 
 
     @Autowired
-    private PropertiesValue propertiesValue;
+    private WeChatPropertiesValue propertiesValue;
 
     /**
      * 麻痹呀 突然又自己好了

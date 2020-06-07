@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 @PropertySource("classpath:wechat.properties")
-public class PropertiesValue {
+public class WeChatPropertiesValue {
 
     @Value("${appid}")
     private String appid;
