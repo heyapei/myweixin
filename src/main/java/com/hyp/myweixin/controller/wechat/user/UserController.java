@@ -4,8 +4,11 @@ package com.hyp.myweixin.controller.wechat.user;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.config.weixin.PropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinUserOptionConfig;
+import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.vo.result.Result;
+import com.hyp.myweixin.service.UserNoOpenIdIdLog;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,10 @@ public class UserController {
     @Autowired
     private SecretKeyPropertiesValue secretKeyPropertiesValue;
 
+    @Autowired
+    private UserNoOpenIdIdLog userNoOpenIdIdLog;
+
+
     @PostMapping("/add")
     public Result addWechatInfo(WeixinVoteUser weixinVoteUser, HttpServletRequest httpServletRequest) {
         log.info("其中对应的weixin数据：" + weixinVoteUser.toString());
@@ -61,6 +68,26 @@ public class UserController {
         return Result.buildResult(Result.Status.OK,
                 "欢迎" + weixinVoteUser.getNickName()
                         + "！我们的第" + i + "用户！");
+    }
+
+
+    /**
+     * 记录用户进入小程序 记录用户的地区位置信息 ip地址信息 使用设备类型信息 进入小程序的时间 操作的类型 等信息
+     *
+     * @param httpServletRequest
+     */
+    @RequestMapping("userin")
+    public Result userIn(HttpServletRequest httpServletRequest) {
+        String userAgent = httpServletRequest.getHeader("User-Agent");
+        System.out.println(userAgent);
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
+        weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE.getType());
+        userNoOpenIdIdLog.addUserOperationLog(weixinUserOptionLog, httpServletRequest);
+        return Result.buildResult(Result.Status.OK, "保存用户操作日志，日志类型：" + WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE.getMsg());
     }
 
 

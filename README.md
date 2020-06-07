@@ -2,7 +2,12 @@
 
 ## 2020年5月28日23点22分 完成了最基础本地小程序的调用后端数据的实验
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
-
+```$xslt
+2020年6月7日
+今天上午遇到一个错误
+Null return value from advice does not match primitive return type for:
+网上说是aop的错误，是返回值类型不是aop需要的，然后我就给返回值都改成了包装类 就Ok了
+```
 
 ```$xslt
 2020年6月6日 

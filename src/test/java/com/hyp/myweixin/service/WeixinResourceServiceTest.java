@@ -40,8 +40,26 @@ public class WeixinResourceServiceTest {
     @Test
     public void testDate() {
         boolean parsable = NumberUtils.isParsable("123121222222222222222222222");
-        log.info("信息："+parsable);
-         parsable = NumberUtils.isParsable("1sdff");
-        log.info("信息2："+parsable);
+        log.info("信息：" + parsable);
+        parsable = NumberUtils.isParsable("1sdff");
+        log.info("信息2：" + parsable);
+    }
+
+    @Test
+    public void testiphone() {
+        String userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.12(0x17000c30) NetType/WIFI Language/zh_CN";
+        String iphoneOS = "iPhone OS";
+        String mobileType = null;
+        if (userAgent.contains(iphoneOS)) {
+            mobileType = userAgent.replaceAll(" ", "");
+            String iphoneOSIndex = iphoneOS.replaceAll(" ", "");
+            mobileType = mobileType.substring(mobileType.indexOf(iphoneOSIndex) + 6, mobileType.indexOf(iphoneOSIndex) + 10);
+        } else {
+            mobileType = "未知型号";
+        }
+
+        System.out.println("手机型号" + mobileType);
+
+
     }
 }
