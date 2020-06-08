@@ -2,6 +2,7 @@ package com.hyp.myweixin;
 
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
+import com.hyp.myweixin.utils.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +24,27 @@ public class NoNameTest {
 
     @Autowired
     private MyHttpClientUtil myHttpClientUtil;
+    @Autowired
+    private RedisUtil redisUtil;
+
+
+    @Test
+    public void testMyRedis() {
+
+
+        boolean set = redisUtil.set("1", "19", 1000);
+        log.info("连接redis测试：{}", set);
+        Object o = redisUtil.get("1");
+        log.info("连接redis测试：{}", o.toString());
+        System.out.println(redisUtil.getExpire("1"));
+    }
+
 
     @Test
     public void contextLoads() {
 
         WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
-        System.out.println("查看是否可以有默认值："+weixinVoteBase.toString());
+        System.out.println("查看是否可以有默认值：" + weixinVoteBase.toString());
 
         String code = "071XkLoW0ChBy02B5RlW0x2qoW0XkLoj";
         String appId = "wx09609fe79142649a";

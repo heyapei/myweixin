@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description: TODO
  */
 @Data
-public class IndexImg {
+public class IndexImgVO {
 
     /**
      * 完整的地址

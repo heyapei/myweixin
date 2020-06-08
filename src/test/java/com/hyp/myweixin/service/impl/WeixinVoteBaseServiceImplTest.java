@@ -4,15 +4,19 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
+import com.hyp.myweixin.service.WeixinVoteWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,15 +32,34 @@ public class WeixinVoteBaseServiceImplTest {
 
     @Autowired
     private WeixinVoteBaseService weixinVoteBaseService;
+    @Autowired
+    private WeixinVoteWorkService weixinVoteWorkService;
+
 
     @Test
     public void getVoteWorkByPage() {
         PageInfo pageInfo = new PageInfo();
-        pageInfo.setPageNum(1);
+        pageInfo.setPageNum(2);
         pageInfo.setPageSize(2);
         PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(null, pageInfo);
         //log.info("分页查询出来的数据：" + voteWorkByPage.toString());
-        log.info("实体类数据" + voteWorkByPage.getList());
+
+        List<WeixinVoteBase> list = voteWorkByPage.getList();
+        List<IndexWorksVO> indexWorksVOS = new ArrayList<>(5);
+        for (WeixinVoteBase weixinVoteBase : list) {
+            Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(weixinVoteBase.getId());
+            Integer countVoteByVoteBaseId = weixinVoteWorkService.getCountVoteByVoteBaseId(weixinVoteBase.getId());
+            IndexWorksVO indexWorksVO = new IndexWorksVO();
+            BeanUtils.copyProperties(weixinVoteBase, indexWorksVO);
+            indexWorksVO.setVoteWorkVoteCount(countVoteByVoteBaseId);
+            indexWorksVO.setVoteWorkJoinCount(countWorkByVoteBaseId);
+            System.out.println("输出1：" + weixinVoteBase.toString());
+            System.out.println("输出2：" + indexWorksVO.toString());
+            indexWorksVOS.add(indexWorksVO);
+        }
+        voteWorkByPage.setList(indexWorksVOS);
+        log.info("pageINfo数据："+voteWorkByPage.toString());
+        log.info("实体类数据" + voteWorkByPage.getList().toString());
 
     }
 

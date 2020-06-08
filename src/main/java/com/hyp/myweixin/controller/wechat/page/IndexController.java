@@ -5,12 +5,16 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinResource;
 import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
-import com.hyp.myweixin.pojo.vo.page.IndexImg;
+import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.vo.page.IndexImgVO;
+import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinResourceService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
+import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +64,7 @@ public class IndexController {
         pageInfo.setPageSize(pageSize);
         PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(null, pageInfo);
 
+
         return Result.buildResult(Result.Status.OK, voteWorkByPage);
     }
 
@@ -86,10 +91,10 @@ public class IndexController {
         List<WeixinResource> weixinResourceList = weixinResourceService.getWeixinResourceByConfigId(
                 WeixinResourceConfig.ConfigType.HeadImg.getConfigType(),
                 WeixinResource.Status.Allow.getState());
-        List<IndexImg> indexImgList = new ArrayList<>(6);
+        List<IndexImgVO> indexImgList = new ArrayList<>(6);
 
         for (WeixinResource weixinResource : weixinResourceList) {
-            IndexImg indexImg = new IndexImg();
+            IndexImgVO indexImg = new IndexImgVO();
             indexImg.setUrl(basePath + weixinResource.getPath());
             indexImg.setTitle(weixinResource.getTitle());
             indexImgList.add(indexImg);
