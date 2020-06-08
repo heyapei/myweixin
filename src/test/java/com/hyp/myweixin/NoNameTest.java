@@ -29,6 +29,26 @@ public class NoNameTest {
 
 
     @Test
+    public void testMyRedisTO() {
+        WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
+        weixinVoteBase.setId(1);
+        weixinVoteBase.setCreateSysUserId(100);
+        weixinVoteBase.setActiveDesc("这个一段中文描述");
+        log.info("打印实体类：" + weixinVoteBase.toString());
+        boolean weixinVoteBase1 = redisUtil.set("weixinVoteBase", weixinVoteBase, 1000);
+        log.info("存入实体类，{}", weixinVoteBase1);
+        Object weixinVoteBase2 = redisUtil.get("weixinVoteBase");
+        if (weixinVoteBase2 != null) {
+            log.info("拉取回来的数据：" + weixinVoteBase2.toString());
+            log.info("拉取回来的数据2：" + (WeixinVoteBase) weixinVoteBase2);
+            WeixinVoteBase ss = (WeixinVoteBase) weixinVoteBase2;
+            log.info("拉取回来的数据3：" + ss.toString());
+        } else {
+            log.info("拉取回来数据失败");
+        }
+    }
+
+    @Test
     public void testMyRedis() {
 
 
