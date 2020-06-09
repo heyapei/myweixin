@@ -7,9 +7,8 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
-import com.hyp.myweixin.utils.redis.RedisUtil;
+import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -50,8 +49,8 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteBase用于条件查询
         List<WeixinVoteBase> weixinVoteBases = weixinVoteBaseMapper.selectByExample(example);
-        log.info("这里没有查询出来数据：" + weixinVoteBases.toString());
-        //pageInfo = new PageInfo(weixinVoteBases);
+        // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
+        pageInfo = new PageInfo(weixinVoteBases);
         /*组装VO进行数据返回*/
         List<IndexWorksVO> indexWorksVOS = new ArrayList<>(5);
         for (WeixinVoteBase weixinVoteBase2 : weixinVoteBases) {
@@ -60,13 +59,16 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             if (countVoteByVoteBaseId == null) {
                 countVoteByVoteBaseId = 0;
             }
-            IndexWorksVO indexWorksVO = new IndexWorksVO();
-            BeanUtils.copyProperties(weixinVoteBase2, indexWorksVO);
+            //IndexWorksVO indexWorksVO = new IndexWorksVO();
+            //BeanUtils.copyProperties(weixinVoteBase2, indexWorksVO);
+            // 使用实体转换类进行数据转换处理
+            IndexWorksVO indexWorksVO = MyEntityUtil.entity2VM(weixinVoteBase2, IndexWorksVO.class);
             indexWorksVO.setVoteWorkVoteCount(countVoteByVoteBaseId);
             indexWorksVO.setVoteWorkJoinCount(countWorkByVoteBaseId);
             indexWorksVOS.add(indexWorksVO);
         }
         pageInfo.setList(indexWorksVOS);
+
 
         return pageInfo;
     }
