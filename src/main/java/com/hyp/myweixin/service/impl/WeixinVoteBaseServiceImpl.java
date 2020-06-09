@@ -2,6 +2,7 @@ package com.hyp.myweixin.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
@@ -71,5 +72,43 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
 
         return pageInfo;
+    }
+
+    /**
+     * 通过活动的ID查询活动的详情
+     *
+     * @param workId 活动ID
+     * @return
+     */
+    @Override
+    public IndexWorksVO getVoteWorkByWorkId(Integer workId) {
+        WeixinVoteBase weixinVoteBase = null;
+        IndexWorksVO indexWorksVO = null;
+        try {
+            weixinVoteBase = weixinVoteBaseMapper.selectByPrimaryKey(workId);
+        } catch (Exception e) {
+            log.error("通过活动ID查询活动错误，查询的活动ID为{},错误理由{}", workId, e.toString());
+            throw new MyDefinitionException("通过活动ID查询活动错误，查询的活动ID为" + workId);
+        }
+        if (weixinVoteBase == null) {
+            return null;
+        } else {
+            Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(weixinVoteBase.getId());
+            Integer countVoteByVoteBaseId = weixinVoteWorkService.getCountVoteByVoteBaseId(weixinVoteBase.getId());
+            if (countVoteByVoteBaseId == null) {
+                countVoteByVoteBaseId = 0;
+            }
+
+            try {
+                indexWorksVO = MyEntityUtil.entity2VM(weixinVoteBase, IndexWorksVO.class);
+            } catch (Exception e) {
+                log.error("通过活动ID查询活动错误，数据类型过程中出现错误,错误理由{}", e.toString());
+                throw new MyDefinitionException("通过活动ID查询活动错误，数据类型过程中出现错误");
+            }
+            indexWorksVO.setVoteWorkVoteCount(countVoteByVoteBaseId);
+            indexWorksVO.setVoteWorkJoinCount(countWorkByVoteBaseId);
+        }
+
+        return indexWorksVO;
     }
 }

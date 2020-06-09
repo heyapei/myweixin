@@ -35,6 +35,15 @@ public class WeixinVoteBaseServiceImplTest {
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
 
+    @Test
+    public void getVoteWorkByWorkId() {
+
+
+        IndexWorksVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(2);
+        System.out.println("查询出来的数据" + voteWorkByWorkId);
+
+    }
+
 
     @Test
     public void getVoteWorkByPage() {
@@ -58,7 +67,7 @@ public class WeixinVoteBaseServiceImplTest {
             indexWorksVOS.add(indexWorksVO);
         }
         voteWorkByPage.setList(indexWorksVOS);
-        log.info("pageINfo数据："+voteWorkByPage.toString());
+        log.info("pageINfo数据：" + voteWorkByPage.toString());
         log.info("实体类数据" + voteWorkByPage.getList().toString());
 
     }

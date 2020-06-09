@@ -31,7 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/page/index")
 @Slf4j
-public class IndexController {
+public class IndexPageController {
 
     @Autowired
     WeixinResourceService weixinResourceService;
