@@ -67,6 +67,23 @@ public class WeixinUserOptionLog {
     @Column(name = "create_time")
     private Date createTime = new Date();
 
+    /**
+     * 操作对象1
+     */
+    @Column(name = "option_object")
+    private String optionObject = "";
+    /**
+     * 操作对象2
+     */
+    @Column(name = "option_object_two")
+    private String optionObjectTwo = "";
+    /**
+     * 操作说明
+     */
+    @Column(name = "option_desc")
+    private String optionDesc = "";
+
+
     public WeixinUserOptionLog() {
         this.optionType = 0;
         this.createTime = new Date();

@@ -2,7 +2,6 @@ package com.hyp.myweixin.pojo.modal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.ibatis.annotations.Mapper;
 
 import javax.persistence.Column;
@@ -56,7 +55,9 @@ public class WeixinUserOptionConfig {
 
     public enum typeEnum {
 
-        INTO_WEiXIN_VOTE(0, "进入微信投票小程序");
+        INTO_WEiXIN_VOTE(0, "进入微信投票小程序"),
+        VIEW_WEiXIN_VOTE_WORK(1, "浏览投票活动");
+
         /**
          * 类型码
          */

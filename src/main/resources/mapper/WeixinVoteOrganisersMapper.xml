@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyp.myweixin.mapper.WeixinVoteOrganisersMapper">
+  <resultMap id="BaseResultMap" type="com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="vote_base_id" jdbcType="INTEGER" property="voteBaseId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="logo_img" jdbcType="VARCHAR" property="logoImg" />
+    <result column="organisers_desc" jdbcType="VARCHAR" property="organisersDesc" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="company" jdbcType="VARCHAR" property="company" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="job_major" jdbcType="VARCHAR" property="jobMajor" />
+    <result column="build_time" jdbcType="TIMESTAMP" property="buildTime" />
+    <result column="corporate" jdbcType="VARCHAR" property="corporate" />
+  </resultMap>
+</mapper>

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,8 @@ public class WeixinVoteBaseServiceImplTest {
     public void getVoteWorkByWorkId() {
 
 
-        IndexWorksVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(2);
-        System.out.println("查询出来的数据" + voteWorkByWorkId);
+        VoteDetailByWorkIdVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(1);
+        System.out.println("查询出来的数据" + voteWorkByWorkId.toString());
 
     }
 

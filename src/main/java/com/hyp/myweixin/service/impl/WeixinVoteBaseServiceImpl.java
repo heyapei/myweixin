@@ -3,9 +3,16 @@ package com.hyp.myweixin.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.mapper.WeixinMusicMapper;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
+import com.hyp.myweixin.mapper.WeixinVoteConfMapper;
+import com.hyp.myweixin.mapper.WeixinVoteOrganisersMapper;
+import com.hyp.myweixin.pojo.modal.WeixinMusic;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.modal.WeixinVoteConf;
+import com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -31,6 +38,13 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
     private WeixinVoteBaseMapper weixinVoteBaseMapper;
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+
+    @Autowired
+    private WeixinVoteConfMapper weixinVoteConfMapper;
+    @Autowired
+    private WeixinMusicMapper weixinMusicMapper;
+    @Autowired
+    private WeixinVoteOrganisersMapper weixinVoteOrganisersMapper;
 
     /**
      * 分页查询投票活动列表
@@ -81,7 +95,9 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
      * @return
      */
     @Override
-    public IndexWorksVO getVoteWorkByWorkId(Integer workId) {
+    public VoteDetailByWorkIdVO getVoteWorkByWorkId(Integer workId) {
+
+        VoteDetailByWorkIdVO voteDetailByWorkIdVO = null;
         WeixinVoteBase weixinVoteBase = null;
         IndexWorksVO indexWorksVO = null;
         try {
@@ -99,16 +115,75 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
                 countVoteByVoteBaseId = 0;
             }
 
+
+            Example example = new Example(WeixinVoteConf.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("activeVoteBaseId", weixinVoteBase.getId());
+            List<WeixinVoteConf> weixinVoteConfS = null;
             try {
-                indexWorksVO = MyEntityUtil.entity2VM(weixinVoteBase, IndexWorksVO.class);
+                weixinVoteConfS = weixinVoteConfMapper.selectByExample(example);
             } catch (Exception e) {
-                log.error("通过活动ID查询活动错误，数据类型过程中出现错误,错误理由{}", e.toString());
-                throw new MyDefinitionException("通过活动ID查询活动错误，数据类型过程中出现错误");
+                log.error("通过投票活动ID查询配置内容错误，查询的投票ID为{},错误理由{}", workId, e.toString());
+                throw new MyDefinitionException("通过投票活动ID查询配置内容错误，查询的投票ID为" + workId);
+
             }
-            indexWorksVO.setVoteWorkVoteCount(countVoteByVoteBaseId);
-            indexWorksVO.setVoteWorkJoinCount(countWorkByVoteBaseId);
+            WeixinVoteConf weixinVoteConf = null;
+            if (weixinVoteConfS != null && weixinVoteConfS.size() > 0) {
+                weixinVoteConf = weixinVoteConfS.get(0);
+            }
+
+            String activeMusic = null;
+            if (weixinVoteConf != null) {
+                int musicId = weixinVoteConf.getActiveConfMusicId();
+                WeixinMusic weixinMusic = null;
+                try {
+                    weixinMusic = weixinMusicMapper.selectByPrimaryKey(musicId);
+                } catch (Exception e) {
+                    log.error("通过音乐ID查询音乐内容错误，查询的音乐ID为{},错误理由{}", workId, e.toString());
+                    throw new MyDefinitionException("通过音乐ID查询音乐内容错误，查询的音乐ID为" + workId);
+
+                }
+
+
+
+                if (weixinMusic != null) {
+                    activeMusic = weixinMusic.getMusicUrl();
+                }
+            }
+
+
+            Example example1 = new Example(WeixinVoteOrganisers.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("voteBaseId", weixinVoteBase.getId());
+            WeixinVoteOrganisers weixinVoteOrganisers = new WeixinVoteOrganisers();
+            List<WeixinVoteOrganisers> weixinVoteOrganisersList = null;
+            try {
+                weixinVoteOrganisersList = weixinVoteOrganisersMapper.selectByExample(example1);
+            } catch (Exception e) {
+                log.error("通过活动ID查询创建单位内容错误，查询的活动ID为{},错误理由{}", workId, e.toString());
+                throw new MyDefinitionException("通过活动ID查询创建单位内容错误，查询的活动ID为" + workId);
+
+            }
+            if (weixinVoteOrganisersList != null && weixinVoteOrganisersList.size() > 0) {
+                weixinVoteOrganisers = weixinVoteOrganisersList.get(0);
+            }
+
+
+            voteDetailByWorkIdVO = new VoteDetailByWorkIdVO();
+            voteDetailByWorkIdVO.setActiveBgImg(weixinVoteBase.getActiveDescImg());
+            voteDetailByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg());
+            voteDetailByWorkIdVO.setActiveEndTime(weixinVoteBase.getActiveEndTime());
+            voteDetailByWorkIdVO.setActiveStartTime(weixinVoteBase.getActiveStartTime());
+            voteDetailByWorkIdVO.setActiveName(weixinVoteBase.getActiveName());
+            voteDetailByWorkIdVO.setActiveMusic(activeMusic);
+            voteDetailByWorkIdVO.setActiveJoinCount(countWorkByVoteBaseId);
+            voteDetailByWorkIdVO.setActiveVoteCount(countVoteByVoteBaseId);
+            //FIXME 当前写为0
+            voteDetailByWorkIdVO.setActiveViewCount(0);
+            voteDetailByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
+            voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
         }
 
-        return indexWorksVO;
+        return voteDetailByWorkIdVO;
     }
 }

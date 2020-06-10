@@ -1,8 +1,7 @@
 package com.hyp.myweixin.controller.wechat.page;
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
-import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -36,11 +35,8 @@ public class VotePageController {
     @PostMapping("/work/detail")
     public Result getVoteWorkByPage(HttpServletRequest request,
                                     int workId) {
-        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
-        if (!b) {
-            throw new MyDefinitionException(401, "密钥验证错误");
-        }
-        IndexWorksVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(workId);
+
+        VoteDetailByWorkIdVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(workId);
         if (voteWorkByWorkId == null) {
             return Result.buildResult(Result.Status.NOT_FOUND);
         }

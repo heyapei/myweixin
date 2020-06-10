@@ -12,6 +12,7 @@ import com.hyp.myweixin.service.UserNoOpenIdIdLog;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +50,7 @@ public class UserController {
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-        if (weixinVoteUser.getOpenId() == null) {
+        if (weixinVoteUser.getOpenId() == null || StringUtils.isBlank(weixinVoteUser.getOpenId())) {
             throw new MyDefinitionException(
                     Integer.parseInt(Result.Status.PARAM_IS_BLANK.getCode()),
                     "微信用户的openId不可以为空");
@@ -86,8 +87,32 @@ public class UserController {
         }
         WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
         weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE.getType());
+        weixinUserOptionLog.setOptionDesc(WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE.getMsg());
         userNoOpenIdIdLog.addUserOperationLog(weixinUserOptionLog, httpServletRequest);
         return Result.buildResult(Result.Status.OK, "保存用户操作日志，日志类型：" + WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE.getMsg());
+    }
+
+    /**
+     * 记录用户进入小程序 记录用户的地区位置信息 ip地址信息 使用设备类型信息 进入小程序的时间 操作的类型 等信息
+     *
+     * @param httpServletRequest
+     */
+    @PostMapping("viewwork")
+    public Result userViewVoteWork(HttpServletRequest httpServletRequest, String voteWorkId) {
+        String userAgent = httpServletRequest.getHeader("User-Agent");
+        System.out.println(userAgent);
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
+        weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getType());
+        weixinUserOptionLog.setOptionDesc(WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getMsg());
+        weixinUserOptionLog.setOptionObject(voteWorkId);
+        userNoOpenIdIdLog.addUserOperationLog(weixinUserOptionLog, httpServletRequest);
+        return Result.buildResult(Result.Status.OK, "保存用户浏览操作日志，日志类型："
+                + WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getMsg()
+                + "，查看的活动ID：" + voteWorkId);
     }
 
 

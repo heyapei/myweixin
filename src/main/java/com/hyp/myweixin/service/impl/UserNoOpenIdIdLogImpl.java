@@ -1,8 +1,11 @@
 package com.hyp.myweixin.service.impl;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinUserOptionLogMapper;
+import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.dto.AmapIpToAddressDTO;
 import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
+import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.service.UserNoOpenIdIdLog;
 import com.hyp.myweixin.utils.MyIpMacUtil;
 import com.hyp.myweixin.utils.amaputil.AmapApiUtil;
@@ -33,6 +36,9 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
     @Autowired
     private WeixinUserOptionLogMapper weixinUserOptionLogMapper;
 
+    @Autowired
+    private WeixinVoteBaseMapper weixinVoteBaseMapper;
+
     /**
      * 添加微信用户操作日志
      *
@@ -52,8 +58,18 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
             return 0;
         }
 
+        if (StringUtils.isNotBlank(weixinUserOptionLog.getOptionObject())) {
+            WeixinVoteBase weixinVoteBase = weixinVoteBaseMapper.selectByPrimaryKey(Integer.parseInt(weixinUserOptionLog.getOptionObject()));
+            //log.info("查询活动数据：" + weixinVoteBase.toString());
+            if (weixinVoteBase == null) {
+                log.error("未能查询到用户浏览的活动数据，浏览的活动ID为：{}", weixinUserOptionLog.getOptionObject());
+                return 0;
+            }
+        }
+
+
         AmapIpToAddressDTO ipPositionNoAsync = amapApiUtil.getIpPositionNoAsync(realIP);
-        if (ipPositionNoAsync != null) {
+        if (ipPositionNoAsync == null) {
             String province = ipPositionNoAsync.getProvince();
             if (province != null) {
                 weixinUserOptionLog.setProvince(province);

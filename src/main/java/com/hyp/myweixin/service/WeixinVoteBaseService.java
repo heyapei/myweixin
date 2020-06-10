@@ -3,6 +3,7 @@ package com.hyp.myweixin.service;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import io.swagger.models.auth.In;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface WeixinVoteBaseService {
      * @param workId 活动ID
      * @return
      */
-    IndexWorksVO getVoteWorkByWorkId(Integer workId);
+    VoteDetailByWorkIdVO getVoteWorkByWorkId(Integer workId);
 
 
 }
