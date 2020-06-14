@@ -3,6 +3,10 @@
 ## 2020年5月28日23点22分 完成了最基础本地小程序的调用后端数据的实验
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
 ```$xslt
+Unexpected error occurred invoking async method: public java.lang.Integer com.hyp.myweixin.service.impl.UserNoOpenIdIdLogImpl.addUserOperationLog(com.hyp.myweixin.pojo.modal.WeixinUserOptionLog,javax.servlet.http.HttpServletRequest)
+这个错误不知道是怎么回事。
+```
+```$xslt
 2020年6月10日 异步处理过程中 在service中抛出异常是不会被抓住的就算被抓住了请求也已经结束了
 新增：
 1. 日志记录：记录浏览记录
