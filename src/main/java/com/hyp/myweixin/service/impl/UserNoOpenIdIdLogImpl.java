@@ -46,7 +46,6 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
      * @param httpServletRequest
      * @return 主键ID
      */
-    @Async("threadPoolTaskExecutor")
     @Override
     public Integer addUserOperationLog(WeixinUserOptionLog weixinUserOptionLog,
                                        HttpServletRequest httpServletRequest) {

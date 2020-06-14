@@ -1,5 +1,9 @@
 package com.hyp.myweixin.service;
 
+import com.github.pagehelper.PageInfo;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -23,5 +27,43 @@ public interface WeixinVoteWorkService {
      * @return
      */
     Integer getCountVoteByVoteBaseId(Integer voteBaseId);
+
+
+    /**
+     * 分页查询活动的所有的作品
+     *
+     * @param weixinVoteWork
+     * @param pageInfo
+     * @return
+     */
+    PageInfo getVoteWorkAllWorkByPage(WeixinVoteWork weixinVoteWork, PageInfo pageInfo);
+
+    /**
+     * 分页查询活动的人气的作品
+     *
+     * @param weixinVoteWork
+     * @param pageInfo
+     * @return
+     */
+    PageInfo getVoteWorkHotWorkByPage(WeixinVoteWork weixinVoteWork, PageInfo pageInfo);
+
+
+    /**
+     * 通过userWorkId查询当前的详细信息
+     *
+     * @param userWorkId
+     * @return
+     */
+    VoteDetailCompleteVO getWeixinVoteWorkByUserWorkId(Integer userWorkId);
+
+
+    /**
+     * 通过作品的ID更新被浏览次数
+     *
+     * @param userWorkId 用户作品ID
+     * @return
+     */
+    int updateVoteWorkViewNum(Integer userWorkId);
+
 
 }

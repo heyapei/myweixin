@@ -45,6 +45,14 @@ public class WeixinVoteBaseServiceImplTest {
 
     }
 
+    @Test
+    public void updateVoteBaseViewNum() {
+
+
+        weixinVoteBaseService.updateVoteBaseViewNum(2);
+
+    }
+
 
     @Test
     public void getVoteWorkByPage() {

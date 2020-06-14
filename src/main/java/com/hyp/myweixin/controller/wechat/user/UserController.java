@@ -9,7 +9,9 @@ import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.UserNoOpenIdIdLog;
+import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteUserService;
+import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,9 @@ public class UserController {
 
     @Autowired
     private UserNoOpenIdIdLog userNoOpenIdIdLog;
+
+    @Autowired
+    private WeixinVoteBaseService weixinVoteBaseService;
 
 
     @PostMapping("/add")
@@ -98,24 +103,60 @@ public class UserController {
      * @param httpServletRequest
      */
     @PostMapping("viewwork")
-    public Result userViewVoteWork(HttpServletRequest httpServletRequest, String voteWorkId) {
-        String userAgent = httpServletRequest.getHeader("User-Agent");
-        System.out.println(userAgent);
+    public Result userViewVoteWork(HttpServletRequest httpServletRequest, Integer voteWorkId) {
         boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
+
+
         WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
         weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getType());
         weixinUserOptionLog.setOptionDesc(WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getMsg());
-        weixinUserOptionLog.setOptionObject(voteWorkId);
+        weixinUserOptionLog.setOptionObject(voteWorkId + "");
         userNoOpenIdIdLog.addUserOperationLog(weixinUserOptionLog, httpServletRequest);
-        return Result.buildResult(Result.Status.OK, "保存用户浏览操作日志，日志类型："
-                + WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getMsg()
-                + "，查看的活动ID：" + voteWorkId);
+
+        int i = weixinVoteBaseService.updateVoteBaseViewNum(voteWorkId);
+        if (i > 0) {
+            return Result.buildResult(Result.Status.OK, "保存用户浏览操作日志，日志类型："
+                    + WeixinUserOptionConfig.typeEnum.VIEW_WEiXIN_VOTE_WORK.getMsg()
+                    + "，查看的活动ID：" + voteWorkId);
+        } else {
+            return Result.buildResult(Result.Status.SERVER_ERROR);
+        }
     }
 
 
+    @Autowired
+    private WeixinVoteWorkService weixinVoteWorkService;
+
+    /**
+     * 记录用户进入小程序 记录用户的地区位置信息 ip地址信息 使用设备类型信息 进入小程序的时间 操作的类型 等信息
+     *
+     * @param httpServletRequest
+     */
+    @PostMapping("vieuserwwork")
+    public Result userViewUserWork(HttpServletRequest httpServletRequest, Integer userWorkId) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
+        weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE_USER_WORK.getType());
+        weixinUserOptionLog.setOptionDesc(WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE_USER_WORK.getMsg());
+        weixinUserOptionLog.setOptionObject(userWorkId + "");
+        userNoOpenIdIdLog.addUserOperationLog(weixinUserOptionLog, httpServletRequest);
+
+        int i = weixinVoteWorkService.updateVoteWorkViewNum(userWorkId);
+        if (i > 0) {
+            return Result.buildResult(Result.Status.OK, "保存用户浏览操作日志，日志类型："
+                    + WeixinUserOptionConfig.typeEnum.INTO_WEiXIN_VOTE_USER_WORK.getMsg()
+                    + "，查看的作品ID：" + userWorkId);
+        } else {
+            return Result.buildResult(Result.Status.SERVER_ERROR);
+        }
+    }
 
 
     /*下面是一个测试*/

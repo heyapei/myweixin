@@ -59,7 +59,9 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         /*条件查询*/
         Example example = new Example(WeixinVoteBase.class);
         Example.Criteria criteria = example.createCriteria();
-        example.orderBy("createTime").desc();
+        example.orderBy("activeShowOrder").desc();
+        /*example.orderBy("createTime").desc();
+        example.orderBy("viewCountNum").desc();*/
 
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteBase用于条件查询
@@ -145,7 +147,6 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
                 }
 
 
-
                 if (weixinMusic != null) {
                     activeMusic = weixinMusic.getMusicUrl();
                 }
@@ -179,11 +180,44 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setActiveJoinCount(countWorkByVoteBaseId);
             voteDetailByWorkIdVO.setActiveVoteCount(countVoteByVoteBaseId);
             //FIXME 当前写为0
-            voteDetailByWorkIdVO.setActiveViewCount(0);
+            voteDetailByWorkIdVO.setActiveViewCount(weixinVoteBase.getViewCountNum());
             voteDetailByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
             voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
         }
 
         return voteDetailByWorkIdVO;
+    }
+
+    /**
+     * 通过活动的ID更新被浏览次数
+     *
+     * @param workId 活动ID
+     * @return
+     */
+    @Override
+    public int updateVoteBaseViewNum(Integer workId) {
+
+        WeixinVoteBase weixinVoteBase = null;
+        try {
+            weixinVoteBase = weixinVoteBaseMapper.selectByPrimaryKey(workId);
+        } catch (Exception e) {
+            log.error("通过活动ID查询活动错误，查询的活动ID为{},错误理由{}", workId, e.toString());
+            throw new MyDefinitionException("通过活动ID查询活动错误，查询的活动ID为" + workId);
+        }
+        if (weixinVoteBase == null) {
+            return 0;
+        } else {
+            Integer viewCountNum = weixinVoteBase.getViewCountNum();
+            weixinVoteBase.setViewCountNum(viewCountNum + 1);
+        }
+        int i = 0;
+        try {
+            i = weixinVoteBaseMapper.updateByPrimaryKey(weixinVoteBase);
+        } catch (Exception e) {
+            log.error("通过活动ID更新浏览次数（数据加1）错误，更新的活动ID为{},错误理由{}", workId, e.toString());
+            throw new MyDefinitionException("通过活动ID更新浏览次数（数据加1）错误，查询的活动ID为" + workId);
+        }
+
+        return i;
     }
 }

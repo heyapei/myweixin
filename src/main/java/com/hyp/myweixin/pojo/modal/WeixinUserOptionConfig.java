@@ -56,7 +56,8 @@ public class WeixinUserOptionConfig {
     public enum typeEnum {
 
         INTO_WEiXIN_VOTE(0, "进入微信投票小程序"),
-        VIEW_WEiXIN_VOTE_WORK(1, "浏览投票活动");
+        VIEW_WEiXIN_VOTE_WORK(1, "浏览投票活动"),
+        INTO_WEiXIN_VOTE_USER_WORK(2, "浏览具体的用户作品");
 
         /**
          * 类型码

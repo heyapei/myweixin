@@ -20,5 +20,6 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="create_sys_user_id" property="createSysUserId" jdbcType="INTEGER" />
+    <result column="view_count_num" property="viewCountNum" jdbcType="INTEGER" />
   </resultMap>
 </mapper>

@@ -2,11 +2,7 @@ package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
-import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
-import io.swagger.models.auth.In;
-
-import java.util.List;
 
 /**
  * @Author 何亚培
@@ -28,10 +24,20 @@ public interface WeixinVoteBaseService {
 
     /**
      * 通过活动的ID查询活动的详情
+     *
      * @param workId 活动ID
      * @return
      */
     VoteDetailByWorkIdVO getVoteWorkByWorkId(Integer workId);
+
+
+    /**
+     * 通过活动的ID更新被浏览次数
+     *
+     * @param workId 活动ID
+     * @return
+     */
+    int updateVoteBaseViewNum(Integer workId);
 
 
 }

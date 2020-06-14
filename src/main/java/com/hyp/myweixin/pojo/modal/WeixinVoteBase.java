@@ -64,7 +64,7 @@ public class WeixinVoteBase {
      * 活动结束时间
      */
     @Column(name = "active_end_time")
-    private Date activeEndTime  = new Date();
+    private Date activeEndTime = new Date();
 
     /**
      * 是否公开到首页 0默认公开 1不公开
@@ -100,6 +100,11 @@ public class WeixinVoteBase {
      */
     @Column(name = "create_sys_user_id")
     private Integer createSysUserId;
+    /**
+     * 被浏览总次数
+     */
+    @Column(name = "view_count_num")
+    private Integer viewCountNum;
 
 
 }

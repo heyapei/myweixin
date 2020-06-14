@@ -3,8 +3,10 @@ package com.hyp.myweixin.pojo.modal;
 import lombok.Data;
 import org.apache.ibatis.annotations.Mapper;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author heyapei
@@ -35,31 +37,31 @@ public class WeixinVoteWork {
      * 作品人手机号
      */
     @Column(name = "vote_work_user_phone")
-    private String voteWorkUserPhone ="";
+    private String voteWorkUserPhone = "";
 
     /**
      * 作品人微信号
      */
     @Column(name = "vote_work_user_weixin")
-    private String voteWorkUserWeixin ="";
+    private String voteWorkUserWeixin = "";
 
     /**
      * 作品描述
      */
     @Column(name = "vote_work_desc")
-    private String voteWorkDesc ="";
+    private String voteWorkDesc = "";
 
     /**
      * 作品名称
      */
     @Column(name = "vote_work_name")
-    private String voteWorkName ="";
+    private String voteWorkName = "";
 
     /**
      * 作品视频文件Id
      */
     @Column(name = "vote_work_video_url")
-    private String voteWorkVideoUrl ="";
+    private String voteWorkVideoUrl = "";
 
     /**
      * 作品创建时间
@@ -71,7 +73,7 @@ public class WeixinVoteWork {
      * 作品所属活动的ID
      */
     @Column(name = "active_vote_base_id")
-    private Integer activeVoteBaseId ;
+    private Integer activeVoteBaseId;
 
     /**
      * 作品的状态 0默认等待审核 1上线 2下线
@@ -95,6 +97,11 @@ public class WeixinVoteWork {
      * 作品图片
      */
     @Column(name = "vote_work_img")
-    private String voteWorkImg ="";
+    private String voteWorkImg = "";
+    /**
+     * 作品被浏览次数
+     */
+    @Column(name = "vote_work_count_view_num")
+    private Integer voteWorkCountViewNum = 0;
 
 }
