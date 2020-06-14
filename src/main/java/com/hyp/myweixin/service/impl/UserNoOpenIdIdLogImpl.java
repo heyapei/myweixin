@@ -68,6 +68,7 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
 
 
         AmapIpToAddressDTO ipPositionNoAsync = amapApiUtil.getIpPositionNoAsync(realIP);
+        log.info("高德地图通过IP查询的数据：" + ipPositionNoAsync.toString());
         if (ipPositionNoAsync != null) {
             String province = ipPositionNoAsync.getProvince();
             if (province != null) {
@@ -90,6 +91,7 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
 
         if (ipPositionNoAsync != null && ipPositionNoAsync.getRectangle() != null) {
             String geocodeByIpAddressGeneral = amapApiUtil.getGeocodeByIpAddressGeneralNoAsync(ipPositionNoAsync.getRectangle());
+            log.info("高德地图通过经纬度查询的数据：" + geocodeByIpAddressGeneral);
             if (StringUtils.isNotBlank(geocodeByIpAddressGeneral)) {
                 weixinUserOptionLog.setGeneralAddress(geocodeByIpAddressGeneral);
             }
@@ -99,6 +101,7 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
 
         try {
             weixinUserOptionLogMapper.insertUseGeneratedKeys(weixinUserOptionLog);
+            log.info("用户操作记录结果：" + weixinUserOptionLog.toString());
             return (Integer) weixinUserOptionLog.getId();
         } catch (Exception e) {
             log.error("添加微信用户操作日志出现失败，原因{}", e.toString());
