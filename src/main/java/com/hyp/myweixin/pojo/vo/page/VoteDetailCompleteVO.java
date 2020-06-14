@@ -21,8 +21,19 @@ public class VoteDetailCompleteVO {
     private String voteWorkVideoUrl;
     private Date voteWorkCreateTime;
     private Integer activeVoteBaseId;
+    /**
+     * 投票数
+     */
     private Integer voteWorkCountNum;
     private String voteWorkImg;
+    /**
+     * 被查看总次数
+     */
     private Integer voteWorkCountViewNum;
+    /**
+     * 当前排名
+     */
+    private Integer rankNum;
+
 
 }

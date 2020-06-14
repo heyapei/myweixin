@@ -85,6 +85,9 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         example.orderBy("voteWorkShowOrder").desc();
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询
+        if (weixinVoteWork != null) {
+            criteria.andEqualTo("activeVoteBaseId", weixinVoteWork.getId());
+        }
         List<WeixinVoteWork> weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
         // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
         pageInfo = new PageInfo(weixinVoteWorks);
@@ -110,6 +113,9 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         example.orderBy("voteWorkCountNum").desc();
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询
+        if (weixinVoteWork != null) {
+            criteria.andEqualTo("activeVoteBaseId", weixinVoteWork.getId());
+        }
         List<WeixinVoteWork> weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
         // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
         pageInfo = new PageInfo(weixinVoteWorks);
@@ -131,7 +137,15 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         if (weixinVoteWork == null) {
             throw new MyDefinitionException(404, "未发现当前ID:" + userWorkId + "的作品");
         }
-        return MyEntityUtil.entity2VM(weixinVoteWork, VoteDetailCompleteVO.class);
+        VoteDetailCompleteVO voteDetailCompleteVO = MyEntityUtil.entity2VM(weixinVoteWork, VoteDetailCompleteVO.class);
+        Integer rankNumByUserWorkId = null;
+        try {
+            rankNumByUserWorkId = weixinVoteWorkMapper.getRankNumByUserWorkId(weixinVoteWork.getActiveVoteBaseId(), userWorkId);
+        } catch (Exception e) {
+            log.error("查询当前作品排名错误，错误原因：{}", e.toString());
+        }
+        voteDetailCompleteVO.setRankNum(rankNumByUserWorkId);
+        return voteDetailCompleteVO;
     }
 
 
@@ -166,5 +180,55 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         }
         return i;
     }
+
+    /**
+     * 通过作品的ID查询作品
+     *
+     * @param userWorkId 用户作品ID
+     * @return
+     */
+    @Override
+    public WeixinVoteWork getVoteWorkByUserWorkId(Integer userWorkId) {
+        WeixinVoteWork weixinVoteWork = null;
+        try {
+            weixinVoteWork = weixinVoteWorkMapper.selectByPrimaryKey(userWorkId);
+        } catch (Exception e) {
+            log.error("通过作品ID查询活动错误，查询的作品ID为{},错误理由{}", userWorkId, e.toString());
+            throw new MyDefinitionException("通过作品ID查询活动错误，查询的作品ID为" + userWorkId);
+        }
+        return weixinVoteWork;
+    }
+
+    /**
+     * 通过作品的ID更新被投票次数
+     *
+     * @param userWorkId 用户作品ID
+     * @return
+     */
+    @Override
+    public int updateVoteWorkVoteNum(Integer userWorkId) {
+        WeixinVoteWork weixinVoteWork = null;
+        try {
+            weixinVoteWork = weixinVoteWorkMapper.selectByPrimaryKey(userWorkId);
+        } catch (Exception e) {
+            log.error("通过作品ID查询活动错误，查询的作品ID为{},错误理由{}", userWorkId, e.toString());
+            throw new MyDefinitionException("通过作品ID查询活动错误，查询的作品ID为" + userWorkId);
+        }
+        if (weixinVoteWork == null) {
+            return 0;
+        } else {
+            Integer viewCountNum = weixinVoteWork.getVoteWorkCountNum();
+            weixinVoteWork.setVoteWorkCountNum(viewCountNum + 1);
+        }
+        int i = 0;
+        try {
+            i = weixinVoteWorkMapper.updateByPrimaryKey(weixinVoteWork);
+        } catch (Exception e) {
+            log.error("通过作品ID更新投票次数（数据加1）错误，更新的活动ID为{},错误理由{}", userWorkId, e.toString());
+            throw new MyDefinitionException("通过作品ID更新投票次数（数据加1）错误，查询的活动ID为" + userWorkId);
+        }
+        return i;
+    }
+
 
 }

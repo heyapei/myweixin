@@ -57,7 +57,8 @@ public class WeixinUserOptionConfig {
 
         INTO_WEiXIN_VOTE(0, "进入微信投票小程序"),
         VIEW_WEiXIN_VOTE_WORK(1, "浏览投票活动"),
-        INTO_WEiXIN_VOTE_USER_WORK(2, "浏览具体的用户作品");
+        INTO_WEiXIN_VOTE_USER_WORK(2, "浏览具体的用户作品"),
+        VOTE_WEiXIN_VOTE_WORK(3, "对具体用户作品投票");
 
         /**
          * 类型码

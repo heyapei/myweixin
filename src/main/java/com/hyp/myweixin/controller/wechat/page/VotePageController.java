@@ -3,6 +3,7 @@ package com.hyp.myweixin.controller.wechat.page;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
@@ -60,6 +61,7 @@ public class VotePageController {
     @ApiOperation(value = "根据workId查询活动下面的所有作品信息", tags = {"查询全部选手"})
     @PostMapping("/work/detail/allwork")
     public Result getVoteWorkAllWork(HttpServletRequest request,
+                                     int activeId,
                                      @RequestParam(defaultValue = "1") int pageNo,
                                      @RequestParam(defaultValue = "5") int pageSize) {
 
@@ -71,7 +73,10 @@ public class VotePageController {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(pageNo);
         pageInfo.setPageSize(pageSize);
-        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(null, pageInfo);
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setId(activeId);
+
+        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
         return Result.buildResult(Result.Status.OK, voteWorkAllWorkByPage);
     }
 
@@ -79,6 +84,7 @@ public class VotePageController {
     @ApiOperation(value = "根据workId查询活动下面的人气作品信息", tags = {"查询人气选手"})
     @PostMapping("/work/detail/hotwork")
     public Result getVoteWorkHotWork(HttpServletRequest request,
+                                     int activeId,
                                      @RequestParam(defaultValue = "1") int pageNo,
                                      @RequestParam(defaultValue = "5") int pageSize) {
 
@@ -89,7 +95,11 @@ public class VotePageController {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(pageNo);
         pageInfo.setPageSize(pageSize);
-        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkHotWorkByPage(null, pageInfo);
+
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setId(activeId);
+
+        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkHotWorkByPage(weixinVoteWork, pageInfo);
         return Result.buildResult(Result.Status.OK, voteWorkAllWorkByPage);
     }
 

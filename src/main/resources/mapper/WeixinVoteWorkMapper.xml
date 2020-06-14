@@ -26,6 +26,14 @@
           select  SUM(vote_work_count_num) from weixin_vote_work where active_vote_base_id =  #{active_vote_base_id}
   </select>
 
+  <!--想要计算排第几名就是计算比他分数高的有几个，再加上自身就好了-->
+  <select id="getRankNumByUserWorkId" parameterType="integer" resultType="integer">
+         select count(1)+1
+  from weixin_vote_work
+  where active_vote_base_id = #{voteBaseId} AND vote_work_count_num >
+  (select vote_work_count_num from weixin_vote_work where id =#{userWorkId})
+  </select>
+
 
 
 

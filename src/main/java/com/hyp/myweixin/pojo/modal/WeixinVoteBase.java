@@ -105,6 +105,11 @@ public class WeixinVoteBase {
      */
     @Column(name = "view_count_num")
     private Integer viewCountNum;
+    /**
+     * 被浏览总次数
+     */
+    @Column(name = "vote_count_num")
+    private Integer voteCountNum;
 
 
 }

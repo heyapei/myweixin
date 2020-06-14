@@ -1,6 +1,7 @@
 package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 
@@ -64,6 +65,28 @@ public interface WeixinVoteWorkService {
      * @return
      */
     int updateVoteWorkViewNum(Integer userWorkId);
+
+
+    /**
+     * 通过作品的ID查询作品
+     *
+     * @param userWorkId 用户作品ID
+     * @return
+     */
+    WeixinVoteWork getVoteWorkByUserWorkId(Integer userWorkId);
+
+
+
+    /**
+     * 通过作品的ID更新被投票次数
+     *
+     * @param userWorkId 用户作品ID
+     * @return
+     */
+    int updateVoteWorkVoteNum(Integer userWorkId);
+
+
+
 
 
 }

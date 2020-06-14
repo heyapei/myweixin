@@ -2,6 +2,8 @@ package com.hyp.myweixin.pojo.vo.page;
 
 import lombok.Data;
 
+import javax.persistence.Column;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -16,4 +18,5 @@ public class VoteDetailSimpleVO {
     private String voteWorkUserName;
     private Integer voteWorkCountNum;
     private String voteWorkImg;
+    private Integer voteWorkCountViewNum;
 }

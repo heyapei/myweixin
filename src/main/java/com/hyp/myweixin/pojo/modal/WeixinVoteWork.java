@@ -10,6 +10,7 @@ import java.util.Date;
 
 /**
  * @author heyapei
+ * 活动下面具体到用户的作品
  */
 @Table(name = "weixin_vote_work")
 @Mapper

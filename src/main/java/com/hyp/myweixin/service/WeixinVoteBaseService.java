@@ -40,4 +40,13 @@ public interface WeixinVoteBaseService {
     int updateVoteBaseViewNum(Integer workId);
 
 
+    /**
+     * 通过workId记录点赞数
+     *
+     * @param workId 活动ID
+     * @return
+     */
+    int updateVoteBaseVoteNum(Integer workId);
+
+
 }
