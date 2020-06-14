@@ -1,6 +1,5 @@
 package com.hyp.myweixin.service.impl;
 
-import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinUserOptionLogMapper;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.dto.AmapIpToAddressDTO;
@@ -12,7 +11,6 @@ import com.hyp.myweixin.utils.amaputil.AmapApiUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +66,7 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
 
 
         AmapIpToAddressDTO ipPositionNoAsync = amapApiUtil.getIpPositionNoAsync(realIP);
-        if (ipPositionNoAsync == null) {
+        if (ipPositionNoAsync != null) {
             String province = ipPositionNoAsync.getProvince();
             if (province != null) {
                 weixinUserOptionLog.setProvince(province);
