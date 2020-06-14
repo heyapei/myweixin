@@ -72,15 +72,15 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         List<IndexWorksVO> indexWorksVOS = new ArrayList<>(5);
         for (WeixinVoteBase weixinVoteBase2 : weixinVoteBases) {
             Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(weixinVoteBase2.getId());
-            Integer countVoteByVoteBaseId = weixinVoteWorkService.getCountVoteByVoteBaseId(weixinVoteBase2.getId());
+            /*Integer countVoteByVoteBaseId = weixinVoteWorkService.getCountVoteByVoteBaseId(weixinVoteBase2.getId());
             if (countVoteByVoteBaseId == null) {
                 countVoteByVoteBaseId = 0;
-            }
+            }*/
             //IndexWorksVO indexWorksVO = new IndexWorksVO();
             //BeanUtils.copyProperties(weixinVoteBase2, indexWorksVO);
             // 使用实体转换类进行数据转换处理
             IndexWorksVO indexWorksVO = MyEntityUtil.entity2VM(weixinVoteBase2, IndexWorksVO.class);
-            indexWorksVO.setVoteWorkVoteCount(countVoteByVoteBaseId);
+            indexWorksVO.setVoteWorkVoteCount(weixinVoteBase2.getVoteCountNum());
             indexWorksVO.setVoteWorkJoinCount(countWorkByVoteBaseId);
             indexWorksVOS.add(indexWorksVO);
         }
