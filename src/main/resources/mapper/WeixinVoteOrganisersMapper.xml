@@ -17,5 +17,6 @@
     <result column="job_major" jdbcType="VARCHAR" property="jobMajor" />
     <result column="build_time" jdbcType="TIMESTAMP" property="buildTime" />
     <result column="corporate" jdbcType="VARCHAR" property="corporate" />
+    <result column="weixin_qr_code" jdbcType="VARCHAR" property="weixinQrCode" />
   </resultMap>
 </mapper>

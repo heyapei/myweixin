@@ -24,6 +24,7 @@ public class VoteDetailByWorkIdVO {
     private String organisersLogoImg;
     private String activeMusic;
     private String activeBgImg;
+    private String organisersWeixinQrCode;
 
 
 }

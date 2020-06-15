@@ -179,10 +179,10 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setActiveMusic(activeMusic);
             voteDetailByWorkIdVO.setActiveJoinCount(countWorkByVoteBaseId);
             voteDetailByWorkIdVO.setActiveVoteCount(weixinVoteBase.getVoteCountNum());
-            //FIXME 当前写为0
             voteDetailByWorkIdVO.setActiveViewCount(weixinVoteBase.getViewCountNum());
             voteDetailByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
             voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
+            voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode());
         }
 
         return voteDetailByWorkIdVO;

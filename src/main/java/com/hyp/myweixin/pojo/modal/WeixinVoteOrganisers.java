@@ -78,4 +78,11 @@ public class WeixinVoteOrganisers {
      */
     private String corporate = "";
 
+
+    /**
+     * 公司二维码图片路径
+     */
+    @Column(name = "weixin_qr_code")
+    private String weixinQrCode = "";
+
 }
