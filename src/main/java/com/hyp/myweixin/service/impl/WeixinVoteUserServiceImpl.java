@@ -76,6 +76,21 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
     }
 
     /**
+     * 通过表主键获取用户信息
+     *
+     * @param id 主键voteUser
+     * @return 信息详情
+     */
+    @Override
+    public WeixinVoteUser getUserById(Integer id) {
+        WeixinVoteUser weixinVoteUser = weixinVoteUserMapper.selectByPrimaryKey(id);
+        if (weixinVoteUser != null) {
+            return weixinVoteUser;
+        }
+        return null;
+    }
+
+    /**
      * 通过openId获取用户信息
      *
      * @param openId
@@ -97,5 +112,24 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
             throw new MyDefinitionException("通过openId查询用户数据失败");
         }
         return weixinVoteUser;
+    }
+
+    /**
+     * 根据用户openId更新用户信息
+     *
+     * @param weixinVoteUser
+     * @return
+     */
+    @Override
+    public Integer updateWeixinUserByOpenId(WeixinVoteUser weixinVoteUser) {
+        Integer i = 0;
+        WeixinVoteUser userByOpenId = getUserByOpenId(weixinVoteUser.getOpenId());
+        if (userByOpenId != null) {
+            Example example = new Example(WeixinVoteUser.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("openId", weixinVoteUser.getOpenId());
+            i = weixinVoteUserMapper.updateByExampleSelective(weixinVoteUser, example);
+        }
+        return i;
     }
 }

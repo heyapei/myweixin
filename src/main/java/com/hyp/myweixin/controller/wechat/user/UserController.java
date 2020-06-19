@@ -62,9 +62,17 @@ public class UserController {
         }
         WeixinVoteUser userByOpenId = weixinVoteUserService.getUserByOpenId(weixinVoteUser.getOpenId());
         if (userByOpenId != null) {
-            return Result.buildResult(Result.Status.OK,
+            /*return Result.buildResult(Result.Status.OK,
                     "该微信用户已经是我们的第" + userByOpenId.getId()
-                            + "位用户，无需重复保存");
+                            + "位用户，无需重复保存");*/
+            Integer integer = weixinVoteUserService.updateWeixinUserByOpenId(weixinVoteUser);
+            if (integer != null && integer > 0) {
+                return Result.buildResult(Result.Status.OK,
+                        "更新第" + weixinVoteUser.getId() + "位用户信息成功");
+            } else {
+                return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR,
+                        "更新第" + weixinVoteUser.getId() + "位用户信息失败");
+            }
         }
 
         int i = weixinVoteUserService.addWechatInfo(weixinVoteUser);

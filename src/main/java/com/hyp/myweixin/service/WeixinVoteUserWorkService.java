@@ -2,6 +2,8 @@ package com.hyp.myweixin.service;
 
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 
+import java.util.List;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -18,5 +20,14 @@ public interface WeixinVoteUserWorkService {
      * @return
      */
     int addUserVote(WeixinVoteUserWork weixinVoteUserWork);
+
+
+    /**
+     * 保存用户对某个作品的投票记录
+     *
+     * @param workId
+     * @return
+     */
+    List<WeixinVoteUserWork> getWeixinVoteUserWorkByWorkId(Integer workId);
 
 }

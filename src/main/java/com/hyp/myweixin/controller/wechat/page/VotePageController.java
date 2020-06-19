@@ -3,11 +3,13 @@ package com.hyp.myweixin.controller.wechat.page;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
+import com.hyp.myweixin.service.WeixinVoteUserWorkService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -39,6 +42,8 @@ public class VotePageController {
     private WeixinVoteBaseService weixinVoteBaseService;
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+    @Autowired
+    private WeixinVoteUserWorkService weixinVoteUserWorkService;
 
     @ApiOperation("根据workId查询活动的详情")
     @PostMapping("/work/detail")
@@ -115,5 +120,23 @@ public class VotePageController {
         VoteDetailCompleteVO weixinVoteWorkByUserWorkId = weixinVoteWorkService.getWeixinVoteWorkByUserWorkId(userWorkId);
         return Result.buildResult(Result.Status.OK, weixinVoteWorkByUserWorkId);
     }
+
+
+    @ApiOperation(value = "获取作品的点赞人的信息")
+    @PostMapping("/work/detail/userworkvoteuser")
+    public Result getUserWorkVoteUser(HttpServletRequest request,
+                                      Integer userWorkId) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        List<WeixinVoteUserWork> weixinVoteUserWorkByWorkId = weixinVoteUserWorkService.getWeixinVoteUserWorkByWorkId(userWorkId);
+        if (weixinVoteUserWorkByWorkId == null) {
+            return Result.buildResult(Result.Status.NOT_FOUND);
+        }
+        return Result.buildResult(Result.Status.OK, weixinVoteUserWorkByWorkId);
+    }
+
 
 }

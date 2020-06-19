@@ -1,10 +1,9 @@
 package com.hyp.myweixin.pojo.vo.page;
 
 import lombok.Data;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Date;
-import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author heyapei
@@ -14,7 +13,7 @@ import javax.persistence.*;
 public class VoteDetailCompleteVO {
 
     private Integer id;
-    private String voteWorkUserName ;
+    private String voteWorkUserName;
     private String voteWorkUserPhone;
     private String voteWorkDesc;
     private String voteWorkName;
@@ -25,7 +24,7 @@ public class VoteDetailCompleteVO {
      * 投票数
      */
     private Integer voteWorkCountNum;
-    private String voteWorkImg;
+    private String[] voteWorkImgS;
     /**
      * 被查看总次数
      */
@@ -34,6 +33,9 @@ public class VoteDetailCompleteVO {
      * 当前排名
      */
     private Integer rankNum;
-
+    /**
+     * 作品用户头像
+     */
+    private String voteWorkUserAvatar;
 
 }

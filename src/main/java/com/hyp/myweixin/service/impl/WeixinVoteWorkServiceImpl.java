@@ -4,9 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteWorkMapper;
+import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
+import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,9 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
     @Autowired
     private WeixinVoteWorkMapper weixinVoteWorkMapper;
+
+    @Autowired
+    private WeixinVoteUserService weixinVoteUserService;
 
     /**
      * 通过voteBaseId获取当前这个活动有多少人参加
@@ -137,6 +142,9 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         if (weixinVoteWork == null) {
             throw new MyDefinitionException(404, "未发现当前ID:" + userWorkId + "的作品");
         }
+
+        String voteWorkImg = weixinVoteWork.getVoteWorkImg();
+        String[] voteImgS = voteWorkImg.split(";");
         VoteDetailCompleteVO voteDetailCompleteVO = MyEntityUtil.entity2VM(weixinVoteWork, VoteDetailCompleteVO.class);
         Integer rankNumByUserWorkId = null;
         try {
@@ -144,7 +152,12 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         } catch (Exception e) {
             log.error("查询当前作品排名错误，错误原因：{}", e.toString());
         }
+        voteDetailCompleteVO.setVoteWorkImgS(voteImgS);
         voteDetailCompleteVO.setRankNum(rankNumByUserWorkId);
+        WeixinVoteUser userById = weixinVoteUserService.getUserById(weixinVoteWork.getVoteWorkUserId());
+        if (userById != null) {
+            voteDetailCompleteVO.setVoteWorkUserAvatar(userById.getAvatarUrl());
+        }
         return voteDetailCompleteVO;
     }
 
