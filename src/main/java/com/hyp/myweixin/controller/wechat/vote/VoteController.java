@@ -72,7 +72,7 @@ public class VoteController {
         weixinVoteUserWork.setIp(myIpMacUtil.ipToLong(myIpMacUtil.getRealIP(httpServletRequest)));
         int i = weixinVoteUserWorkService.addUserVote(weixinVoteUserWork);
         if (i > 0) {
-            return Result.buildResult(Result.Status.OK, "保存用户对作品：" + weixinVoteUserWork.getWorkId() + "成功");
+            return Result.buildResult(Result.Status.OK, "保存用户对作品：" + weixinVoteUserWork.getWorkId() + "进行投票，成功");
         } else {
             return Result.buildResult(Result.Status.SERVER_ERROR);
         }
