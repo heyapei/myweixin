@@ -4,8 +4,10 @@
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
 
 ```$xslt
+2020年6月20日
 新增了作品投票人信息列表
 修改了作品详情展示图片类型变为数组类型 可以展示轮播图
+记住了：以后dao层的方法一定要一个功能是一个功能尽可以的拆散要不然就会出现方法无法重复使用的情况
 ```
 ```$xslt
 Unexpected error occurred invoking async method: public java.lang.Integer com.hyp.myweixin.service.impl.UserNoOpenIdIdLogImpl.addUserOperationLog(com.hyp.myweixin.pojo.modal.WeixinUserOptionLog,javax.servlet.http.HttpServletRequest)
