@@ -13,6 +13,7 @@ import com.hyp.myweixin.utils.MyIpMacUtil;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,6 +60,28 @@ public class VoteController {
         boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        if (StringUtils.isBlank(weixinVoteUserWork.getAvatarUrl())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        if (!weixinVoteUserWork.getAvatarUrl().startsWith("https://")) {
+            return Result.buildResult(Result.Status.PARAM_TYPE_BIND_ERROR);
+        }
+        if (StringUtils.isBlank(weixinVoteUserWork.getCity())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        if (StringUtils.isBlank(weixinVoteUserWork.getProvince())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        if (StringUtils.isBlank(weixinVoteUserWork.getCountry())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        if (StringUtils.isBlank(weixinVoteUserWork.getGender())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        if (StringUtils.isBlank(weixinVoteUserWork.getNickName())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
         }
 
 
