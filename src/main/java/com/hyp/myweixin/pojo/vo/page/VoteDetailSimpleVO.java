@@ -19,4 +19,5 @@ public class VoteDetailSimpleVO {
     private Integer voteWorkCountNum;
     private String voteWorkImg;
     private Integer voteWorkCountViewNum;
+    private Integer voteWorkOr;
 }

@@ -20,6 +20,7 @@
     <result column="vote_work_count_num" property="voteWorkCountNum" jdbcType="INTEGER" />
     <result column="vote_work_count_view_num" property="voteWorkCountViewNum" jdbcType="INTEGER" />
     <result column="vote_work_img" property="voteWorkImg" jdbcType="LONGVARCHAR" />
+    <result column="vote_work_or" property="voteWorkOr" jdbcType="INTEGER" />
   </resultMap>
 
   <select id="getCountVoteByVoteBaseId" parameterType="integer" resultType="integer">

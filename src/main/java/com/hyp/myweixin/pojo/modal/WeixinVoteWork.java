@@ -105,4 +105,10 @@ public class WeixinVoteWork {
     @Column(name = "vote_work_count_view_num")
     private Integer voteWorkCountViewNum = 0;
 
+    /**
+     * 作品在活动中的序号
+     */
+    @Column(name = "vote_work_or")
+    private Integer voteWorkOr;
+
 }

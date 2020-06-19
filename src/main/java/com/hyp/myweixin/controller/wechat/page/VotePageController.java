@@ -111,7 +111,7 @@ public class VotePageController {
     }
 
 
-    @ApiOperation(value = "根据userWorkId查询用户作品信息")
+    @ApiOperation(value = "根据userWorkId查询用户作品详细信息")
     @PostMapping("/work/detail/userwork")
     public Result getVoteWorkHotWork(HttpServletRequest request,
                                      Integer userWorkId) {

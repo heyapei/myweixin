@@ -37,5 +37,6 @@ public class VoteDetailCompleteVO {
      * 作品用户头像
      */
     private String voteWorkUserAvatar;
+    private Integer voteWorkOr;
 
 }
