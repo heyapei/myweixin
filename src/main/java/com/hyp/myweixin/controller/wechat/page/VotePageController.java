@@ -7,6 +7,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkSimpleVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -90,7 +92,7 @@ public class VotePageController {
     @PostMapping("/work/detail/hotwork")
     public Result getVoteWorkHotWork(HttpServletRequest request,
                                      int activeId,
-                                     @RequestParam(defaultValue = "1") int pageNo,
+                                     @RequestParam(defaultValue = "1") int pageNoNum,
                                      @RequestParam(defaultValue = "5") int pageSize) {
 
         boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
@@ -98,7 +100,7 @@ public class VotePageController {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
         PageInfo pageInfo = new PageInfo();
-        pageInfo.setPageNum(pageNo);
+        pageInfo.setPageNum(pageNoNum);
         pageInfo.setPageSize(pageSize);
 
         WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
@@ -125,17 +127,32 @@ public class VotePageController {
     @ApiOperation(value = "获取作品的点赞人的信息")
     @PostMapping("/work/detail/userworkvoteuser")
     public Result getUserWorkVoteUser(HttpServletRequest request,
-                                      Integer userWorkId) {
+                                      Integer userWorkId,
+                                      @RequestParam(defaultValue = "1") int pageNo,
+                                      @RequestParam(defaultValue = "5") int pageSize) {
         boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
 
-        List<WeixinVoteUserWork> weixinVoteUserWorkByWorkId = weixinVoteUserWorkService.getWeixinVoteUserWorkByWorkId(userWorkId);
-        if (weixinVoteUserWorkByWorkId == null) {
-            return Result.buildResult(Result.Status.NOT_FOUND);
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(pageNo);
+        pageInfo.setPageSize(pageSize);
+        WeixinVoteUserWork weixinVoteUserWork = new WeixinVoteUserWork();
+        weixinVoteUserWork.setWorkId(userWorkId);
+        PageInfo weixinVoteUserWorkByPage = weixinVoteUserWorkService.getWeixinVoteUserWorkByPage(weixinVoteUserWork, pageInfo);
+
+        List<WeixinVoteUserWork> list = weixinVoteUserWorkByPage.getList();
+        List<WeixinVoteUserWorkSimpleVO> list1 = new ArrayList<>();
+        for (WeixinVoteUserWork voteUserWork : list) {
+            WeixinVoteUserWorkSimpleVO weixinVoteUserWorkSimpleVO = new WeixinVoteUserWorkSimpleVO();
+            weixinVoteUserWorkSimpleVO.setAvatarUrl(voteUserWork.getAvatarUrl());
+            list1.add(weixinVoteUserWorkSimpleVO);
         }
-        return Result.buildResult(Result.Status.OK, weixinVoteUserWorkByWorkId);
+        weixinVoteUserWorkByPage.setList(list1);
+        return Result.buildResult(Result.Status.OK, weixinVoteUserWorkByPage);
+        //return null;
     }
 
 

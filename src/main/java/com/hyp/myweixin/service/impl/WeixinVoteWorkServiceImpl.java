@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -98,6 +99,12 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         pageInfo = new PageInfo(weixinVoteWorks);
         /*组装VO进行数据返回*/
         List<VoteDetailSimpleVO> voteDetailSimpleVOS = MyEntityUtil.entity2VMList(weixinVoteWorks, VoteDetailSimpleVO.class);
+        List<VoteDetailSimpleVO> weixinVoteWorksTemp = new ArrayList<>();
+        for (VoteDetailSimpleVO voteWork : voteDetailSimpleVOS) {
+            String[] split = voteWork.getVoteWorkImg().split(";");
+            voteWork.setVoteWorkImg(split[0]);
+            weixinVoteWorksTemp.add(voteWork);
+        }
         pageInfo.setList(voteDetailSimpleVOS);
         return pageInfo;
     }
@@ -126,6 +133,12 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         pageInfo = new PageInfo(weixinVoteWorks);
         /*组装VO进行数据返回*/
         List<VoteDetailSimpleVO> voteDetailSimpleVOS = MyEntityUtil.entity2VMList(weixinVoteWorks, VoteDetailSimpleVO.class);
+        List<VoteDetailSimpleVO> weixinVoteWorksTemp = new ArrayList<>();
+        for (VoteDetailSimpleVO voteWork : voteDetailSimpleVOS) {
+            String[] split = voteWork.getVoteWorkImg().split(";");
+            voteWork.setVoteWorkImg(split[0]);
+            weixinVoteWorksTemp.add(voteWork);
+        }
         pageInfo.setList(voteDetailSimpleVOS);
         return pageInfo;
     }

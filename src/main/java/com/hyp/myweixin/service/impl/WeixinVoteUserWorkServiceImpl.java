@@ -1,5 +1,7 @@
 package com.hyp.myweixin.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.mapper.WeixinVoteUserWorkMapper;
@@ -101,5 +103,30 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
         criteria.andEqualTo("workId", workId);
         List<WeixinVoteUserWork> weixinVoteUserWorks = weixinVoteUserWorkMapper.selectByExample(example);
         return weixinVoteUserWorks;
+    }
+
+    /**
+     * 保存用户对某个作品的投票记录
+     *
+     * @param weixinVoteUserWork
+     * @param pageInfo
+     * @return
+     */
+    @Override
+    public PageInfo getWeixinVoteUserWorkByPage(WeixinVoteUserWork weixinVoteUserWork, PageInfo pageInfo) {
+
+
+        Example example = new Example(WeixinVoteUserWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
+        //TODO　weixinVoteWork用于条件查询
+        if (weixinVoteUserWork != null) {
+            criteria.andEqualTo("workId", weixinVoteUserWork.getWorkId());
+        }
+        List<WeixinVoteUserWork> weixinVoteWorks = weixinVoteUserWorkMapper.selectByExample(example);
+        // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
+        pageInfo = new PageInfo(weixinVoteWorks);
+
+        return pageInfo;
     }
 }
