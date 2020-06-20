@@ -143,7 +143,7 @@ public class UserController {
      *
      * @param httpServletRequest
      */
-    @PostMapping("vieuserwwork")
+    @PostMapping("viewuserwork")
     public Result userViewUserWork(HttpServletRequest httpServletRequest, Integer userWorkId) {
         boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
