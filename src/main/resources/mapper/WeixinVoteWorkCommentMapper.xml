@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyp.myweixin.mapper.WeixinVoteWorkCommentMapper">
+    <resultMap id="BaseResultMap" type="com.hyp.myweixin.pojo.modal.WeixinVoteWorkComment">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="vote_user_id" property="voteUserId" jdbcType="INTEGER"/>
+        <result column="vote_work_id" property="voteWorkId" jdbcType="INTEGER"/>
+        <result column="work_comment" property="workComment" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="comment_status" property="commentStatus" jdbcType="INTEGER"/>
+        <result column="show_order" property="showOrder" jdbcType="INTEGER"/>
+        <result column="like_count" property="likeCount" jdbcType="INTEGER"/>
+        <result column="comment_or" property="commentOr" jdbcType="INTEGER"/>
+    </resultMap>
+</mapper>

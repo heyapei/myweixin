@@ -1,6 +1,7 @@
 package com.hyp.myweixin.service.impl;
 
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -21,6 +22,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class WeixinVoteUserWorkServiceImplTest {
     @Autowired
     private WeixinVoteUserWorkService weixinVoteUserWorkService;
+    @Autowired
+    private WeixinVoteWorkServiceImpl weixinVoteWorkService;
 
     @Test
     public void addUserVote() {
@@ -30,5 +33,13 @@ public class WeixinVoteUserWorkServiceImplTest {
 
         int i = weixinVoteUserWorkService.addUserVote(weixinVoteUserWork);
         log.info("查询出来的数据：" + i);
+    }
+
+
+    @Test
+    public void getUserWorkDiff() {
+        WeixinVoteUserWorkDiffVO userWorkDiff = weixinVoteWorkService.getUserWorkDiff(14);
+        log.info("查询结果：" + userWorkDiff.toString());
+
     }
 }

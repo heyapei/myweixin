@@ -8,6 +8,8 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -34,6 +36,129 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
+
+
+    /**
+     * 获取作品点赞比当前作品多的作品
+     *
+     * @param activeId
+     * @param workId
+     * @return
+     */
+    @Override
+    public List<WeixinVoteWork> getThanWorkWeixinVoteWork(Integer activeId, Integer workId) {
+
+        WeixinVoteWork voteWorkByUserWorkId = getVoteWorkByUserWorkId(workId);
+        if (voteWorkByUserWorkId == null) {
+            log.error("获取作品点赞比当前作品多的作品失败，未能通过workId查询到作品，查询的workId：{}", workId);
+            throw new MyDefinitionException(404, "未能通过workId查询到作品");
+        }
+
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeVoteBaseId", activeId);
+        criteria.andGreaterThan("voteWorkCountNum", voteWorkByUserWorkId.getVoteWorkCountNum());
+        example.orderBy("voteWorkCountNum").desc();
+        return weixinVoteWorkMapper.selectByExample(example);
+    }
+
+    /**
+     * 获取作品点赞比当前作品少的作品
+     *
+     * @param activeId
+     * @param workId
+     * @return
+     */
+    @Override
+    public List<WeixinVoteWork> getLessWorkWeixinVoteWork(Integer activeId, Integer workId) {
+
+        WeixinVoteWork voteWorkByUserWorkId = getVoteWorkByUserWorkId(workId);
+        if (voteWorkByUserWorkId == null) {
+            log.error("获取作品点赞比当前作品少的作品失败，未能通过workId查询到作品，查询的workId：{}", workId);
+            throw new MyDefinitionException(404, "未能通过workId查询到作品");
+        }
+
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeVoteBaseId", activeId);
+        criteria.andLessThan("voteWorkCountNum", voteWorkByUserWorkId.getVoteWorkCountNum());
+        example.orderBy("voteWorkCountNum").desc();
+        return weixinVoteWorkMapper.selectByExample(example);
+    }
+
+    /**
+     * 获取作品在活动中的排名
+     *
+     * @param activeId
+     * @param workId
+     * @return
+     */
+    @Override
+    public Integer getRankNumByUserWorkId(Integer activeId, Integer workId) {
+        Integer rankNumByUserWorkId = null;
+        try {
+            rankNumByUserWorkId = weixinVoteWorkMapper.getRankNumByUserWorkId(activeId, workId);
+        } catch (Exception e) {
+            log.error("查询当前作品排名错误，错误原因：{}", e.toString());
+        }
+        return rankNumByUserWorkId;
+    }
+
+    /**
+     * 查询当前作品的差距
+     *
+     * @param workId
+     * @return
+     */
+    @Override
+    public WeixinVoteUserWorkDiffVO getUserWorkDiff(Integer workId) {
+        WeixinVoteWork voteWorkByUserWorkId = getVoteWorkByUserWorkId(workId);
+        if (voteWorkByUserWorkId == null) {
+            log.error("未能通过workId查询到作品，查询的workId：{}", workId);
+            throw new MyDefinitionException(404, "未能通过workId查询到作品");
+        }
+        WeixinVoteUserWorkDiffVO weixinVoteWorkDiffVo = new WeixinVoteUserWorkDiffVO();
+        /*weixinVoteWorkDiffVo.setViewCount(voteWorkByUserWorkId.getVoteWorkCountViewNum());
+        weixinVoteWorkDiffVo.setVoteCount(voteWorkByUserWorkId.getVoteWorkCountNum());
+        weixinVoteWorkDiffVo.setVoteWorkOr(voteWorkByUserWorkId.getVoteWorkOr());
+        weixinVoteWorkDiffVo.setVoteWorkRank(getRankNumByUserWorkId(voteWorkByUserWorkId.getActiveVoteBaseId(), workId));*/
+        /*自己的数据*/
+        weixinVoteWorkDiffVo.setMyWeixinVoteWorkSimpleVO(MyEntityUtil.entity2VM(voteWorkByUserWorkId, WeixinVoteWorkSimpleVO.class));
+
+        /*上一个名次*/
+        WeixinVoteWorkSimpleVO weixinVoteWorkSimpleVOThan = null;
+        List<WeixinVoteWork> thanWorkWeixinVoteWork = getThanWorkWeixinVoteWork(voteWorkByUserWorkId.getActiveVoteBaseId(), workId);
+        if (thanWorkWeixinVoteWork != null && thanWorkWeixinVoteWork.size() > 0) {
+            weixinVoteWorkSimpleVOThan = MyEntityUtil.entity2VM(thanWorkWeixinVoteWork.get(thanWorkWeixinVoteWork.size() - 1), WeixinVoteWorkSimpleVO.class);
+        }
+        /*下一个名次*/
+        WeixinVoteWorkSimpleVO weixinVoteWorkSimpleVOLess = null;
+        thanWorkWeixinVoteWork = getLessWorkWeixinVoteWork(voteWorkByUserWorkId.getActiveVoteBaseId(), workId);
+        if (thanWorkWeixinVoteWork != null && thanWorkWeixinVoteWork.size() > 0) {
+            weixinVoteWorkSimpleVOLess = MyEntityUtil.entity2VM(thanWorkWeixinVoteWork.get(0), WeixinVoteWorkSimpleVO.class);
+        }
+        /*最高名次*/
+        WeixinVoteWorkSimpleVO weixinVoteWorkSimpleVOBest = null;
+        thanWorkWeixinVoteWork = getThanWorkWeixinVoteWork(voteWorkByUserWorkId.getActiveVoteBaseId(), workId);
+        if (thanWorkWeixinVoteWork != null && thanWorkWeixinVoteWork.size() > 0) {
+            weixinVoteWorkSimpleVOBest = MyEntityUtil.entity2VM(thanWorkWeixinVoteWork.get(0), WeixinVoteWorkSimpleVO.class);
+        }
+
+
+
+        /**/
+        weixinVoteWorkDiffVo.setPreDiff(weixinVoteWorkSimpleVOThan.getVoteWorkCountNum() - voteWorkByUserWorkId.getVoteWorkCountNum());
+        weixinVoteWorkDiffVo.setPreWeixinVoteWorkSimpleVO(weixinVoteWorkSimpleVOThan);
+
+        weixinVoteWorkDiffVo.setNextDiff(voteWorkByUserWorkId.getVoteWorkCountNum() - weixinVoteWorkSimpleVOLess.getVoteWorkCountNum());
+        weixinVoteWorkDiffVo.setNextWeixinVoteWorkSimpleVO(weixinVoteWorkSimpleVOLess);
+
+        weixinVoteWorkDiffVo.setBestDiff(weixinVoteWorkSimpleVOBest.getVoteWorkCountNum() - voteWorkByUserWorkId.getVoteWorkCountNum());
+        weixinVoteWorkDiffVo.setBestWeixinVoteWorkSimpleVO(weixinVoteWorkSimpleVOBest);
+
+        return weixinVoteWorkDiffVo;
+    }
+
 
     /**
      * 通过voteBaseId获取当前这个活动有多少人参加

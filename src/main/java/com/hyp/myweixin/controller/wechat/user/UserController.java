@@ -68,10 +68,10 @@ public class UserController {
             Integer integer = weixinVoteUserService.updateWeixinUserByOpenId(weixinVoteUser);
             if (integer != null && integer > 0) {
                 return Result.buildResult(Result.Status.OK,
-                        "更新第" + weixinVoteUser.getId() + "位用户信息成功");
+                        "更新第" + weixinVoteUser.getId() + "位用户信息成功", weixinVoteUser.getId());
             } else {
                 return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR,
-                        "更新第" + weixinVoteUser.getId() + "位用户信息失败");
+                        "更新第" + weixinVoteUser.getId() + "位用户信息失败", weixinVoteUser.getId());
             }
         }
 
@@ -81,7 +81,7 @@ public class UserController {
         }
         return Result.buildResult(Result.Status.OK,
                 "欢迎" + weixinVoteUser.getNickName()
-                        + "！我们的第" + i + "用户！");
+                        + "！我们的第" + i + "用户！", weixinVoteUser.getId());
     }
 
 

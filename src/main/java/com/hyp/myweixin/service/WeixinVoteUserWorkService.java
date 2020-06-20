@@ -2,6 +2,8 @@ package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
 
 import java.util.List;
 
@@ -14,6 +16,8 @@ import java.util.List;
 public interface WeixinVoteUserWorkService {
 
 
+
+
     /**
      * 保存用户对某个作品的投票记录
      *
@@ -23,22 +27,34 @@ public interface WeixinVoteUserWorkService {
     int addUserVote(WeixinVoteUserWork weixinVoteUserWork);
 
 
+
+
+
     /**
-     * 查询
+     * 查询活动下面的作品
      *
-     * @param workId
+     * @param activeId
      * @return
      */
-    List<WeixinVoteUserWork> getWeixinVoteUserWorkByWorkId(Integer workId);
+    List<WeixinVoteUserWork> getWeixinVoteUserWorkByWorkId(Integer activeId);
 
 
     /**
-     * 保存用户对某个作品的投票记录
+     * 获取用户作品投票人的信息
      *
      * @param weixinVoteUserWork
      * @param pageInfo
      * @return
      */
     PageInfo getWeixinVoteUserWorkByPage(WeixinVoteUserWork weixinVoteUserWork, PageInfo pageInfo);
+
+
+    /**
+     * 获取投票人的头像信息
+     *
+     * @param pageInfo
+     * @return
+     */
+    PageInfo getWeixinVoteUserWorkSimpleVOByPageInfo(PageInfo pageInfo);
 
 }

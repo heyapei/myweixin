@@ -83,6 +83,9 @@ public class VoteController {
         if (StringUtils.isBlank(weixinVoteUserWork.getNickName())) {
             return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
         }
+        if (StringUtils.isBlank(weixinVoteUserWork.getOpenId())) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
 
 
         WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();

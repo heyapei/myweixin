@@ -5,16 +5,18 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWorkComment;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
-import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkSimpleVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
+import com.hyp.myweixin.service.WeixinVoteWorkCommentService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Author 何亚培
@@ -46,6 +47,9 @@ public class VotePageController {
     private WeixinVoteWorkService weixinVoteWorkService;
     @Autowired
     private WeixinVoteUserWorkService weixinVoteUserWorkService;
+
+    @Autowired
+    private WeixinVoteWorkCommentService weixinVoteWorkCommentService;
 
     @ApiOperation("根据workId查询活动的详情")
     @PostMapping("/work/detail")
@@ -142,16 +146,91 @@ public class VotePageController {
         WeixinVoteUserWork weixinVoteUserWork = new WeixinVoteUserWork();
         weixinVoteUserWork.setWorkId(userWorkId);
         PageInfo weixinVoteUserWorkByPage = weixinVoteUserWorkService.getWeixinVoteUserWorkByPage(weixinVoteUserWork, pageInfo);
+        PageInfo weixinVoteUserWorkSimpleVOByPageInfo = weixinVoteUserWorkService.getWeixinVoteUserWorkSimpleVOByPageInfo(weixinVoteUserWorkByPage);
+        return Result.buildResult(Result.Status.OK, weixinVoteUserWorkSimpleVOByPageInfo);
+        //return null;
+    }
 
-        List<WeixinVoteUserWork> list = weixinVoteUserWorkByPage.getList();
-        List<WeixinVoteUserWorkSimpleVO> list1 = new ArrayList<>();
-        for (WeixinVoteUserWork voteUserWork : list) {
-            WeixinVoteUserWorkSimpleVO weixinVoteUserWorkSimpleVO = new WeixinVoteUserWorkSimpleVO();
-            weixinVoteUserWorkSimpleVO.setAvatarUrl(voteUserWork.getAvatarUrl());
-            list1.add(weixinVoteUserWorkSimpleVO);
+
+    @ApiOperation(value = "对具体作品添加评论")
+    @PostMapping("/work/detail/addcomment")
+    public Result addComment(HttpServletRequest request,
+                             Integer voteUserId,
+                             Integer voteWorkId,
+                             String workComment) {
+
+
+        if (StringUtils.isBlank(workComment)) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE, "评论不可以为空");
         }
-        weixinVoteUserWorkByPage.setList(list1);
-        return Result.buildResult(Result.Status.OK, weixinVoteUserWorkByPage);
+        if (voteUserId == null) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE, "用户ID不可以为空");
+        }
+        if (voteWorkId == null) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE, "作品ID不可以为空");
+        }
+
+
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+
+
+        WeixinVoteWorkComment weixinVoteWorkComment = new WeixinVoteWorkComment();
+        weixinVoteWorkComment.setVoteUserId(voteUserId);
+        weixinVoteWorkComment.setWorkComment(workComment);
+        weixinVoteWorkComment.setVoteWorkId(voteWorkId);
+        int i = weixinVoteWorkCommentService.addWeixinVoteWorkComment(weixinVoteWorkComment);
+        if (i <= 0) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "保存用户评论错误");
+        } else {
+            return Result.buildResult(Result.Status.OK, "保存用户评论成功", i);
+        }
+    }
+
+
+    @ApiOperation(value = "查询具体作品的评论")
+    @PostMapping("/work/detail/userworkcomment")
+    public Result getUserWorkComment(HttpServletRequest request,
+                                     Integer voteWorkId,
+                                     @RequestParam(defaultValue = "1") int pageNo,
+                                     @RequestParam(defaultValue = "5") int pageSize) {
+
+
+        if (voteWorkId == null) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE, "作品ID不可以为空");
+        }
+
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(pageNo);
+        pageInfo.setPageSize(pageSize);
+        WeixinVoteWorkComment weixinVoteWorkComment = new WeixinVoteWorkComment();
+        weixinVoteWorkComment.setVoteWorkId(voteWorkId);
+        PageInfo weixinVoteWorkCommentVOByPageInfo = weixinVoteWorkCommentService.getWeixinVoteWorkCommentVOByPageInfo(weixinVoteWorkComment, pageInfo);
+        if (weixinVoteWorkCommentVOByPageInfo != null) {
+            return Result.buildResult(Result.Status.OK, weixinVoteWorkCommentVOByPageInfo);
+        }
+        return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR);
+    }
+
+
+
+    @ApiOperation(value = "查询当前作品的差距信息")
+    @PostMapping("/work/detail/userworkdiff")
+    public Result getUserWorkDiff(HttpServletRequest request,
+                                      @RequestParam Integer userWorkId) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        return Result.buildResult(Result.Status.OK,  weixinVoteWorkService.getUserWorkDiff(userWorkId));
         //return null;
     }
 

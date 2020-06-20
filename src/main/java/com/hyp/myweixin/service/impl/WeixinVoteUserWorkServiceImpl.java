@@ -3,11 +3,14 @@ package com.hyp.myweixin.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.mapper.WeixinVoteUserWorkMapper;
+import com.hyp.myweixin.mapper.WeixinVoteWorkMapper;
+import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkSimpleVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
+import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,9 +37,9 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     @Autowired
     private WeixinVoteBaseService weixinVoteBaseService;
     @Autowired
-    private WeixinVoteBaseMapper weixinVoteBaseMapper;
-    @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+    @Autowired
+    private WeixinVoteUserService weixinVoteUserService;
 
     /**
      * 保存用户对某个作品的投票记录
@@ -127,6 +131,30 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
         // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
         pageInfo = new PageInfo(weixinVoteWorks);
 
+        return pageInfo;
+    }
+
+    /**
+     * 获取投票人的头像信息
+     *
+     * @param pageInfo
+     * @return
+     */
+    @Override
+    public PageInfo getWeixinVoteUserWorkSimpleVOByPageInfo(PageInfo pageInfo) {
+
+        List<WeixinVoteUserWork> list = pageInfo.getList();
+        List<WeixinVoteUserWorkSimpleVO> list1 = new ArrayList<>();
+        for (WeixinVoteUserWork voteUserWork : list) {
+            String openId = voteUserWork.getOpenId();
+            WeixinVoteUser userByOpenId = weixinVoteUserService.getUserByOpenId(openId);
+            if (userByOpenId != null) {
+                WeixinVoteUserWorkSimpleVO weixinVoteUserWorkSimpleVO = new WeixinVoteUserWorkSimpleVO();
+                weixinVoteUserWorkSimpleVO.setAvatarUrl(voteUserWork.getAvatarUrl());
+                list1.add(weixinVoteUserWorkSimpleVO);
+            }
+        }
+        pageInfo.setList(list1);
         return pageInfo;
     }
 }

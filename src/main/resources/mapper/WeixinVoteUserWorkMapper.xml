@@ -16,6 +16,7 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="work_id" property="workId" jdbcType="INTEGER" />
     <result column="ip" property="ip" jdbcType="BIGINT" />
+    <result column="open_id" property="openId" jdbcType="VARCHAR" />
     <result column="ext1" property="ext1" jdbcType="VARCHAR" />
     <result column="ext2" property="ext2" jdbcType="VARCHAR" />
     <result column="ext3" property="ext3" jdbcType="VARCHAR" />

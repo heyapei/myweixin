@@ -75,6 +75,14 @@ public class WeixinVoteUserWork {
     @Column(name = "work_id")
     private Integer workId;
 
+
+    /**
+     * 微信用户唯一标识
+     */
+    @NotNull(message = "用户唯一标识不可以为空")
+    @Column(name = "open_id")
+    private String openId;
+
     /**
      * 所属IP(Ip地址string转long类型方便查询)
      */

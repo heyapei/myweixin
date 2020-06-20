@@ -4,6 +4,10 @@ import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
+
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -12,6 +16,46 @@ import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
  * @Description: TODO
  */
 public interface WeixinVoteWorkService {
+
+
+    /**
+     * 获取作品点赞比当前作品多的作品
+     *
+     * @param activeId
+     * @param workId
+     * @return
+     */
+    List<WeixinVoteWork> getThanWorkWeixinVoteWork(Integer activeId, Integer workId);
+
+
+    /**
+     * 获取作品点赞比当前作品少的作品
+     *
+     * @param activeId
+     * @param workId
+     * @return
+     */
+    List<WeixinVoteWork> getLessWorkWeixinVoteWork(Integer activeId, Integer workId);
+
+
+    /**
+     * 获取作品在活动中的排名
+     *
+     * @param activeId
+     * @param workId
+     * @return
+     */
+    Integer getRankNumByUserWorkId(Integer activeId, Integer workId);
+
+    /**
+     * 查询当前作品的差距
+     *
+     * @param workId
+     * @return
+     */
+    WeixinVoteUserWorkDiffVO getUserWorkDiff(Integer workId);
+
+
     /**
      * 通过voteBaseId获取当前这个活动有多少人参加
      *
