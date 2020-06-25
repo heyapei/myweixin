@@ -121,6 +121,7 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
 
 
         Example example = new Example(WeixinVoteUserWork.class);
+        example.orderBy("createTime").desc();
         Example.Criteria criteria = example.createCriteria();
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询

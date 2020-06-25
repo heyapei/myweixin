@@ -50,8 +50,6 @@ public class NoNameTest {
 
     @Test
     public void testMyRedis() {
-
-
         boolean set = redisUtil.set("1", "19", 1000);
         log.info("连接redis测试：{}", set);
         Object o = redisUtil.get("1");

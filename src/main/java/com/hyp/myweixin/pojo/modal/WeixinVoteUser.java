@@ -60,6 +60,11 @@ public class WeixinVoteUser {
     private String country;
 
     /**
+     * 是否允许使用 0允许 1不允许
+     */
+    private Integer enable;
+
+    /**
      * 创建时间
      */
     @Column(name = "create_time")
