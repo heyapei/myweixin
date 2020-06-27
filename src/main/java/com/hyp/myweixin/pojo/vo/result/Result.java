@@ -16,6 +16,14 @@ package com.hyp.myweixin.pojo.vo.result;
  * @author heyapei
  */
 public class Result<T> {
+    @Override
+    public String toString() {
+        return "Result{" +
+                "status='" + status + '\'' +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
+    }
 
     /**
      * 状态码

@@ -22,4 +22,22 @@ public interface WeixinResourceService {
     List<WeixinResource> getWeixinResourceByConfigId(int configId, int status);
 
 
+    /**
+     * 通过md5值获取数据
+     *
+     * @param md5 文件md5值
+     * @return
+     */
+   WeixinResource getWeixinResourceByMD5(String md5);
+
+
+    /**
+     * 保存资源文件
+     *
+     * @param weixinResource
+     * @return 主键ID
+     */
+    Integer addWeixinResource(WeixinResource weixinResource);
+
+
 }

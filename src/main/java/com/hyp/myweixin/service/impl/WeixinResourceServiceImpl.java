@@ -47,4 +47,47 @@ public class WeixinResourceServiceImpl implements WeixinResourceService {
             throw new MyDefinitionException("执行错误异常");
         }
     }
+
+    /**
+     * 保存资源文件
+     *
+     * @param weixinResource
+     * @return 主键ID
+     */
+    @Override
+    public Integer addWeixinResource(WeixinResource weixinResource) {
+        if (weixinResource == null) {
+            return null;
+        }
+        int i = 0;
+        try {
+            i = weixinResourceMapper.insertUseGeneratedKeys(weixinResource);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("保存资源文件错误，错误原因：{}", e.toString());
+        }
+        if (i > 0) {
+            return weixinResource.getId();
+        }
+        return null;
+    }
+
+    /**
+     * 通过md5值获取数据
+     *
+     * @param md5 文件md5值
+     * @return
+     */
+    @Override
+    public WeixinResource getWeixinResourceByMD5(String md5) {
+        Example example = new Example(WeixinResource.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("md5", md5);
+        try {
+            return weixinResourceMapper.selectOneByExample(example);
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new MyDefinitionException("通过md5值获取数据错误");
+        }
+    }
 }

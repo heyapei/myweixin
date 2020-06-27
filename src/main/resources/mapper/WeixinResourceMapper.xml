@@ -12,7 +12,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="real_name" jdbcType="VARCHAR" property="realName" />
     <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="size" jdbcType="DOUBLE" property="size" />
+    <result column="size" jdbcType="BIGINT" property="size" />
     <result column="md5" jdbcType="VARCHAR" property="md5" />
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="description" jdbcType="VARCHAR" property="description" />

@@ -216,7 +216,7 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询
         if (weixinVoteWork != null) {
-            if (weixinVoteWork.getId() != null) {
+            if (weixinVoteWork.getActiveVoteBaseId() != null) {
                 criteria.andEqualTo("activeVoteBaseId", weixinVoteWork.getActiveVoteBaseId());
             }
 

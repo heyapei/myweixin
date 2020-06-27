@@ -51,7 +51,7 @@ public class WeixinResource {
     /**
      * 文件大小
      */
-    private Double size;
+    private Long size;
 
     /**
      * 文件MD5值
