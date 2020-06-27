@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
@@ -36,6 +38,21 @@ public class WeixinVoteBaseServiceImplTest {
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
 
+    @Test
+    public void testGetActiveWorkRank() {
+
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(1);
+        pageInfo.setPageSize(5);
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setId(1);
+        weixinVoteWork.setVoteWorkShowOrder(-1);
+        log.info("查询数据：{}",weixinVoteWork.toString());
+
+        ActiveWorkRankVO activeWorkRank = weixinVoteBaseService.getActiveWorkRank(1, pageInfo);
+        System.out.println("查询出来的数据" + activeWorkRank.toString());
+
+    }
     @Test
     public void getVoteWorkByWorkId() {
 

@@ -29,6 +29,15 @@ public class NoNameTest {
 
 
     @Test
+    public void testInteger() {
+
+        Integer i = null;
+     log.info("查询结果：{}",i>0);
+
+    }
+
+
+    @Test
     public void testMyRedisTO() {
         WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
         weixinVoteBase.setId(1);

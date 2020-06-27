@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 /**
  * @Author 何亚培
@@ -85,7 +84,8 @@ public class VotePageController {
         pageInfo.setPageNum(pageNo);
         pageInfo.setPageSize(pageSize);
         WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
-        weixinVoteWork.setId(activeId);
+        weixinVoteWork.setActiveVoteBaseId(activeId);
+        weixinVoteWork.setVoteWorkShowOrder(-1);
 
         PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
         return Result.buildResult(Result.Status.OK, voteWorkAllWorkByPage);
@@ -177,7 +177,6 @@ public class VotePageController {
         }
 
 
-
         WeixinVoteWorkComment weixinVoteWorkComment = new WeixinVoteWorkComment();
         weixinVoteWorkComment.setVoteUserId(voteUserId);
         weixinVoteWorkComment.setWorkComment(workComment);
@@ -221,17 +220,36 @@ public class VotePageController {
     }
 
 
-
     @ApiOperation(value = "查询当前作品的差距信息")
     @PostMapping("/work/detail/userworkdiff")
     public Result getUserWorkDiff(HttpServletRequest request,
-                                      @RequestParam Integer userWorkId) {
+                                  @RequestParam Integer userWorkId) {
         boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-        return Result.buildResult(Result.Status.OK,  weixinVoteWorkService.getUserWorkDiff(userWorkId));
+        return Result.buildResult(Result.Status.OK, weixinVoteWorkService.getUserWorkDiff(userWorkId));
         //return null;
+    }
+
+
+    @ApiOperation(value = "获取当前活动下的作品的排行榜")
+    @PostMapping("/work/detail/activeworkrank")
+    public Result getActiveWorkRank(HttpServletRequest request,
+                                    Integer voteWorkId,
+                                    @RequestParam(defaultValue = "1") int pageNo,
+                                    @RequestParam(defaultValue = "5") int pageSize) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        if (voteWorkId == null) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(pageNo);
+        pageInfo.setPageSize(pageSize);
+        return Result.buildResult(Result.Status.OK, weixinVoteBaseService.getActiveWorkRank(voteWorkId, pageInfo));
     }
 
 

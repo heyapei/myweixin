@@ -213,12 +213,58 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
         Example example = new Example(WeixinVoteWork.class);
         Example.Criteria criteria = example.createCriteria();
-        example.orderBy("voteWorkShowOrder").desc();
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询
         if (weixinVoteWork != null) {
-            criteria.andEqualTo("activeVoteBaseId", weixinVoteWork.getId());
+            if (weixinVoteWork.getId() != null) {
+                criteria.andEqualTo("activeVoteBaseId", weixinVoteWork.getActiveVoteBaseId());
+            }
+
+            if (weixinVoteWork.getVoteWorkStatus() != null && weixinVoteWork.getVoteWorkStatus() > -1) {
+                criteria.andEqualTo("voteWorkStatus", weixinVoteWork.getVoteWorkStatus());
+            }
+
+            /*排序*/
+            if (weixinVoteWork.getVoteWorkShowOrder() != null) {
+                if (weixinVoteWork.getVoteWorkShowOrder() < 0) {
+                    example.orderBy("voteWorkShowOrder").asc();
+                } else {
+                    example.orderBy("voteWorkShowOrder").desc();
+                }
+            }
+
+            if (weixinVoteWork.getVoteWorkCountNum() != null) {
+                if (weixinVoteWork.getVoteWorkCountNum() < 0) {
+                    example.orderBy("voteWorkCountNum").asc();
+                } else {
+                    example.orderBy("voteWorkCountNum").desc();
+                }
+            }
+
+            if (weixinVoteWork.getVoteWorkCountViewNum() != null) {
+                if (weixinVoteWork.getVoteWorkCountViewNum() < 0) {
+                    example.orderBy("voteWorkCountViewNum").asc();
+                } else {
+                    example.orderBy("voteWorkCountViewNum").desc();
+                }
+            }
+
+            if (weixinVoteWork.getVoteWorkOr() != null) {
+                if (weixinVoteWork.getVoteWorkOr() < 0) {
+                    example.orderBy("voteWorkOr").asc();
+                } else {
+                    example.orderBy("voteWorkOr").desc();
+                }
+            }
+
+            if (weixinVoteWork.getVoteWorkCreateTime() != null) {
+                example.orderBy("voteWorkCreateTime").desc();
+            }
+
+
         }
+
+
         List<WeixinVoteWork> weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
         // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
         pageInfo = new PageInfo(weixinVoteWorks);

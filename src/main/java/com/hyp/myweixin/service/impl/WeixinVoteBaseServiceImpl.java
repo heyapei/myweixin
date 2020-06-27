@@ -7,10 +7,8 @@ import com.hyp.myweixin.mapper.WeixinMusicMapper;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.mapper.WeixinVoteConfMapper;
 import com.hyp.myweixin.mapper.WeixinVoteOrganisersMapper;
-import com.hyp.myweixin.pojo.modal.WeixinMusic;
-import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
-import com.hyp.myweixin.pojo.modal.WeixinVoteConf;
-import com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers;
+import com.hyp.myweixin.pojo.modal.*;
+import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
@@ -34,6 +32,7 @@ import java.util.List;
 @Slf4j
 public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
+
     @Autowired
     private WeixinVoteBaseMapper weixinVoteBaseMapper;
     @Autowired
@@ -45,6 +44,34 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
     private WeixinMusicMapper weixinMusicMapper;
     @Autowired
     private WeixinVoteOrganisersMapper weixinVoteOrganisersMapper;
+
+
+    /**
+     * 分页查询活动下作品的排行榜
+     *
+     * @param activeId 活动ID
+     * @param pageInfo 分页信息
+     * @return
+     */
+    @Override
+    public ActiveWorkRankVO getActiveWorkRank(Integer activeId, PageInfo pageInfo) {
+        WeixinVoteBase weixinVoteBase = weixinVoteBaseMapper.selectByPrimaryKey(activeId);
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("未能查找到对应活动内容");
+        }
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setActiveVoteBaseId(activeId);
+        weixinVoteWork.setVoteWorkShowOrder(0);
+        weixinVoteWork.setVoteWorkCountNum(0);
+        weixinVoteWork.setVoteWorkCreateTime(null);
+        weixinVoteWork.setVoteWorkCountViewNum(null);
+        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
+        ActiveWorkRankVO workRankVO = new ActiveWorkRankVO();
+        workRankVO.setVoteWorkPageInfo(voteWorkAllWorkByPage);
+        workRankVO.setWeixinVoteBase(weixinVoteBase);
+        return workRankVO;
+    }
+
 
     /**
      * 分页查询投票活动列表

@@ -2,6 +2,7 @@ package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 
 /**
@@ -11,6 +12,16 @@ import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
  * @Description: TODO
  */
 public interface WeixinVoteBaseService {
+
+
+    /**
+     * 分页查询活动下作品的排行榜
+     * @param activeId 活动ID
+     * @param pageInfo 分页信息
+     * @return
+     */
+    ActiveWorkRankVO getActiveWorkRank(Integer activeId, PageInfo pageInfo);
+
 
     /**
      * 分页查询投票活动列表
