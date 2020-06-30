@@ -3,6 +3,7 @@ package com.hyp.myweixin.service.impl;
 import com.hyp.myweixin.config.imgvideres.ImgVideResConfig;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.ResourceSimpleDTO;
+import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.modal.WeixinResource;
 import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import com.hyp.myweixin.pojo.vo.result.Result;
@@ -37,6 +38,19 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     private WeixinResourceService weixinResourceService;
     @Autowired
     private WeixinResourceConfigService weixinResourceConfigService;
+
+    /**
+     * 创建活动
+     *
+     * @param weixinVoteWorkDTO
+     * @return
+     */
+    @Override
+    public Integer createVoteWork(WeixinVoteWorkDTO weixinVoteWorkDTO) {
+        Integer activeConfRankHide = weixinVoteWorkDTO.getActiveConfRankHide();
+
+        return null;
+    }
 
     /**
      * 保存图片资源

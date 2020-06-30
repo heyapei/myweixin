@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service;
 
+import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
  * @Description: TODO
  */
 public interface VoteActiveService {
+
+
+    /**
+     * 创建活动
+     * @param weixinVoteWorkDTO
+     * @return
+     */
+    Integer createVoteWork(WeixinVoteWorkDTO weixinVoteWorkDTO);
 
 
     /**

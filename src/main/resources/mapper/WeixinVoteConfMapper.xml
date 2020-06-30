@@ -17,6 +17,13 @@
     <result column="active_conf_rank_hide" jdbcType="INTEGER" property="activeConfRankHide" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="active_upload_start_time" jdbcType="TIMESTAMP" property="activeUploadStartTime" />
+    <result column="active_upload_end_time" jdbcType="TIMESTAMP" property="activeUploadEndTime" />
+    <result column="active_conf_sex" jdbcType="VARCHAR" property="activeConfSex" />
+    <result column="active_conf_region" jdbcType="VARCHAR" property="activeConfRegion" />
+    <result column="active_conf_need_weixin" jdbcType="INTEGER" property="activeConfNeedWeixin" />
+    <result column="active_conf_need_phone" jdbcType="INTEGER" property="activeConfNeedPhone" />
     <result column="active_conf_share_img" jdbcType="LONGVARCHAR" property="activeConfShareImg" />
   </resultMap>
+
 </mapper>
