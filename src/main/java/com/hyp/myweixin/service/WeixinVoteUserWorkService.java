@@ -2,9 +2,8 @@ package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
-import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
-import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,6 +15,33 @@ import java.util.List;
 public interface WeixinVoteUserWorkService {
 
 
+    /**
+     * 按照时间范围查询用户对某个作品的投票数据 如果没有传入开始结束/结束时间 则直接取今天的时间开始/结束
+     * @param openId
+     * @param userWorkId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+     List<WeixinVoteUserWork> getWeixinVoteUserWorkSByOpenIdTime(String openId, Integer userWorkId, Date startTime, Date endTime);
+
+    /**
+     * 通过openId获取获取用户的信息
+     *
+     * @param openId 用户唯一值
+     * @param userWorkId 用户作品ID
+     * @return
+     */
+    List<WeixinVoteUserWork> getWeixinVoteUserWorkSByOpenId(String openId, Integer userWorkId);
+
+
+    /**
+     * 判断当前投票的合法性
+     *
+     * @param weixinVoteUserWork
+     * @return
+     */
+    String judgeVoteLegal(WeixinVoteUserWork weixinVoteUserWork);
 
 
     /**
@@ -25,9 +51,6 @@ public interface WeixinVoteUserWorkService {
      * @return
      */
     int addUserVote(WeixinVoteUserWork weixinVoteUserWork);
-
-
-
 
 
     /**

@@ -13,9 +13,27 @@ import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
  */
 public interface WeixinVoteBaseService {
 
+    /**
+     * 通过活动的ID查询活动的详情 完整实体类
+     *
+     * @param workId 活动ID
+     * @return
+     */
+    WeixinVoteBase getWeixinVoteBaseByWorkId(Integer workId);
+
+
+    /**
+     * 保存活动基础表
+     *
+     * @param weixinVoteBase
+     * @return
+     */
+    Integer saveVoteBase(WeixinVoteBase weixinVoteBase);
+
 
     /**
      * 分页查询活动下作品的排行榜
+     *
      * @param activeId 活动ID
      * @param pageInfo 分页信息
      * @return

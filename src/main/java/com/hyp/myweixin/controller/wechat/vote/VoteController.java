@@ -88,6 +88,14 @@ public class VoteController {
         }
 
 
+        /*投票数据限制*/
+
+        String judgeVoteLegalResult = weixinVoteUserWorkService.judgeVoteLegal(weixinVoteUserWork);
+        if (StringUtils.isNotBlank(judgeVoteLegalResult)) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, judgeVoteLegalResult);
+        }
+
+
         WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
         weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.VOTE_WEiXIN_VOTE_WORK.getType());
         weixinUserOptionLog.setOptionDesc(WeixinUserOptionConfig.typeEnum.VOTE_WEiXIN_VOTE_WORK.getMsg());

@@ -4,16 +4,15 @@ import com.hyp.myweixin.config.imgvideres.ImgVideResConfig;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.ResourceSimpleDTO;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
-import com.hyp.myweixin.pojo.modal.WeixinResource;
-import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
+import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.vo.result.Result;
-import com.hyp.myweixin.service.VoteActiveService;
-import com.hyp.myweixin.service.WeixinResourceConfigService;
-import com.hyp.myweixin.service.WeixinResourceService;
+import com.hyp.myweixin.service.*;
+import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.fileutil.MyFileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +38,13 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     @Autowired
     private WeixinResourceConfigService weixinResourceConfigService;
 
+    @Autowired
+    private WeixinVoteBaseService weixinVoteBaseService;
+    @Autowired
+    private WeixinVoteConfService weixinVoteConfService;
+    @Autowired
+    private WeixinVoteOrganisersService weixinVoteOrganisersService;
+
     /**
      * 创建活动
      *
@@ -46,10 +52,127 @@ public class VoteActiveServiceImpl implements VoteActiveService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer createVoteWork(WeixinVoteWorkDTO weixinVoteWorkDTO) {
-        Integer activeConfRankHide = weixinVoteWorkDTO.getActiveConfRankHide();
 
-        return null;
+        /*在这里做一下预判断 因为有可能会出现图片链接地址出现空的情况*/
+
+        /*活动展示封面*/
+        String activeImg = weixinVoteWorkDTO.getActiveImg();
+        if (activeImg.contains(";")) {
+            String[] split = activeImg.split(";");
+            StringBuffer imgUrlS = new StringBuffer();
+            for (String s : split) {
+                imgUrlS.append(s).append(";");
+            }
+            weixinVoteWorkDTO.setActiveImg(imgUrlS.toString());
+        }
+
+        /*活动介绍*/
+        String activeDescImg = weixinVoteWorkDTO.getActiveDescImg();
+        if (activeDescImg.contains(";")) {
+            String[] split = activeDescImg.split(";");
+            StringBuffer imgUrlS = new StringBuffer();
+            for (String s : split) {
+                imgUrlS.append(s).append(";");
+            }
+            weixinVoteWorkDTO.setActiveDescImg(imgUrlS.toString());
+        }
+        /*活动奖励*/
+        String activeRewardImg = weixinVoteWorkDTO.getActiveRewardImg();
+        if (activeRewardImg.contains(";")) {
+            String[] split = activeRewardImg.split(";");
+            StringBuffer imgUrlS = new StringBuffer();
+            for (String s : split) {
+                imgUrlS.append(s).append(";");
+            }
+            weixinVoteWorkDTO.setActiveRewardImg(imgUrlS.toString());
+        }
+
+
+        Integer resultVal = null;
+
+        WeixinVoteBase weixinVoteBaseWithWeixinVoteWorkDTO = getWeixinVoteBaseWithWeixinVoteWorkDTO(weixinVoteWorkDTO);
+        log.info("查询数据：{}", weixinVoteBaseWithWeixinVoteWorkDTO.toString());
+        Integer saveVoteBaseKey = weixinVoteBaseService.saveVoteBase(weixinVoteBaseWithWeixinVoteWorkDTO);
+        resultVal = saveVoteBaseKey;
+        if (saveVoteBaseKey != null && saveVoteBaseKey > 0) {
+            log.info("保存活动基础信息成功成功");
+            /*提取weixinVoteOrganisers*/
+            WeixinVoteOrganisers weixinVoteOrganisersWithWeixinVoteWorkDTO = getWeixinVoteOrganisersWithWeixinVoteWorkDTO(weixinVoteWorkDTO);
+            weixinVoteOrganisersWithWeixinVoteWorkDTO.setVoteBaseId(saveVoteBaseKey);
+            Integer saveWeixinVoteOrganisers = weixinVoteOrganisersService.saveWeixinVoteOrganisers(weixinVoteOrganisersWithWeixinVoteWorkDTO);
+            resultVal = saveWeixinVoteOrganisers;
+            if (saveWeixinVoteOrganisers != null && saveWeixinVoteOrganisers > 0) {
+                log.info("保存活动主办方信息成功");
+                /*提取WeixinVoteConf数据*/
+                WeixinVoteConf weixinVoteConfWithWeixinVoteWorkDTO = getWeixinVoteConfWithWeixinVoteWorkDTO(weixinVoteWorkDTO);
+
+                weixinVoteConfWithWeixinVoteWorkDTO.setActiveVoteBaseId(saveVoteBaseKey);
+
+                Integer saveWeixinVoteConf = weixinVoteConfService.saveWeixinVoteConf(weixinVoteConfWithWeixinVoteWorkDTO);
+                resultVal = saveWeixinVoteConf;
+                if (saveWeixinVoteConf != null && saveWeixinVoteConf > 0) {
+                    log.info("保存活动配置信息成功");
+                }
+            }
+        }
+        return resultVal;
+    }
+
+
+    /**
+     * 从weixinVoteWorkDTO提取weixinVoteConf数据
+     *
+     * @param weixinVoteWorkDTO
+     * @return
+     */
+    private static WeixinVoteConf getWeixinVoteConfWithWeixinVoteWorkDTO(WeixinVoteWorkDTO weixinVoteWorkDTO) {
+        WeixinVoteConf weixinVoteConf = null;
+        try {
+            weixinVoteConf = MyEntityUtil.entity2VM(weixinVoteWorkDTO, WeixinVoteConf.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("从weixinVoteWorkDTO提取weixinVoteConf数据错误，错误原因：{}", e.toString());
+        }
+        return weixinVoteConf;
+    }
+
+    /**
+     * 从weixinVoteWorkDTO提取weixinVoteOrganisers数据
+     *
+     * @param weixinVoteWorkDTO
+     * @return
+     */
+    private static WeixinVoteOrganisers getWeixinVoteOrganisersWithWeixinVoteWorkDTO(WeixinVoteWorkDTO weixinVoteWorkDTO) {
+        WeixinVoteOrganisers weixinVoteOrganisers = null;
+        try {
+            weixinVoteOrganisers = MyEntityUtil.entity2VM(weixinVoteWorkDTO, WeixinVoteOrganisers.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("从weixinVoteWorkDTO提取weixinVoteOrganisers数据错误，错误原因：{}", e.toString());
+        }
+        return weixinVoteOrganisers;
+    }
+
+
+    /**
+     * 从weixinVoteWorkDTO提取WeixinVoteBase数据
+     *
+     * @param weixinVoteWorkDTO
+     * @return
+     */
+    private static WeixinVoteBase getWeixinVoteBaseWithWeixinVoteWorkDTO(WeixinVoteWorkDTO weixinVoteWorkDTO) {
+        WeixinVoteBase weixinVoteBase = null;
+        try {
+            weixinVoteBase = MyEntityUtil.entity2VM(weixinVoteWorkDTO, WeixinVoteBase.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("从weixinVoteWorkDTO提取WeixinVoteBase数据错误，错误原因：{}", e.toString());
+        }
+        weixinVoteBase.setViewCountNum(0);
+        weixinVoteBase.setVoteCountNum(0);
+        return weixinVoteBase;
     }
 
     /**

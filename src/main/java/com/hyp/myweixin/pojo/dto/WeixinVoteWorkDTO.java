@@ -2,6 +2,7 @@ package com.hyp.myweixin.pojo.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -12,6 +13,66 @@ import java.util.Date;
  */
 @Data
 public class WeixinVoteWorkDTO {
+
+
+
+    /*活动的初始数据*/
+    /**
+     * 封面图片
+     */
+    @NotNull(message = "活动封面图片必填")
+    private String activeImg;
+
+    /**
+     * 活动名称
+     */
+    @NotNull(message = "活动名称必填")
+    private String activeName;
+
+    /**
+     * 活动描述
+     */
+    @NotNull(message = "活动描述必填")
+    private String activeDesc;
+
+    /**
+     * 活动描述图片
+     */
+    @NotNull(message = "活动描述图片必填")
+    private String activeDescImg;
+
+    /**
+     * 活动奖励
+     */
+    private String activeReward;
+
+    /**
+     * 活动奖励图片
+     */
+    private String activeRewardImg;
+
+    /**
+     * 活动开始时间
+     */
+    @NotNull(message = "活动开始时间必填")
+    private Date activeStartTime;
+
+    /**
+     * 活动结束时间
+     */
+    @NotNull(message = "活动结束时间必填")
+    private Date activeEndTime;
+
+    /**
+     * 是否公开到首页 0默认公开 1不公开
+     */
+    @NotNull(message = "是否公布到首页必填  0默认公开 1不公开 ")
+    private Integer activePublic;
+    /**
+     * 活动创建人Id
+     */
+    @NotNull(message = "活动创建人必填")
+    private Integer createSysUserId;
 
 
     /*活动配置数据*/
@@ -100,55 +161,7 @@ public class WeixinVoteWorkDTO {
     private String activeConfShareImg;
 
 
-    /*活动的初始数据*/
-    /**
-     * 封面图片
-     */
-    private String activeImg;
 
-    /**
-     * 活动名称
-     */
-    private String activeName;
-
-    /**
-     * 活动描述
-     */
-    private String activeDesc;
-
-    /**
-     * 活动描述图片
-     */
-    private String activeDescImg;
-
-    /**
-     * 活动奖励
-     */
-    private String activeReward;
-
-    /**
-     * 活动奖励图片
-     */
-    private String activeRewardImg;
-
-    /**
-     * 活动开始时间
-     */
-    private Date activeStartTime;
-
-    /**
-     * 活动结束时间
-     */
-    private Date activeEndTime;
-
-    /**
-     * 是否公开到首页 0默认公开 1不公开
-     */
-    private Integer activePublic;
-    /**
-     * 活动创建人Id
-     */
-    private Integer createSysUserId;
 
 
     /*主办方信息*/

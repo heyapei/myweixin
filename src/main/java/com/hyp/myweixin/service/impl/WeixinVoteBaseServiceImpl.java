@@ -47,6 +47,50 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
 
     /**
+     * 通过活动的ID查询活动的详情 完整实体类
+     *
+     * @param workId 活动ID
+     * @return
+     */
+    @Override
+    public WeixinVoteBase getWeixinVoteBaseByWorkId(Integer workId) {
+        WeixinVoteBase weixinVoteBase = null;
+        try {
+            weixinVoteBase = weixinVoteBaseMapper.selectByPrimaryKey(workId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("通过活动的ID查询活动的详情错误，错误原因：{}", e.toString());
+        }
+
+        return weixinVoteBase;
+    }
+
+    /**
+     * 保存活动基础表
+     *
+     * @param weixinVoteBase
+     * @return
+     */
+    @Override
+    public Integer saveVoteBase(WeixinVoteBase weixinVoteBase) {
+        Integer result = null;
+        int i = 0;
+        try {
+            /*需要返回当前活动的主键*/
+            i = weixinVoteBaseMapper.insertUseGeneratedKeys(weixinVoteBase);
+            //i = weixinVoteBaseMapper.insertSelective(weixinVoteBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("保存活动基础数据错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("保存活动基础数据错误");
+        }
+        if (i > 0) {
+            result = weixinVoteBase.getId();
+        }
+        return result;
+    }
+
+    /**
      * 分页查询活动下作品的排行榜
      *
      * @param activeId 活动ID
