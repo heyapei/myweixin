@@ -4,11 +4,22 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
 import com.hyp.myweixin.utils.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.AlgorithmParameters;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @Author 何亚培
@@ -81,6 +92,82 @@ public class NoNameTest {
         String parameter = myHttpClientUtil.getParameter(url, null, null);
         System.out.println("换取的结果：" + parameter);
     }
+
+    /*测试AES算法*/
+    @Test
+    public void testAES() throws Exception {
+        //getKey(); 5cc3b16449beb0b2048c4daa4f9e2ffd
+        String nihaoya = Encode_AES_CBC_NoPadding("Egi2zRHPg6TQHNhE", "nihaoya");
+        System.out.println(nihaoya); // eT0jbAS+vgXzdlYUGBOtiQ==
+        System.out.println(DeCode_AES_CBC_NoPadding("Egi2zRHPg6TQHNhE", "eT0jbAS+vgXzdlYUGBOtiQ=="));
+
+    }
+
+
+    /** 加密  - AES/CBC/NoPadding
+     * @throws Exception **/
+    private static String Encode_AES_CBC_NoPadding(String key, String content) throws Exception {
+        if (StringUtils.isBlank(key)) {
+            throw new NullPointerException("key is null");
+        }
+        if (StringUtils.isBlank(content)) {
+            return null;
+        }
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+            int blockSize = cipher.getBlockSize();
+            byte[] dataBytes = content.getBytes("UTF-8");
+            int plaintextLength = dataBytes.length;
+            if (plaintextLength % blockSize != 0) {
+                plaintextLength = plaintextLength + (blockSize - (plaintextLength % blockSize));
+            }
+            byte[] plaintext = new byte[plaintextLength];
+            System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
+            SecretKeySpec keyspec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            IvParameterSpec ivspec = new IvParameterSpec(key.getBytes("UTF-8"));
+            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+            return Base64.encodeBase64String(cipher.doFinal(plaintext));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+    }
+
+    /** 解密  - AES/CBC/NoPadding **/
+    private String DeCode_AES_CBC_NoPadding(String key, String content) throws Exception {
+        if (StringUtils.isBlank(key)) {
+            throw new NullPointerException("key is null");
+        }
+        if (StringUtils.isBlank(content)) {
+            return null;
+        }
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+            Key sKeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            cipher.init(Cipher.DECRYPT_MODE, sKeySpec, generateIV(key.getBytes("UTF-8")));// 初始化
+            byte[] result = cipher.doFinal(Base64.decodeBase64(content.getBytes("UTF-8")));
+            return new String(result, "utf-8").trim();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+
+    }
+
+    public static AlgorithmParameters generateIV(byte[] iv) throws Exception {
+        AlgorithmParameters params = AlgorithmParameters.getInstance("AES");
+        params.init(new IvParameterSpec(iv));
+        return params;
+    }
+
+
+
+
+
+
+
+
 
 
 }

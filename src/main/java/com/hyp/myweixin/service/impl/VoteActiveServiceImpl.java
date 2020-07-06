@@ -82,13 +82,16 @@ public class VoteActiveServiceImpl implements VoteActiveService {
 
         /*如果类型为activeCoverImg 则保存 封面图 和 活动标题*/
         if (type.equalsIgnoreCase("activeCoverImg")) {
-            weixinVoteBase.setActiveImg(activeImg);
+
+            if (activeImg != null) {
+                weixinVoteBase.setActiveImg(activeImg);
+            }
             weixinVoteBase.setActiveName(activeText);
         }
 
         /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
         if (type.equalsIgnoreCase("activeDesc")) {
-            if (activeImg.contains(";")) {
+            if (activeImg!=null && activeImg.contains(";")) {
                 String[] split = activeImg.split(";");
                 StringBuffer imgUrlS = new StringBuffer();
                 for (String s : split) {
@@ -99,9 +102,9 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             weixinVoteBase.setActiveDesc(activeText);
         }
 
-        /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
+        /*如果类型是activeReward 则保存 奖励文字 和 奖励图片*/
         if (type.equalsIgnoreCase("activeReward")) {
-            if (activeImg.contains(";")) {
+            if (activeImg!=null && activeImg.contains(";")) {
                 String[] split = activeImg.split(";");
                 StringBuffer imgUrlS = new StringBuffer();
                 for (String s : split) {
@@ -113,7 +116,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         }
         /*创建时间每次都会更新的*/
         weixinVoteBase.setCreateTime(new Date());
-        return weixinVoteBaseService.saveVoteBase(weixinVoteBase);
+        return weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
     }
 
     /**

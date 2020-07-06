@@ -15,6 +15,17 @@ import java.util.List;
  */
 public interface WeixinVoteBaseService {
 
+
+    /**
+     * 更新内容
+     *
+     * @param weixinVoteBase 活动内容
+     * @return
+     */
+    int updateVoteBaseVote(WeixinVoteBase weixinVoteBase);
+
+
+
     /**
      * 查询用户名下的活动按照活动的状态值
      *

@@ -45,6 +45,24 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
     @Autowired
     private WeixinVoteOrganisersMapper weixinVoteOrganisersMapper;
 
+    /**
+     * 更新内容
+     *
+     * @param weixinVoteBase 活动内容
+     * @return
+     */
+    @Override
+    public int updateVoteBaseVote(WeixinVoteBase weixinVoteBase) {
+        int i = 0;
+        try {
+            i = weixinVoteBaseMapper.updateByPrimaryKeySelective(weixinVoteBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("更新活动内容错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("更新活动内容错误");
+        }
+        return i;
+    }
 
     /**
      * 查询用户名下的活动按照活动的状态值
@@ -177,6 +195,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             //BeanUtils.copyProperties(weixinVoteBase2, indexWorksVO);
             // 使用实体转换类进行数据转换处理
             IndexWorksVO indexWorksVO = MyEntityUtil.entity2VM(weixinVoteBase2, IndexWorksVO.class);
+            indexWorksVO.setActiveImg(indexWorksVO.getActiveImg().replace(";", ""));
             indexWorksVO.setVoteWorkVoteCount(weixinVoteBase2.getVoteCountNum());
             indexWorksVO.setVoteWorkJoinCount(countWorkByVoteBaseId);
             indexWorksVOS.add(indexWorksVO);
@@ -269,7 +288,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
             voteDetailByWorkIdVO = new VoteDetailByWorkIdVO();
             voteDetailByWorkIdVO.setActiveBgImg(weixinVoteBase.getActiveDescImg());
-            voteDetailByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg());
+            voteDetailByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg().replaceAll(";",""));
             voteDetailByWorkIdVO.setActiveEndTime(weixinVoteBase.getActiveEndTime());
             voteDetailByWorkIdVO.setActiveStartTime(weixinVoteBase.getActiveStartTime());
             voteDetailByWorkIdVO.setActiveName(weixinVoteBase.getActiveName());
@@ -278,8 +297,8 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setActiveVoteCount(weixinVoteBase.getVoteCountNum());
             voteDetailByWorkIdVO.setActiveViewCount(weixinVoteBase.getViewCountNum());
             voteDetailByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
-            voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
-            voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode());
+            voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";",""));
+            voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode().replaceAll(";",""));
             voteDetailByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
         }
 
