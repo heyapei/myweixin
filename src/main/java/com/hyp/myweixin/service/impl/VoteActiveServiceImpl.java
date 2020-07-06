@@ -228,8 +228,8 @@ public class VoteActiveServiceImpl implements VoteActiveService {
 
         int resource_config_id = 0;
         String savePath = path + imgVideResConfig.getActiveImgBasePath();
-        if (type.equalsIgnoreCase(imgVideResConfig.getActiveUserWorkPath())) {
-            savePath += imgVideResConfig.getActiveUserWorkPath();
+        if (type.equalsIgnoreCase(imgVideResConfig.getActiveVoteWorkPath())) {
+            savePath += imgVideResConfig.getActiveVoteWorkPath();
             resource_config_id = 2;
         } else if (type.equalsIgnoreCase(imgVideResConfig.getActiveUserWorkPath())) {
             resource_config_id = 3;
