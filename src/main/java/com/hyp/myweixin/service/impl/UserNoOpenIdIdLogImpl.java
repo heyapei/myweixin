@@ -2,12 +2,12 @@ package com.hyp.myweixin.service.impl;
 
 import com.hyp.myweixin.mapper.WeixinUserOptionLogMapper;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
-import com.hyp.myweixin.pojo.dto.AmapIpToAddressDTO;
+import com.hyp.myweixin.pojo.dto.bdmap.BDMapResSimpleDTO;
 import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.service.UserNoOpenIdIdLog;
 import com.hyp.myweixin.utils.MyIpMacUtil;
-import com.hyp.myweixin.utils.amaputil.AmapApiUtil;
+import com.hyp.myweixin.utils.bdmaputil.BDMapUtilService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
 
 
     @Autowired
-    private AmapApiUtil amapApiUtil;
+    private BDMapUtilService bdMapUtilService;
     @Autowired
     private MyIpMacUtil myIpMacUtil;
 
@@ -67,14 +67,15 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
         }
 
 
-        AmapIpToAddressDTO ipPositionNoAsync = amapApiUtil.getIpPositionNoAsync(realIP);
-        log.info("高德地图通过IP查询的数据：" + ipPositionNoAsync.toString());
-        if (ipPositionNoAsync != null) {
-            String province = ipPositionNoAsync.getProvince();
+        //AmapIpToAddressDTO ipPositionNoAsync = amapApiUtil.getIpPositionNoAsync(realIP);
+        BDMapResSimpleDTO bdMapResSimpleDTOByIp = bdMapUtilService.getBDMapResSimpleDTOByIp(realIP);
+        //log.info("高德地图通过IP查询的数据：" + ipPositionNoAsync.toString());
+        if (bdMapResSimpleDTOByIp != null) {
+            String province = bdMapResSimpleDTOByIp.getProvince();
             if (province != null) {
                 weixinUserOptionLog.setProvince(province);
             }
-            String city = ipPositionNoAsync.getCity();
+            String city = bdMapResSimpleDTOByIp.getCity();
             if (city != null) {
                 weixinUserOptionLog.setCity(city);
             }
@@ -89,9 +90,10 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
             weixinUserOptionLog.setDeviceType(mobileType);
         }
 
-        if (ipPositionNoAsync != null && ipPositionNoAsync.getRectangle() != null) {
-            String geocodeByIpAddressGeneral = amapApiUtil.getGeocodeByIpAddressGeneralNoAsync(ipPositionNoAsync.getRectangle());
-            log.info("高德地图通过经纬度查询的数据：" + geocodeByIpAddressGeneral);
+        if (bdMapResSimpleDTOByIp != null) {
+            // String geocodeByIpAddressGeneral = amapApiUtil.getGeocodeByIpAddressGeneralNoAsync(ipPositionNoAsync.getRectangle());
+            String geocodeByIpAddressGeneral = bdMapResSimpleDTOByIp.getGeneralAddress();
+            //log.info("高德地图通过经纬度查询的数据：" + geocodeByIpAddressGeneral);
             if (StringUtils.isNotBlank(geocodeByIpAddressGeneral)) {
                 weixinUserOptionLog.setGeneralAddress(geocodeByIpAddressGeneral);
             }
