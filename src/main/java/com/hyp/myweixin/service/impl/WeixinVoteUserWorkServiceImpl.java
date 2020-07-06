@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteUserWorkMapper;
 import com.hyp.myweixin.pojo.modal.*;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkSimpleVO;
 import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
@@ -41,6 +42,7 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     private WeixinVoteConfService weixinVoteConfService;
 
 
+
     /**
      * 判断当前投票的合法性
      *
@@ -50,16 +52,26 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     @Override
     public String judgeVoteLegal(WeixinVoteUserWork weixinVoteUserWork) {
         int voteWorkId = weixinVoteUserWork.getWorkId();
-        if (voteWorkId == 0) {
+        if (voteWorkId <= 0) {
             return "未发现活动数据ID";
         }
+
+        VoteDetailCompleteVO weixinVoteWorkByUserWorkId = weixinVoteWorkService.getWeixinVoteWorkByUserWorkId(voteWorkId);
+        if (weixinVoteWorkByUserWorkId == null) {
+            return "未能查找到作品所属活动的具体数据";
+        }
+        voteWorkId = weixinVoteWorkByUserWorkId.getActiveVoteBaseId();
+       // log.info("活动的主键："+voteWorkId);
+
         WeixinVoteBase weixinVoteBase = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
         if (weixinVoteBase == null) {
             return "未发现活动数据";
         }
         Date nowDate = new Date();
         Date activeStartTime = weixinVoteBase.getActiveStartTime();
+        //log.info("活动开始时间："+activeStartTime);
         Date activeEndTime = weixinVoteBase.getActiveEndTime();
+        //log.info("活动结束时间："+activeEndTime);
         /*时间判断 活动是否开始/结束*/
         boolean voteTimeLegal = activeStartTime.before(nowDate);
         if (!voteTimeLegal) {

@@ -86,6 +86,7 @@ public class VoteController {
         if (StringUtils.isBlank(weixinVoteUserWork.getOpenId())) {
             return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
         }
+        log.info("投票的请求参数是：{}",weixinVoteUserWork.toString());
 
 
         /*投票数据限制*/

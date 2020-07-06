@@ -39,7 +39,7 @@ public class WeixinVoteUserWorkServiceImplTest {
         Date as = new Date(new Date().getTime()-24*60*60*1000);
         weixinVoteUserWork.setCreateTime(as);
         weixinVoteUserWork.setUpdateTime(new Date());
-        weixinVoteUserWork.setWorkId(1);
+        weixinVoteUserWork.setWorkId(8);
         weixinVoteUserWork.setOpenId("");
         weixinVoteUserWork.setIp(0L);
         weixinVoteUserWork.setExt1("");
@@ -52,6 +52,7 @@ public class WeixinVoteUserWorkServiceImplTest {
 
         String s = weixinVoteUserWorkService.judgeVoteLegal(weixinVoteUserWork);
         log.info("查询出来的数据：" + s);
+
     }
 
 

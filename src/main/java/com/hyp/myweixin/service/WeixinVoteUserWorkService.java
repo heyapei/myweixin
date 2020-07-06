@@ -15,6 +15,9 @@ import java.util.List;
 public interface WeixinVoteUserWorkService {
 
 
+
+
+
     /**
      * 按照时间范围查询用户对某个作品的投票数据 如果没有传入开始结束/结束时间 则直接取今天的时间开始/结束
      * @param openId

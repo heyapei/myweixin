@@ -47,6 +47,32 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
 
     /**
+     * 查询用户名下的活动按照活动的状态值
+     *
+     * @param userId 用户ID
+     * @param status 活动状态值
+     * @return
+     */
+    @Override
+    public List<WeixinVoteBase> getWeixinVoteBaseByUserIdAndStatus(int userId, int status) {
+        Example example = new Example(WeixinVoteBase.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.orderBy("activeShowOrder").desc();
+        if (userId > 0) {
+            criteria.andEqualTo("createSysUserId", userId);
+        }
+        criteria.andEqualTo("status", status);
+        List<WeixinVoteBase> weixinVoteBases = null;
+        try {
+            weixinVoteBases = weixinVoteBaseMapper.selectByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("查询用户名下的活动按照活动的状态值错误，错误原因{}", e.toString());
+        }
+        return weixinVoteBases;
+    }
+
+    /**
      * 通过活动的ID查询活动的详情 完整实体类
      *
      * @param workId 活动ID

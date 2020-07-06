@@ -5,6 +5,8 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 
+import java.util.List;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -12,6 +14,16 @@ import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
  * @Description: TODO
  */
 public interface WeixinVoteBaseService {
+
+    /**
+     * 查询用户名下的活动按照活动的状态值
+     *
+     * @param userId 用户ID
+     * @param status 活动状态值
+     * @return
+     */
+    List<WeixinVoteBase> getWeixinVoteBaseByUserIdAndStatus(int userId, int status);
+
 
     /**
      * 通过活动的ID查询活动的详情 完整实体类
@@ -26,7 +38,7 @@ public interface WeixinVoteBaseService {
      * 保存活动基础表
      *
      * @param weixinVoteBase
-     * @return
+     * @return 主键
      */
     Integer saveVoteBase(WeixinVoteBase weixinVoteBase);
 

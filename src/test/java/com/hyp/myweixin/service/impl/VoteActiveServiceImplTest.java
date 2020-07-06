@@ -1,5 +1,4 @@
 package com.hyp.myweixin.service.impl;
-import java.util.Date;
 
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.service.VoteActiveService;
@@ -9,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
 
 
 /**
@@ -24,6 +25,13 @@ public class VoteActiveServiceImplTest {
 
     @Autowired
     private VoteActiveService voteActiveService;
+
+
+    @Test
+    public void createBaseVoteWork() {
+        Integer baseVoteWork = voteActiveService.createBaseVoteWork(27);
+        log.info("查询结果：{}", baseVoteWork);
+    }
 
     @Test
     public void createVoteWork() {

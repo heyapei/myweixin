@@ -36,6 +36,69 @@ public class VoteActiveController {
     private VoteActiveService voteActiveService;
 
 
+    /**
+     * 这个过程中 要检查是否还有未创建完成的数据
+     *
+     * @param httpServletRequest
+     * @param userId             用户的ID
+     * @return
+     */
+    @PostMapping("create/base/votework")
+    public Result createBaseVoteWork(HttpServletRequest httpServletRequest,
+                                     int userId) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        Integer baseVoteWork = voteActiveService.createBaseVoteWork(userId);
+        if (baseVoteWork <= 0) {
+            return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
+        }
+        return Result.buildResult(Result.Status.OK, baseVoteWork);
+    }
+
+    /**
+     * 保存对应的数据 图片上传完成后直接写入数据库对应的活动中去
+     *
+     * @param httpServletRequest
+     * @param userId             用户的ID
+     * @return
+     */
+    @PostMapping("create/base/savepageandimg")
+    public Result createBaseVoteWorkSavePageAndImg(HttpServletRequest httpServletRequest,
+                                                   int userId,
+                                                   int voteWorkId,
+                                                   String activeText,
+                                                   String activeImg,
+                                                   String type
+    ) {
+
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        Integer baseVoteWorkSavePageAndImg = voteActiveService.createBaseVoteWorkSavePageAndImg(userId, voteWorkId, type, activeText, activeImg);
+        if (baseVoteWorkSavePageAndImg <= 0) {
+            return Result.buildResult(Result.Status.DATA_IS_WRONG,
+                    "数据未能保存成功，原因如下：用户没有未创建完成的活动/" +
+                            "该不属于该用户/" +
+                            "上传的文件数据没有指定文件类型");
+        }
+        return Result.buildResult(Result.Status.OK);
+    }
+
+
+    /**
+     * 基本上可以弃用了 没有必要了
+     *
+     * @param httpServletRequest
+     * @param weixinVoteWorkDTO
+     * @return
+     */
+    @Deprecated
     @PostMapping("create/votework")
     public Result createVoteWork(HttpServletRequest httpServletRequest, @Valid WeixinVoteWorkDTO weixinVoteWorkDTO) {
         /*鉴权*/

@@ -79,7 +79,7 @@ public class WeixinVoteBase {
     private Integer activeShowOrder = 0;
 
     /**
-     * 0 待审核 1上线  2未开始 3已结束
+     * 0 待审核 1上线  2未开始 3已结束 4未启动
      */
     private Integer status = 0;
 

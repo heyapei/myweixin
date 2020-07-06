@@ -10,6 +10,7 @@ import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.fileutil.MyFileUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -44,6 +46,123 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     private WeixinVoteConfService weixinVoteConfService;
     @Autowired
     private WeixinVoteOrganisersService weixinVoteOrganisersService;
+    @Autowired
+    private WeixinVoteUserService weixinVoteUserService;
+
+    /**
+     * 根据以下数据进行更新操作
+     *
+     * @param userId     用户ID
+     * @param workId     活动ID
+     * @param type       上传的数据类型
+     * @param activeText 上传的文本 非必须
+     * @param activeImg  上传的图片 使用英文;拼接好的
+     * @return
+     */
+    @Override
+    public Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type, String activeText, String activeImg) {
+        WeixinVoteBase weixinVoteBase = null;
+        // 先查询出来该用户下活动状态为4（未创建完成）的活动
+        List<WeixinVoteBase> weixinVoteBaseByUserIdAndStatus = weixinVoteBaseService.getWeixinVoteBaseByUserIdAndStatus(userId, 4);
+        if (weixinVoteBaseByUserIdAndStatus != null && weixinVoteBaseByUserIdAndStatus.size() > 0) {
+            weixinVoteBase = weixinVoteBaseByUserIdAndStatus.get(0);
+        } else {
+            log.error("该用户:{}，没有未创建完成的活动", userId);
+            return -1;
+        }
+
+        if (weixinVoteBase.getId() != workId) {
+            log.error("活动：{}，不属于该用户：{}", workId, userId);
+            return -1;
+        }
+
+        if (StringUtils.isBlank(type)) {
+            log.error("上传的文件数据没有指定文件类型：{}", type);
+        }
+
+        /*如果类型为activeCoverImg 则保存 封面图 和 活动标题*/
+        if (type.equalsIgnoreCase("activeCoverImg")) {
+            weixinVoteBase.setActiveImg(activeImg);
+            weixinVoteBase.setActiveName(activeText);
+        }
+
+        /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
+        if (type.equalsIgnoreCase("activeDesc")) {
+            if (activeImg.contains(";")) {
+                String[] split = activeImg.split(";");
+                StringBuffer imgUrlS = new StringBuffer();
+                for (String s : split) {
+                    imgUrlS.append(s).append(";");
+                }
+                weixinVoteBase.setActiveDescImg(imgUrlS.toString());
+            }
+            weixinVoteBase.setActiveDesc(activeText);
+        }
+
+        /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
+        if (type.equalsIgnoreCase("activeReward")) {
+            if (activeImg.contains(";")) {
+                String[] split = activeImg.split(";");
+                StringBuffer imgUrlS = new StringBuffer();
+                for (String s : split) {
+                    imgUrlS.append(s).append(";");
+                }
+                weixinVoteBase.setActiveRewardImg(imgUrlS.toString());
+            }
+            weixinVoteBase.setActiveReward(activeText);
+        }
+        /*创建时间每次都会更新的*/
+        weixinVoteBase.setCreateTime(new Date());
+        return weixinVoteBaseService.saveVoteBase(weixinVoteBase);
+    }
+
+    /**
+     * 返回活动的ID 如果用户没有创建完成的数据则创建一个 ，如果有则返回新的活动ID
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public Integer createBaseVoteWork(int userId) {
+        if (userId <= 0) {
+            return -1;
+        }
+        WeixinVoteUser userById = weixinVoteUserService.getUserById(userId);
+        if (userById == null) {
+            return -1;
+        }
+        List<WeixinVoteBase> weixinVoteBaseByUserIdAndStatus = weixinVoteBaseService.getWeixinVoteBaseByUserIdAndStatus(userId, 4);
+        if (weixinVoteBaseByUserIdAndStatus != null && weixinVoteBaseByUserIdAndStatus.size() > 0) {
+            return weixinVoteBaseByUserIdAndStatus.get(0).getId();
+        }
+        WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
+        weixinVoteBase.setId(0);
+        weixinVoteBase.setActiveImg("");
+        weixinVoteBase.setActiveName("");
+        weixinVoteBase.setActiveDesc("");
+        weixinVoteBase.setActiveDescImg("");
+        weixinVoteBase.setActiveReward("");
+        weixinVoteBase.setActiveRewardImg("");
+        weixinVoteBase.setActiveStartTime(new Date());
+        weixinVoteBase.setActiveEndTime(new Date());
+        weixinVoteBase.setActivePublic(0);
+        weixinVoteBase.setActiveShowOrder(0);
+        weixinVoteBase.setStatus(4);
+        weixinVoteBase.setCreateTime(new Date());
+        weixinVoteBase.setUpdateTime(new Date());
+        weixinVoteBase.setCreateSysUserId(userId);
+        weixinVoteBase.setViewCountNum(0);
+        weixinVoteBase.setVoteCountNum(0);
+        Integer saveVoteBase = null;
+        try {
+            saveVoteBase = weixinVoteBaseService.saveVoteBase(weixinVoteBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("新增用户活动创建失败，失败原因{}", e.toString());
+        }
+
+        return saveVoteBase;
+    }
 
     /**
      * 创建活动
