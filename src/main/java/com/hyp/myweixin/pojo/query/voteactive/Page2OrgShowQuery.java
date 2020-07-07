@@ -1,6 +1,5 @@
 package com.hyp.myweixin.pojo.query.voteactive;
 
-import com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -12,7 +11,7 @@ import javax.validation.constraints.NotNull;
  * @Description: TODO
  */
 @Data
-public class Page2Query {
+public class Page2OrgShowQuery {
 
     @NotNull(message = "用户ID不可以为空")
     private Integer userId;
@@ -29,6 +28,23 @@ public class Page2Query {
     @NotNull(message = "是否填写了公司信息不可以为空")
     private Integer hasOrganisers;
 
-    private WeixinVoteOrganisers weixinVoteOrganisers;
+    /**
+     * 公司
+     */
+    private String orgName;
+    /**
+     * 公司二维码
+     */
+    private String orgWeixinQrCode;
+
+    /**
+     * 公司的logo
+     */
+    private String orgLogoImg;
+    /**
+     * 公司联系电话
+     */
+    private String orgPhone;
+
 
 }

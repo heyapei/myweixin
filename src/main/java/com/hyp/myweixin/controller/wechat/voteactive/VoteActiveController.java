@@ -3,11 +3,13 @@ package com.hyp.myweixin.controller.wechat.voteactive;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
+import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.VoteActiveService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +36,37 @@ public class VoteActiveController {
     private SecretKeyPropertiesValue secretKeyPropertiesValue;
     @Autowired
     private VoteActiveService voteActiveService;
+
+
+    /**
+     * 保存第二页的内容 如果以前没有则新建 如果有则更新
+     *
+     * @param httpServletRequest
+     * @param page2OrgShowQuery  保存用实体
+     * @return
+     */
+    @PostMapping("create/base/saveorgshow")
+    public Result createOrgShow(HttpServletRequest httpServletRequest,
+                                @Validated Page2OrgShowQuery page2OrgShowQuery
+    ) {
+
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        Integer page2AndImg = voteActiveService.createPage2AndImg(page2OrgShowQuery);
+        if (page2AndImg == null || page2AndImg <= 0) {
+            return Result.buildResult(Result.Status.DATA_IS_WRONG,
+                    "数据未能保存成功，原因如下：创建人信息没有发现/" +
+                            "活动没有发现/" +
+                            "活动不属于当前用户/" +
+                            "创建、保存配置项错误/" +
+                            "创建、保存公司信息错误");
+
+        }
+        return Result.buildResult(Result.Status.OK);
+    }
 
 
     /**
@@ -81,7 +114,7 @@ public class VoteActiveController {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
         Integer baseVoteWorkSavePageAndImg = voteActiveService.createBaseVoteWorkSavePageAndImg(userId, voteWorkId, type, activeText, activeImg);
-        if (baseVoteWorkSavePageAndImg <= 0) {
+        if (baseVoteWorkSavePageAndImg == null || baseVoteWorkSavePageAndImg <= 0) {
             return Result.buildResult(Result.Status.DATA_IS_WRONG,
                     "数据未能保存成功，原因如下：用户没有未创建完成的活动/" +
                             "该不属于该用户/" +

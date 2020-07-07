@@ -1,6 +1,8 @@
 package com.hyp.myweixin.service.impl;
 
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
+import com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers;
+import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.service.VoteActiveService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -26,6 +28,32 @@ public class VoteActiveServiceImplTest {
     @Autowired
     private VoteActiveService voteActiveService;
 
+
+    @Test
+    public void createPage2AndImg() {
+        Page2OrgShowQuery page2Query = new Page2OrgShowQuery();
+        page2Query.setUserId(27);
+        page2Query.setVoteWorkId(41);
+        page2Query.setIsShowIndex(0);
+        page2Query.setShareImg("活动分享图");
+        page2Query.setHasOrganisers(1);
+        WeixinVoteOrganisers weixinVoteOrganisers = new WeixinVoteOrganisers();
+        weixinVoteOrganisers.setId(0);
+        weixinVoteOrganisers.setVoteBaseId(41);
+        weixinVoteOrganisers.setName("公司的名字");
+        weixinVoteOrganisers.setLogoImg("公司的logo图片");
+        weixinVoteOrganisers.setOrganisersDesc("");
+        weixinVoteOrganisers.setPhone("");
+        weixinVoteOrganisers.setAddress("");
+        weixinVoteOrganisers.setCompany("");
+        weixinVoteOrganisers.setType("");
+        weixinVoteOrganisers.setJobMajor("");
+        weixinVoteOrganisers.setBuildTime(new Date());
+        weixinVoteOrganisers.setCorporate("");
+        weixinVoteOrganisers.setWeixinQrCode("微信图片");
+        Integer page2AndImg = voteActiveService.createPage2AndImg(page2Query);
+        log.info("查询结果：{}", page2AndImg);
+    }
 
     @Test
     public void createBaseVoteWork() {

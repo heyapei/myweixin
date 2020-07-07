@@ -1,6 +1,7 @@
 package com.hyp.myweixin.service;
 
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
+import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +12,23 @@ import org.springframework.web.multipart.MultipartFile;
  * @Description: TODO
  */
 public interface VoteActiveService {
+
+
+
+    /**
+     * 添加第二屏幕的内容
+     * 1. 是否展示到首页 必须
+     * 2. 活动分享图 必须
+     * 3. 是否有主办方信息 必须
+     * 4. 主办方信息
+     * 逻辑：
+     * 1.检查是否有配置数据 如果有则更新没有就生成 生成过程中写入数据
+     * 2. 检查主办方信息 如果有则更新没有就生成 生成过程中写入数据
+     *
+     * @param page2Query 查询实体类
+     * @return
+     */
+    Integer createPage2AndImg(Page2OrgShowQuery page2Query);
 
 
     /**

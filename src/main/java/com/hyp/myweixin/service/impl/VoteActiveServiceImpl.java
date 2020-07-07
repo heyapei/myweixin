@@ -5,6 +5,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.ResourceSimpleDTO;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.modal.*;
+import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -49,6 +50,106 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
 
+
+    @Override
+    public Integer createPage2AndImg(Page2OrgShowQuery page2Query) {
+        WeixinVoteBase weixinVoteBaseByWorkId;
+        Integer userId = page2Query.getUserId();
+        Integer voteWorkId = page2Query.getVoteWorkId();
+        if (judgeIsOperatorLegal(userId, voteWorkId)) {
+            weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
+            /*是否公开到首页 0默认不公开 1公开*/
+            weixinVoteBaseByWorkId.setActivePublic(page2Query.getIsShowIndex());
+            WeixinVoteConf weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(voteWorkId);
+            if (weixinVoteConf == null) {
+                weixinVoteConf = new WeixinVoteConf();
+                weixinVoteConf.setActiveVoteBaseId(voteWorkId);
+                weixinVoteConf.setActiveConfMusicId(0);
+                weixinVoteConf.setActiveConfRepeatVote(0);
+                weixinVoteConf.setActiveConfVoteType(0);
+                weixinVoteConf.setActiveConfSignUp(0);
+                weixinVoteConf.setActiveConfVerify(0);
+                weixinVoteConf.setActiveConfNumHide(0);
+                weixinVoteConf.setActiveConfUserHide(0);
+                weixinVoteConf.setActiveConfRankHide(0);
+                weixinVoteConf.setCreateTime(new Date());
+                weixinVoteConf.setUpdateTime(new Date());
+                weixinVoteConf.setActiveUploadStartTime(new Date());
+                weixinVoteConf.setActiveUploadEndTime(new Date());
+                weixinVoteConf.setActiveConfSex("");
+                weixinVoteConf.setActiveConfRegion("");
+                weixinVoteConf.setActiveConfNeedWeixin(0);
+                weixinVoteConf.setActiveConfNeedPhone(0);
+                weixinVoteConf.setActiveConfShareImg(page2Query.getShareImg());
+                weixinVoteConfService.saveWeixinVoteConf(weixinVoteConf);
+            } else {
+                weixinVoteConf.setActiveConfShareImg(page2Query.getShareImg());
+                weixinVoteConf.setUpdateTime(new Date());
+                weixinVoteConfService.updateWeixinVoteConf(weixinVoteConf);
+            }
+
+            /*hasOrganisers等于1标识有公司信息 0标识没有*/
+            if (page2Query.getHasOrganisers() == 1) {
+                WeixinVoteOrganisers weixinVoteOrganisers = weixinVoteOrganisersService.getWeixinVoteConfByVoteWorkId(voteWorkId);
+                if (weixinVoteOrganisers == null) {
+                    weixinVoteOrganisers = new WeixinVoteOrganisers();
+                    weixinVoteOrganisers.setVoteBaseId(voteWorkId);
+                    weixinVoteOrganisers.setName(page2Query.getOrgName());
+                    weixinVoteOrganisers.setLogoImg(page2Query.getOrgLogoImg());
+                    weixinVoteOrganisers.setOrganisersDesc("");
+                    weixinVoteOrganisers.setPhone(page2Query.getOrgPhone());
+                    weixinVoteOrganisers.setAddress("");
+                    weixinVoteOrganisers.setCompany("");
+                    weixinVoteOrganisers.setType("");
+                    weixinVoteOrganisers.setJobMajor("");
+                    weixinVoteOrganisers.setBuildTime(new Date());
+                    weixinVoteOrganisers.setCorporate("");
+                    weixinVoteOrganisers.setWeixinQrCode(page2Query.getOrgWeixinQrCode());
+                    Integer saveWeixinVoteOrganisers = weixinVoteOrganisersService.saveWeixinVoteOrganisers(weixinVoteOrganisers);
+                    if (saveWeixinVoteOrganisers == null || saveWeixinVoteOrganisers <= 0) {
+                        return -1;
+                    }
+                } else {
+                    weixinVoteOrganisers.setName(page2Query.getOrgName());
+                    weixinVoteOrganisers.setLogoImg(page2Query.getOrgLogoImg());
+                    weixinVoteOrganisers.setPhone(page2Query.getOrgPhone());
+                    weixinVoteOrganisers.setWeixinQrCode(page2Query.getOrgWeixinQrCode());
+                    Integer updateSelectiveWeixinVoteOrganisers = weixinVoteOrganisersService.updateSelectiveWeixinVoteOrganisers(weixinVoteOrganisers);
+                    if (updateSelectiveWeixinVoteOrganisers == null || updateSelectiveWeixinVoteOrganisers <= 0) {
+                        return -1;
+                    }
+                }
+            }
+        } else {
+            return -1;
+        }
+        return 1;
+    }
+
+    /**
+     * 判断操作是否合理，主要是 1人员信息是否正确 2该人员是否允许修改
+     *
+     * @param userId
+     * @param voteWorkId
+     * @return
+     */
+    private boolean judgeIsOperatorLegal(Integer userId, Integer voteWorkId) {
+        WeixinVoteUser userById = weixinVoteUserService.getUserById(userId);
+        if (userById == null) {
+            return false;
+        }
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
+        if (weixinVoteBaseByWorkId == null) {
+            return false;
+        }
+
+        if (!weixinVoteBaseByWorkId.getCreateSysUserId().equals(userId)) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * 根据以下数据进行更新操作
      *
@@ -91,7 +192,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
 
         /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
         if (type.equalsIgnoreCase("activeDesc")) {
-            if (activeImg!=null && activeImg.contains(";")) {
+            if (activeImg != null && activeImg.contains(";")) {
                 String[] split = activeImg.split(";");
                 StringBuffer imgUrlS = new StringBuffer();
                 for (String s : split) {
@@ -104,7 +205,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
 
         /*如果类型是activeReward 则保存 奖励文字 和 奖励图片*/
         if (type.equalsIgnoreCase("activeReward")) {
-            if (activeImg!=null && activeImg.contains(";")) {
+            if (activeImg != null && activeImg.contains(";")) {
                 String[] split = activeImg.split(";");
                 StringBuffer imgUrlS = new StringBuffer();
                 for (String s : split) {
