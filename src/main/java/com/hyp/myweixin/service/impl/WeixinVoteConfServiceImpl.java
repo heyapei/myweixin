@@ -24,25 +24,88 @@ public class WeixinVoteConfServiceImpl implements WeixinVoteConfService {
     private WeixinVoteConfMapper weixinVoteConfMapper;
 
     /**
-     * 通过活动的ID查询配置文件
+     * 保存配置信息 请填写完整的数据 需要返回一个主键
      *
-     * @param voteWorkId
+     * @param weixinVoteConf 完成的数据
+     * @return 主键
+     */
+    @Override
+    public Integer saveWeixinVoteConf(WeixinVoteConf weixinVoteConf) {
+
+        int i = 0;
+        try {
+            i = weixinVoteConfMapper.insertUseGeneratedKeys(weixinVoteConf);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("保存配置信息并返回主键错误，错误原因：{}", e.toString());
+        }
+        if (i > 0) {
+            return weixinVoteConf.getId();
+        }
+        return null;
+    }
+
+    /**
+     * 通过主键查询配置信息
+     *
+     * @param id 主键
+     * @return 配置表的信息
+     */
+    @Override
+    public WeixinVoteConf getWeixinVoteConfByID(Integer id) {
+        WeixinVoteConf weixinVoteConf = null;
+        try {
+            weixinVoteConf = weixinVoteConfMapper.selectByPrimaryKey(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("通过主键查询配置信息错误，错误原因：{}", e.toString());
+
+        }
+        return weixinVoteConf;
+    }
+
+    /**
+     * 通过活动查询当前活动的配置表
+     *
+     * @param baseWorkId
      * @return
      */
     @Override
-    public WeixinVoteConf getWeixinVoteConfByVoteWorkId(Integer voteWorkId) {
+    public WeixinVoteConf getWeixinVoteConfByVoteWorkId(Integer baseWorkId) {
+
+
         Example example = new Example(WeixinVoteConf.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("activeVoteBaseId", voteWorkId);
+        criteria.andEqualTo("activeVoteBaseId", baseWorkId);
+
         WeixinVoteConf weixinVoteConf = null;
         try {
             weixinVoteConf = weixinVoteConfMapper.selectOneByExample(example);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("通过活动的ID查询配置文件错误，错误原因：{}", e.toString());
+            log.error("通过活动查询当前活动的配置表错误，错误原因：{}", e.toString());
         }
 
         return weixinVoteConf;
+    }
+
+    /**
+     * 更新 只更新传过来的实体中有值的内容数据 按照主键
+     *
+     * @param weixinVoteConf 需要更新的实体类
+     * @return 受影响的行数
+     */
+    @Override
+    public Integer updateWeixinVoteConf(WeixinVoteConf weixinVoteConf) {
+        int i = 0;
+        try {
+            i = weixinVoteConfMapper.updateByPrimaryKeySelective(weixinVoteConf);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            log.error("按照主键只更新传过来的实体中有值的内容数据错误，错误原因：{}", e.toString());
+        }
+        return i;
     }
 
     /**
@@ -52,7 +115,7 @@ public class WeixinVoteConfServiceImpl implements WeixinVoteConfService {
      * @return
      */
     @Override
-    public Integer saveWeixinVoteConf(WeixinVoteConf weixinVoteConf) {
+    public Integer saveSelectiveWeixinVoteConf(WeixinVoteConf weixinVoteConf) {
 
         int i = 0;
         try {

@@ -7,6 +7,7 @@ import com.hyp.myweixin.service.WeixinVoteOrganisersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * @Author 何亚培
@@ -22,13 +23,93 @@ public class WeixinVoteOrganisersServiceImpl implements WeixinVoteOrganisersServ
 
 
     /**
+     * 保存公司信息 请填写完整的数据 需要返回一个主键
+     *
+     * @param weixinVoteOrganisers 完成的数据
+     * @return 主键
+     */
+    @Override
+    public Integer saveWeixinVoteOrganisers(WeixinVoteOrganisers weixinVoteOrganisers) {
+        int i = 0;
+        try {
+            i = weixinVoteOrganisersMapper.insertUseGeneratedKeys(weixinVoteOrganisers);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("保存公司信息完整的数据返回一个主键错误，错误原因：{}", e.toString());
+        }
+        if (i > 0) {
+            return weixinVoteOrganisers.getId();
+        }
+        return null;
+    }
+
+    /**
+     * 通过主键查询公司信息
+     *
+     * @param id 主键
+     * @return 公司信息
+     */
+    @Override
+    public WeixinVoteOrganisers getWeixinVoteOrganisersByID(Integer id) {
+        WeixinVoteOrganisers weixinVoteOrganisers = null;
+        try {
+            weixinVoteOrganisers = weixinVoteOrganisersMapper.selectByPrimaryKey(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("通过主键查询公司信息错误，错误原因：{}", e.toString());
+        }
+        return weixinVoteOrganisers;
+    }
+
+    /**
+     * 通过活动查询当前活动的公司信息
+     *
+     * @param baseWorkId 活动ID
+     * @return 公司信息
+     */
+    @Override
+    public WeixinVoteOrganisers getWeixinVoteConfByVoteWorkId(Integer baseWorkId) {
+        Example example = new Example(WeixinVoteOrganisers.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("voteBaseId", baseWorkId);
+
+        WeixinVoteOrganisers weixinVoteOrganisers = null;
+        try {
+            weixinVoteOrganisers = weixinVoteOrganisersMapper.selectOneByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("通过活动查询当前活动的公司信息，错误原因：{}", e.toString());
+        }
+        return weixinVoteOrganisers;
+    }
+
+    /**
+     * 更新公司信息 只更新传过来的实体中有值的内容数据 按照主键
+     *
+     * @param weixinVoteOrganisers 需要更新的实体类
+     * @return 受影响的行数
+     */
+    @Override
+    public Integer updateSelectiveWeixinVoteOrganisers(WeixinVoteOrganisers weixinVoteOrganisers) {
+
+        int i = 0;
+        try {
+            i = weixinVoteOrganisersMapper.updateByPrimaryKeySelective(weixinVoteOrganisers);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("更新公司信息错误，错误原因：{}", e.toString());
+        }
+        return i;
+    }
+
+    /**
      * 保存活动公司信息
      *
      * @param weixinVoteOrganisers
      * @return
      */
     @Override
-    public Integer saveWeixinVoteOrganisers(WeixinVoteOrganisers weixinVoteOrganisers) {
+    public Integer saveSelectiveWeixinVoteOrganisers(WeixinVoteOrganisers weixinVoteOrganisers) {
         int i = 0;
         try {
             i = weixinVoteOrganisersMapper.insertSelective(weixinVoteOrganisers);

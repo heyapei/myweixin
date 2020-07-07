@@ -115,7 +115,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             weixinVoteBase.setActiveReward(activeText);
         }
         /*创建时间每次都会更新的*/
-        weixinVoteBase.setCreateTime(new Date());
+        weixinVoteBase.setUpdateTime(new Date());
         return weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
     }
 
@@ -223,7 +223,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             /*提取weixinVoteOrganisers*/
             WeixinVoteOrganisers weixinVoteOrganisersWithWeixinVoteWorkDTO = getWeixinVoteOrganisersWithWeixinVoteWorkDTO(weixinVoteWorkDTO);
             weixinVoteOrganisersWithWeixinVoteWorkDTO.setVoteBaseId(saveVoteBaseKey);
-            Integer saveWeixinVoteOrganisers = weixinVoteOrganisersService.saveWeixinVoteOrganisers(weixinVoteOrganisersWithWeixinVoteWorkDTO);
+            Integer saveWeixinVoteOrganisers = weixinVoteOrganisersService.saveSelectiveWeixinVoteOrganisers(weixinVoteOrganisersWithWeixinVoteWorkDTO);
             resultVal = saveWeixinVoteOrganisers;
             if (saveWeixinVoteOrganisers != null && saveWeixinVoteOrganisers > 0) {
                 log.info("保存活动主办方信息成功");
@@ -232,7 +232,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
 
                 weixinVoteConfWithWeixinVoteWorkDTO.setActiveVoteBaseId(saveVoteBaseKey);
 
-                Integer saveWeixinVoteConf = weixinVoteConfService.saveWeixinVoteConf(weixinVoteConfWithWeixinVoteWorkDTO);
+                Integer saveWeixinVoteConf = weixinVoteConfService.saveSelectiveWeixinVoteConf(weixinVoteConfWithWeixinVoteWorkDTO);
                 resultVal = saveWeixinVoteConf;
                 if (saveWeixinVoteConf != null && saveWeixinVoteConf > 0) {
                     log.info("保存活动配置信息成功");
