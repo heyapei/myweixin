@@ -3,11 +3,25 @@
 ## 2020年5月28日23点22分 完成了最基础本地小程序的调用后端数据的实验
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
 
+```$xslt
+2020年7月8日 
+新增了活动创建第三页的接口
+新增了一个MyErrorList工具类 这个工具类主要是为了能够判断步骤的错误 另外也可以作为返回值的基础
+```
 
 ```$xslt
 2020年7月7日
 添加了第二页的信息 但是现在出现了一个问题 第一页有多个图片，但是还没有上传完成就跳转了
 导致数据没有上传回来
+
+记录一下错误
+如果使用了 selectOneByExample方法去查询，如果数据只有一个是符合查询条件的 就返回一个是正确的
+那么如果符合条件example的数据有多个就会出现这种情况了 会有错误的 
+所以我觉得还是使用selectByExample这样会返回一个list集合 但是这样可以很好的处理这个错误
+如果很需要这种逻辑的 就是必须只能有一个倒是可以尝试使用这个
+org.mybatis.spring.MyBatisSystemException: 
+nested exception is org.apache.ibatis.exceptions.TooManyResultsException: 
+Expected one result (or null) to be returned by selectOne(), but found: 3
 ```
 
 

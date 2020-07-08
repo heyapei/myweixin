@@ -3,7 +3,9 @@ package com.hyp.myweixin.service.impl;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
 import com.hyp.myweixin.service.VoteActiveService;
+import com.hyp.myweixin.utils.MyErrorList;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,26 @@ public class VoteActiveServiceImplTest {
     @Autowired
     private VoteActiveService voteActiveService;
 
+
+    @Test
+    public void createPage3Regulation() {
+        Page3RegulationQuery page3RegulationQuery = new Page3RegulationQuery();
+        page3RegulationQuery.setUserId(27);
+        page3RegulationQuery.setVoteWorkId(42);
+        page3RegulationQuery.setActiveStartTime("2020-06-01 12:11");
+        page3RegulationQuery.setActiveEndTime("2020-06-02 12:11");
+        page3RegulationQuery.setActiveConfRepeatVote(1);
+        page3RegulationQuery.setActiveConfVoteType(12);
+        page3RegulationQuery.setActiveConfSignUp(0);
+        page3RegulationQuery.setActiveUploadStartTime("2020-06-02 12:11");
+        page3RegulationQuery.setActiveUploadEndTime("2020-06-02 12:11");
+        page3RegulationQuery.setActiveConfNeedWeixin(1);
+        page3RegulationQuery.setActiveConfNeedPhone(1);
+
+        MyErrorList page3Regulation = voteActiveService.createPage3Regulation(page3RegulationQuery);
+        log.info("查询结果：{}", page3Regulation.toPlainString());
+
+    }
 
     @Test
     public void createPage2AndImg() {

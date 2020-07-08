@@ -74,6 +74,7 @@ public class WeixinResourceServiceImpl implements WeixinResourceService {
 
     /**
      * 通过md5值获取数据
+     * 要是用户点的很快就会出现多个md5值相同的内容 那么这里容易出现问题
      *
      * @param md5 文件md5值
      * @return
@@ -84,7 +85,12 @@ public class WeixinResourceServiceImpl implements WeixinResourceService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("md5", md5);
         try {
-            return weixinResourceMapper.selectOneByExample(example);
+            List<WeixinResource> weixinResources = weixinResourceMapper.selectByExample(example);
+            if (weixinResources != null && weixinResources.size() > 0) {
+                return weixinResources.get(0);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             log.error(e.toString());
             throw new MyDefinitionException("通过md5值获取数据错误");

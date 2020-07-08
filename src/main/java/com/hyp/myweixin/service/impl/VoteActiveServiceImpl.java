@@ -6,9 +6,13 @@ import com.hyp.myweixin.pojo.dto.ResourceSimpleDTO;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
+import com.hyp.myweixin.utils.MyErrorList;
+import com.hyp.myweixin.utils.dateutil.DateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import com.hyp.myweixin.utils.fileutil.MyFileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +55,165 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     private WeixinVoteUserService weixinVoteUserService;
 
 
+    /**
+     * 添加第三屏幕的内容
+     * 1. 活动开始时间 必须
+     * 2. 活动结束时间 必须
+     * 3. 是否可以对对手重复点赞 必须
+     * 4. 是否开启在线报名 必须
+     * 5. 报名开始时间 必须
+     * 6. 报名结束时间 必须
+     * 7. 报名手机号必填 必填
+     * 8. 报名微信号必填 必填
+     * 逻辑：
+     * 1.检查是否有配置数据 如果有则更新没有就生成 生成过程中写入数据
+     *
+     * @param page3RegulationQuery 查询实体类
+     * @return
+     */
+    @Override
+    public MyErrorList createPage3Regulation(Page3RegulationQuery page3RegulationQuery) {
+
+        MyErrorList myErrorList = new MyErrorList();
+        /*判断值是否为空*/
+        if (page3RegulationQuery == null) {
+            myErrorList.add("创建第三页信息的参数不能为空");
+        }
+        /*判断活动是否属于当前用户 保证用户和活动的有效性*/
+        Integer userId = page3RegulationQuery.getUserId();
+        Integer voteWorkId = page3RegulationQuery.getVoteWorkId();
+        if (myErrorList.noErrors()) {
+            if (!judgeIsOperatorLegal(userId, voteWorkId)) {
+                myErrorList.add("人员信息或活动内容错误");
+            }
+        }
+
+        /*查找当前的活动*/
+        WeixinVoteBase weixinVoteBaseByWorkId = null;
+        if (myErrorList.noErrors()) {
+            weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
+            if (weixinVoteBaseByWorkId == null) {
+                myErrorList.add("未能查找到正确的活动的内容");
+            }
+        }
+
+        /*绑定需要更新的数据*/
+        /*活动开始结束时间*/
+        if (myErrorList.noErrors()) {
+            Date date = MyDateUtil.StringToDate(page3RegulationQuery.getActiveStartTime(), DateStyle.YYYY_MM_DD_HH_MM);
+            if (date != null) {
+                weixinVoteBaseByWorkId.setActiveStartTime(date);
+            } else {
+                myErrorList.add("解析活动开始时间错误");
+            }
+        }
+        if (myErrorList.noErrors()) {
+            Date date = MyDateUtil.StringToDate(page3RegulationQuery.getActiveEndTime(), DateStyle.YYYY_MM_DD_HH_MM);
+            if (date != null) {
+                weixinVoteBaseByWorkId.setActiveEndTime(date);
+            } else {
+                myErrorList.add("解析活动结束时间错误");
+            }
+        }
+
+
+        if (myErrorList.noErrors()) {
+            //log.info("当前的活动内容是：{}", weixinVoteBaseByWorkId.toString());
+            weixinVoteBaseByWorkId.setUpdateTime(new Date());
+            int i = weixinVoteBaseService.updateVoteBaseVote(weixinVoteBaseByWorkId);
+            if (i <= 0) {
+                myErrorList.add("保存活动开始/结束时间错误");
+            }
+        }
+
+
+        /*是否可以重复投票 这里需要先判断活动是否已经有活动配置信息了*/
+        WeixinVoteConf weixinVoteConf = null;
+        if (myErrorList.noErrors()) {
+            log.info("当前的活动ID：{}", voteWorkId);
+            weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(voteWorkId);
+            if (weixinVoteConf == null) {
+                myErrorList.add("未发现当前活动的配置内容");
+            }
+        }
+        if (myErrorList.noErrors()) {
+            Integer activeConfRepeatVote = page3RegulationQuery.getActiveConfRepeatVote();
+            //log.info("允许重复投票吗？"+activeConfRepeatVote);
+            /* 0默认不开启 1开启*/
+            if (activeConfRepeatVote == null || activeConfRepeatVote != 1) {
+                //log.info("不允许");
+                weixinVoteConf.setActiveConfRepeatVote(0);
+                weixinVoteConf.setActiveConfVoteType(1);
+            } else {
+                // log.info("允许");
+                weixinVoteConf.setActiveConfRepeatVote(1);
+                //log.info("允许多少票："+page3RegulationQuery.getActiveConfVoteType());
+                if (page3RegulationQuery.getActiveConfVoteType() == null || page3RegulationQuery.getActiveConfVoteType() == 1) {
+                    //log.info("不允许多票");
+                    weixinVoteConf.setActiveConfVoteType(1);
+                } else {
+                    //log.info("允许多票");
+                    weixinVoteConf.setActiveConfVoteType(page3RegulationQuery.getActiveConfVoteType());
+                }
+            }
+        }
+
+        /*是否允许用户自主上传配置*/
+        if (myErrorList.noErrors()) {
+            Integer activeConfSignUp = page3RegulationQuery.getActiveConfSignUp();
+            if (activeConfSignUp == null || activeConfSignUp == 1) {
+                weixinVoteConf.setActiveConfSignUp(1);
+            } else {
+                weixinVoteConf.setActiveConfSignUp(0);
+                /*报名开始时间*/
+                Date date = MyDateUtil.StringToDate(page3RegulationQuery.getActiveUploadStartTime(), DateStyle.YYYY_MM_DD_HH_MM);
+                if (date != null) {
+                    weixinVoteConf.setActiveUploadStartTime(date);
+                } else {
+                    myErrorList.add("解析报名开始时间错误");
+                }
+                /*报名结束时间*/
+                if (myErrorList.noErrors()) {
+                    date = MyDateUtil.StringToDate(page3RegulationQuery.getActiveUploadEndTime(), DateStyle.YYYY_MM_DD_HH_MM);
+                    if (date != null) {
+                        weixinVoteConf.setActiveUploadEndTime(date);
+                    } else {
+                        myErrorList.add("解析报名结束时间错误");
+                    }
+                }
+
+                /*报名是否需要微信号 0 默认不需要 1 需要*/
+                if (myErrorList.noErrors()) {
+                    Integer activeConfNeedWeixin = page3RegulationQuery.getActiveConfNeedWeixin();
+                    if (activeConfNeedWeixin == null || activeConfNeedWeixin == 0) {
+                        weixinVoteConf.setActiveConfNeedWeixin(0);
+                    } else {
+                        weixinVoteConf.setActiveConfNeedWeixin(1);
+                    }
+                }
+
+                /*报名需要手机号 0 默认不需要 1 需要*/
+                if (myErrorList.noErrors()) {
+                    Integer activeConfNeedPhone = page3RegulationQuery.getActiveConfNeedPhone();
+                    if (activeConfNeedPhone == null || activeConfNeedPhone == 0) {
+                        weixinVoteConf.setActiveConfNeedPhone(0);
+                    } else {
+                        weixinVoteConf.setActiveConfNeedPhone(1);
+                    }
+                }
+            }
+        }
+        if (myErrorList.noErrors()) {
+            weixinVoteConf.setUpdateTime(new Date());
+            Integer integer = weixinVoteConfService.updateWeixinVoteConf(weixinVoteConf);
+            if (integer == null || integer <= 0) {
+                myErrorList.add("保存活动相关配置错误");
+            }
+        }
+
+        return myErrorList;
+    }
+
     @Override
     public Integer createPage2AndImg(Page2OrgShowQuery page2Query) {
         WeixinVoteBase weixinVoteBaseByWorkId;
@@ -60,6 +223,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
             /*是否公开到首页 0默认不公开 1公开*/
             weixinVoteBaseByWorkId.setActivePublic(page2Query.getIsShowIndex());
+            weixinVoteBaseService.updateVoteBaseVote(weixinVoteBaseByWorkId);
             WeixinVoteConf weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(voteWorkId);
             if (weixinVoteConf == null) {
                 weixinVoteConf = new WeixinVoteConf();

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -75,7 +77,12 @@ public class WeixinVoteOrganisersServiceImpl implements WeixinVoteOrganisersServ
 
         WeixinVoteOrganisers weixinVoteOrganisers = null;
         try {
-            weixinVoteOrganisers = weixinVoteOrganisersMapper.selectOneByExample(example);
+            List<WeixinVoteOrganisers> weixinVoteOrganisersList = weixinVoteOrganisersMapper.selectByExample(example);
+            if (weixinVoteOrganisersList != null && weixinVoteOrganisersList.size() > 0) {
+                return weixinVoteOrganisersList.get(0);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("通过活动查询当前活动的公司信息，错误原因：{}", e.toString());

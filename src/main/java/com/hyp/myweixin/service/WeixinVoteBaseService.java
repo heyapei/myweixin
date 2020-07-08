@@ -17,7 +17,7 @@ public interface WeixinVoteBaseService {
 
 
     /**
-     * 更新内容
+     * 更新内容 按照主键 只更新有值的内容
      *
      * @param weixinVoteBase 活动内容
      * @return

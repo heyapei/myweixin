@@ -1,8 +1,11 @@
 package com.hyp.myweixin.service;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
+import com.hyp.myweixin.utils.MyErrorList;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -13,6 +16,24 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface VoteActiveService {
 
+
+    /**
+     * 添加第三屏幕的内容
+     * 1. 活动开始时间 必须
+     * 2. 活动结束时间 必须
+     * 3. 是否可以对对手重复点赞 必须
+     * 4. 是否开启在线报名 必须
+     * 5. 报名开始时间 必须
+     * 6. 报名结束时间 必须
+     * 7. 报名手机号必填 必填
+     * 8. 报名微信号必填 必填
+     * 逻辑：
+     * 1.检查是否有配置数据 如果有则更新没有就生成 生成过程中写入数据
+     *
+     * @param page3RegulationQuery 查询实体类
+     * @return 判断result的值
+     */
+    MyErrorList createPage3Regulation(Page3RegulationQuery page3RegulationQuery);
 
 
     /**

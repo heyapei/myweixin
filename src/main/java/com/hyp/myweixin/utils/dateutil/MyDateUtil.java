@@ -1,5 +1,7 @@
 package com.hyp.myweixin.utils.dateutil;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -8,6 +10,7 @@ import java.util.*;
 /**
  * 日期的工具类 可对农历进行操作
  */
+@Slf4j
 public class MyDateUtil {
 
     private static final ThreadLocal<SimpleDateFormat> threadLocal = new ThreadLocal<SimpleDateFormat>();
@@ -146,6 +149,7 @@ public class MyDateUtil {
             }
         } catch (ParseException e) {
             e.printStackTrace();
+            log.error("10位13位时间戳转Date错误，错误原因：{}",e.toString());
         }
         return date;
     }
@@ -339,6 +343,8 @@ public class MyDateUtil {
                         dateTmp = null;
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("获取日期字符串的日期风格错误，错误原因：{}",e.toString());
                 }
             }
             if (dateTmp != null) {
@@ -377,6 +383,8 @@ public class MyDateUtil {
             try {
                 myDate = getDateFormat(pattern).parse(date);
             } catch (Exception e) {
+                e.printStackTrace();
+                log.error("将日期字符串转化为日期，错误原因：{}",e.toString());
             }
         }
         return myDate;
@@ -410,6 +418,8 @@ public class MyDateUtil {
             try {
                 dateString = getDateFormat(pattern).format(date);
             } catch (Exception e) {
+                e.printStackTrace();
+                log.error("将日期转化为日期字符串，错误原因：{}",e.toString());
             }
         }
         return dateString;

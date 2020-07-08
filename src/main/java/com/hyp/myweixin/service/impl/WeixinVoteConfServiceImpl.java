@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -80,7 +82,12 @@ public class WeixinVoteConfServiceImpl implements WeixinVoteConfService {
 
         WeixinVoteConf weixinVoteConf = null;
         try {
-            weixinVoteConf = weixinVoteConfMapper.selectOneByExample(example);
+            List<WeixinVoteConf> weixinVoteConfs = weixinVoteConfMapper.selectByExample(example);
+            if (weixinVoteConfs != null && weixinVoteConfs.size() > 0) {
+                return weixinVoteConfs.get(0);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("通过活动查询当前活动的配置表错误，错误原因：{}", e.toString());

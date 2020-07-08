@@ -68,7 +68,8 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
         try {
             weixinVoteUserMapper.insertUseGeneratedKeys(weixinVoteUser);
         } catch (Exception e) {
-            log.info(e.toString());
+            e.printStackTrace();
+            log.error("保存微信用户数错误，错误原因：{}"+e.toString());
             throw new MyDefinitionException("保存微信用户数错误");
         }
 
@@ -83,7 +84,14 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
      */
     @Override
     public WeixinVoteUser getUserById(Integer id) {
-        WeixinVoteUser weixinVoteUser = weixinVoteUserMapper.selectByPrimaryKey(id);
+        WeixinVoteUser weixinVoteUser = null;
+        try {
+            weixinVoteUser = weixinVoteUserMapper.selectByPrimaryKey(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("通过表主键获取用户信息，错误原因：{}"+e.toString());
+            throw new MyDefinitionException("获取微信用户数错误");
+        }
         if (weixinVoteUser != null) {
             return weixinVoteUser;
         }
@@ -103,12 +111,19 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
             Example example = new Example(WeixinVoteUser.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("openId", openId);
-            List<WeixinVoteUser> weixinVoteUsers = weixinVoteUserMapper.selectByExample(example);
+            List<WeixinVoteUser> weixinVoteUsers = null;
+            try {
+                weixinVoteUsers = weixinVoteUserMapper.selectByExample(example);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("通过openId获取用户信息，错误原因：{}"+e.toString());
+                throw new MyDefinitionException("通过参数获取微信用户数据错误");
+            }
             if (weixinVoteUsers != null && weixinVoteUsers.size() > 0) {
                 weixinVoteUser = weixinVoteUsers.get(0);
             }
         } catch (Exception e) {
-            log.info(e.toString());
+            log.error(e.toString());
             throw new MyDefinitionException("通过openId查询用户数据失败");
         }
         return weixinVoteUser;
@@ -128,7 +143,13 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
             Example example = new Example(WeixinVoteUser.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("openId", weixinVoteUser.getOpenId());
-            i = weixinVoteUserMapper.updateByExampleSelective(weixinVoteUser, example);
+            try {
+                i = weixinVoteUserMapper.updateByExampleSelective(weixinVoteUser, example);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("通过openId更新用户信息，错误原因：{}"+e.toString());
+                throw new MyDefinitionException("通过参数更新微信用户数据错误");
+            }
         }
         return i;
     }

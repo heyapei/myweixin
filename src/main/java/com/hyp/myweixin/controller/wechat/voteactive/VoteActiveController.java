@@ -4,8 +4,10 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.VoteActiveService;
+import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,31 @@ public class VoteActiveController {
     private SecretKeyPropertiesValue secretKeyPropertiesValue;
     @Autowired
     private VoteActiveService voteActiveService;
+
+
+    /**
+     * 保存第三页的内容 如果以前没有则新建 如果有则更新
+     *
+     * @param httpServletRequest
+     * @param page3RegulationQuery 保存用实体
+     * @return
+     */
+    @PostMapping("create/base/savaactiveregulation")
+    public Result createActiveRegulation(HttpServletRequest httpServletRequest,
+                                         @Validated Page3RegulationQuery page3RegulationQuery
+    ) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        MyErrorList page3Regulation = voteActiveService.createPage3Regulation(page3RegulationQuery);
+        if (page3Regulation.noErrors()) {
+            return Result.buildResult(Result.Status.OK);
+        } else {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, page3Regulation.toPlainString());
+        }
+    }
 
 
     /**
