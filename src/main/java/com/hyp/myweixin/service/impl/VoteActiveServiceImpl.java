@@ -7,6 +7,7 @@ import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page4RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -54,6 +55,68 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
 
+
+    /**
+     * 添加第四屏幕的内容
+     * 1. 性别限制
+     * <p>
+     * 逻辑：
+     * 1.检查是否有配置数据 如果有则更新没有就生成 生成过程中写入数据
+     *
+     * @param page4RegulationQuery 查询实体类
+     * @return 判断result的值
+     */
+    @Override
+    public MyErrorList createPage4Regulation(Page4RegulationQuery page4RegulationQuery) {
+
+        MyErrorList myErrorList = new MyErrorList();
+        /*判断值是否为空*/
+        if (page4RegulationQuery == null) {
+            myErrorList.add("创建第四页信息的参数不能为空");
+        }
+        /*判断活动是否属于当前用户 保证用户和活动的有效性*/
+        Integer userId = page4RegulationQuery.getUserId();
+        Integer voteWorkId = page4RegulationQuery.getVoteWorkId();
+        if (myErrorList.noErrors()) {
+            if (!judgeIsOperatorLegal(userId, voteWorkId)) {
+                myErrorList.add("人员信息或活动内容错误");
+            }
+        }
+
+        /*查找当前的活动*/
+        WeixinVoteBase weixinVoteBaseByWorkId = null;
+        if (myErrorList.noErrors()) {
+            weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
+            if (weixinVoteBaseByWorkId == null) {
+                myErrorList.add("未能查找到正确的活动的内容");
+            }
+        }
+
+        /*性别是否能限制要判断当前是否有配置列表*/
+        WeixinVoteConf weixinVoteConf = null;
+        if (myErrorList.noErrors()) {
+            weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(voteWorkId);
+            if (weixinVoteConf == null) {
+                myErrorList.add("未发现当前活动的配置内容");
+            }
+        }
+
+
+        if (myErrorList.noErrors()) {
+            weixinVoteConf.setActiveConfSex(page4RegulationQuery.getSex());
+        }
+
+
+        if (myErrorList.noErrors()) {
+            weixinVoteConf.setUpdateTime(new Date());
+            Integer integer = weixinVoteConfService.updateWeixinVoteConf(weixinVoteConf);
+            if (integer == null || integer <= 0) {
+                myErrorList.add("保存活动相关配置错误");
+            }
+        }
+
+        return myErrorList;
+    }
 
     /**
      * 添加第三屏幕的内容
@@ -145,15 +208,14 @@ public class VoteActiveServiceImpl implements VoteActiveService {
                 weixinVoteConf.setActiveConfRepeatVote(0);
                 weixinVoteConf.setActiveConfVoteType(1);
             } else {
-                // log.info("允许");
-                weixinVoteConf.setActiveConfRepeatVote(1);
-                //log.info("允许多少票："+page3RegulationQuery.getActiveConfVoteType());
-                if (page3RegulationQuery.getActiveConfVoteType() == null || page3RegulationQuery.getActiveConfVoteType() == 1) {
+                String activeConfVoteType = page3RegulationQuery.getActiveConfVoteType();
+                if (StringUtils.isNotBlank(activeConfVoteType) && activeConfVoteType.contains(";")) {
+                    String[] activeConfVoteTypeSplit = activeConfVoteType.split(";");
+                    weixinVoteConf.setActiveConfRepeatVote(Integer.parseInt(activeConfVoteTypeSplit[0]));
                     //log.info("不允许多票");
-                    weixinVoteConf.setActiveConfVoteType(1);
+                    weixinVoteConf.setActiveConfVoteType(Integer.parseInt(activeConfVoteTypeSplit[1]));
                 } else {
-                    //log.info("允许多票");
-                    weixinVoteConf.setActiveConfVoteType(page3RegulationQuery.getActiveConfVoteType());
+                    myErrorList.add("当前投票配置模式下有必填项没有完整填写");
                 }
             }
         }

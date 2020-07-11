@@ -38,8 +38,9 @@ public class Page3RegulationQuery {
     private Integer activeConfRepeatVote = 0;
     /**
      * 重复投票次数
+     * 值1,值2 值1：1按照每天多少票 2按照总共多少票 值2：票数量
      */
-    private Integer activeConfVoteType = 1;
+    private String activeConfVoteType = "1,1";
     /**
      * 是否开启在线报名
      * 是否开启用户自己上传作品 0 开启 1 不开启 默认不开启
