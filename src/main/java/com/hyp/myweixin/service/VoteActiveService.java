@@ -1,9 +1,9 @@
 package com.hyp.myweixin.service;
 
-import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page4RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.utils.MyErrorList;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +15,19 @@ import org.springframework.web.multipart.MultipartFile;
  * @Description: TODO
  */
 public interface VoteActiveService {
+
+
+    /**
+     * 添加第四屏幕的内容
+     * 1. 性别限制
+     * <p>
+     * 逻辑：
+     * 1.检查是否有配置数据 如果有则更新没有就生成 生成过程中写入数据
+     *
+     * @param page4RegulationQuery 查询实体类
+     * @return 判断result的值
+     */
+    MyErrorList createPage4Regulation(Page4RegulationQuery page4RegulationQuery);
 
 
     /**

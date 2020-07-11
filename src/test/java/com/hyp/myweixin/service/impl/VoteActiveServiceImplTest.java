@@ -39,7 +39,7 @@ public class VoteActiveServiceImplTest {
         page3RegulationQuery.setActiveStartTime("2020-06-01 12:11");
         page3RegulationQuery.setActiveEndTime("2020-06-02 12:11");
         page3RegulationQuery.setActiveConfRepeatVote(1);
-        page3RegulationQuery.setActiveConfVoteType(12);
+        page3RegulationQuery.setActiveConfVoteType("12");
         page3RegulationQuery.setActiveConfSignUp(0);
         page3RegulationQuery.setActiveUploadStartTime("2020-06-02 12:11");
         page3RegulationQuery.setActiveUploadEndTime("2020-06-02 12:11");

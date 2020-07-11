@@ -5,6 +5,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
+import com.hyp.myweixin.pojo.query.voteactive.Page4RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.VoteActiveService;
 import com.hyp.myweixin.utils.MyErrorList;
@@ -38,6 +39,31 @@ public class VoteActiveController {
     private SecretKeyPropertiesValue secretKeyPropertiesValue;
     @Autowired
     private VoteActiveService voteActiveService;
+
+
+    /**
+     * 保存第四页的内容 如果以前没有则新建 如果有则更新
+     *
+     * @param httpServletRequest
+     * @param page4RegulationQuery 保存用实体
+     * @return
+     */
+    @PostMapping("create/base/savaactivesexregion")
+    public Result createActiveSexRegion(HttpServletRequest httpServletRequest,
+                                        @Validated Page4RegulationQuery page4RegulationQuery
+    ) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        MyErrorList page4Regulation = voteActiveService.createPage4Regulation(page4RegulationQuery);
+        if (page4Regulation.noErrors()) {
+            return Result.buildResult(Result.Status.OK);
+        } else {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, page4Regulation.toPlainString());
+        }
+    }
 
 
     /**
