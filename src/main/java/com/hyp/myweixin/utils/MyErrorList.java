@@ -1,5 +1,7 @@
 package com.hyp.myweixin.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 
 /**
@@ -7,6 +9,7 @@ import java.util.ArrayList;
  *
  * @author heyapei
  */
+@Component
 public class MyErrorList {
     private ArrayList al;
 
