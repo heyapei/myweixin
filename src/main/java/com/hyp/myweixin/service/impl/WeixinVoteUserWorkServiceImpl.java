@@ -42,7 +42,6 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     private WeixinVoteConfService weixinVoteConfService;
 
 
-
     /**
      * 判断当前投票的合法性
      *
@@ -61,7 +60,7 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
             return "未能查找到作品所属活动的具体数据";
         }
         voteWorkId = weixinVoteWorkByUserWorkId.getActiveVoteBaseId();
-       // log.info("活动的主键："+voteWorkId);
+        // log.info("活动的主键："+voteWorkId);
 
         WeixinVoteBase weixinVoteBase = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
         if (weixinVoteBase == null) {
@@ -90,17 +89,41 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
         /*判断是否可以重复投票*/
         Integer activeConfRepeatVote = weixinVoteConf.getActiveConfRepeatVote();
         if (activeConfRepeatVote != null) {
-            /*如果activeConfRepeatVote为0标识每日只允许投票一次 等于别的标识可以投票多次 具体多少次 按照activeConfVoteType判断*/
-            List<WeixinVoteUserWork> weixinVoteUserWorkS = getWeixinVoteUserWorkSByOpenIdTime(weixinVoteUserWork.getOpenId(), weixinVoteUserWork.getWorkId(), null, null);
+
+
+            /*如果activeConfRepeatVote为0标识只允许投票一次
+            等于别的标识可以投票多次 具体多少次 按照activeConfVoteType判断*/
+
+
             if (activeConfRepeatVote == 0) {
+                List<WeixinVoteUserWork> weixinVoteUserWorkS = getWeixinVoteUserWorkS(weixinVoteUserWork.getOpenId(),
+                        weixinVoteUserWork.getWorkId());
                 if (weixinVoteUserWorkS != null && weixinVoteUserWorkS.size() >= 1) {
-                    return "当前活动只允许每日投票一次";
+                    return "当前活动不允许重复投票";
                 }
             } else {
-                Integer activeConfVoteType = weixinVoteConf.getActiveConfVoteType();
-                if (activeConfVoteType != null) {
-                    if (weixinVoteUserWorkS.size() >= activeConfVoteType) {
-                        return "当前活动只允许每日投票" + activeConfVoteType + "次";
+
+                /*如果等于1 标识 每日投票限制*/
+                if (activeConfRepeatVote == 1) {
+                    List<WeixinVoteUserWork> weixinVoteUserWorkS =
+                            getWeixinVoteUserWorkSByOpenIdTime(weixinVoteUserWork.getOpenId(),
+                                    weixinVoteUserWork.getWorkId(), null, null);
+                    Integer activeConfVoteType = weixinVoteConf.getActiveConfVoteType();
+                    if (activeConfVoteType != null) {
+                        if (weixinVoteUserWorkS != null && weixinVoteUserWorkS.size() >= 0) {
+                            if (weixinVoteUserWorkS.size() >= activeConfVoteType) {
+                                return "当前活动只允许每日投票" + activeConfVoteType + "次";
+                            }
+                        }
+                    }
+                } else {
+                    List<WeixinVoteUserWork> weixinVoteUserWorkS = getWeixinVoteUserWorkS(weixinVoteUserWork.getOpenId(),
+                            weixinVoteUserWork.getWorkId());
+                    Integer activeConfVoteType = weixinVoteConf.getActiveConfVoteType();
+                    if (weixinVoteUserWorkS != null && weixinVoteUserWorkS.size() >= 0) {
+                        if (weixinVoteUserWorkS.size() >= activeConfVoteType) {
+                            return "当前活动最多允许重复投票" + activeConfVoteType + "次数";
+                        }
                     }
                 }
             }
@@ -133,6 +156,29 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     }
 
     /**
+     * 查询用户对某个作品的投票数据
+     *
+     * @param openId
+     * @param userWorkId
+     * @return
+     */
+    @Override
+    public List<WeixinVoteUserWork> getWeixinVoteUserWorkS(String openId, Integer userWorkId) {
+        Example example = new Example(WeixinVoteUserWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("openId", openId);
+        criteria.andEqualTo("workId", userWorkId);
+        List<WeixinVoteUserWork> weixinVoteUserWorks = null;
+        try {
+            weixinVoteUserWorks = weixinVoteUserWorkMapper.selectByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("通过openId以及workId获取用户的投票信息错误，错误原因：{}", e.toString());
+        }
+        return weixinVoteUserWorks;
+    }
+
+    /**
      * 按照时间范围查询用户对某个作品的投票数据 如果没有传入开始结束/结束时间 则直接取今天的时间开始/结束
      *
      * @param openId     用户唯一值
@@ -162,7 +208,7 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
             weixinVoteUserWorks = weixinVoteUserWorkMapper.selectByExample(example);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("通过openId获取获取用户的信息错误，错误原因：{}", e.toString());
+            log.error("通过openId以及workId获取用户在时间范围内的投票信息错误，错误原因：{}", e.toString());
         }
         return weixinVoteUserWorks;
     }

@@ -29,6 +29,16 @@ public interface WeixinVoteUserWorkService {
      List<WeixinVoteUserWork> getWeixinVoteUserWorkSByOpenIdTime(String openId, Integer userWorkId, Date startTime, Date endTime);
 
     /**
+     * 查询用户对某个作品的投票数据
+     * @param openId
+     * @param userWorkId
+
+     * @return
+     */
+    List<WeixinVoteUserWork> getWeixinVoteUserWorkS(String openId, Integer userWorkId);
+
+
+    /**
      * 通过openId获取获取用户的信息
      *
      * @param openId 用户唯一值

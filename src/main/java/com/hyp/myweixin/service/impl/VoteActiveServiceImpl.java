@@ -115,6 +115,14 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             }
         }
 
+        if (myErrorList.noErrors()) {
+            weixinVoteBaseByWorkId.setStatus(1);
+            int i = weixinVoteBaseService.updateVoteBaseVote(weixinVoteBaseByWorkId);
+            if (i <= 0) {
+                myErrorList.add("活动上线失败");
+            }
+        }
+
         return myErrorList;
     }
 

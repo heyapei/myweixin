@@ -174,12 +174,25 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         /*条件查询*/
         Example example = new Example(WeixinVoteBase.class);
         Example.Criteria criteria = example.createCriteria();
+        //TODO　weixinVoteBase用于条件查询
+        if (weixinVoteBase != null) {
+            if (weixinVoteBase.getActivePublic() != null) {
+                criteria.andEqualTo("activePublic", weixinVoteBase.getActivePublic());
+            }
+            if (weixinVoteBase.getStatus() != null) {
+                criteria.andEqualTo("status", weixinVoteBase.getStatus());
+            }
+        }
         example.orderBy("activeShowOrder").desc();
         /*example.orderBy("createTime").desc();
         example.orderBy("viewCountNum").desc();*/
+        example.orderBy("activeStartTime").desc();
+
+
+
 
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
-        //TODO　weixinVoteBase用于条件查询
+
         List<WeixinVoteBase> weixinVoteBases = weixinVoteBaseMapper.selectByExample(example);
         // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
         pageInfo = new PageInfo(weixinVoteBases);
@@ -288,7 +301,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
             voteDetailByWorkIdVO = new VoteDetailByWorkIdVO();
             voteDetailByWorkIdVO.setActiveBgImg(weixinVoteBase.getActiveDescImg());
-            voteDetailByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg().replaceAll(";",""));
+            voteDetailByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg().replaceAll(";", ""));
             voteDetailByWorkIdVO.setActiveEndTime(weixinVoteBase.getActiveEndTime());
             voteDetailByWorkIdVO.setActiveStartTime(weixinVoteBase.getActiveStartTime());
             voteDetailByWorkIdVO.setActiveName(weixinVoteBase.getActiveName());
@@ -297,8 +310,8 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setActiveVoteCount(weixinVoteBase.getVoteCountNum());
             voteDetailByWorkIdVO.setActiveViewCount(weixinVoteBase.getViewCountNum());
             voteDetailByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
-            voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";",""));
-            voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode().replaceAll(";",""));
+            voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";", ""));
+            voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode().replaceAll(";", ""));
             voteDetailByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
         }
 

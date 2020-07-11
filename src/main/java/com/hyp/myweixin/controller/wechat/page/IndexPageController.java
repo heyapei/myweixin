@@ -7,14 +7,11 @@ import com.hyp.myweixin.pojo.modal.WeixinResource;
 import com.hyp.myweixin.pojo.modal.WeixinResourceConfig;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.IndexImgVO;
-import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinResourceService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
-import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,7 +59,12 @@ public class IndexPageController {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(pageNo);
         pageInfo.setPageSize(pageSize);
-        PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(null, pageInfo);
+
+        WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
+        weixinVoteBase.setActivePublic(1);
+        weixinVoteBase.setStatus(1);
+        log.info("当前查询条件：{}", weixinVoteBase.toString());
+        PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(weixinVoteBase, pageInfo);
 
 
         return Result.buildResult(Result.Status.OK, voteWorkByPage);
