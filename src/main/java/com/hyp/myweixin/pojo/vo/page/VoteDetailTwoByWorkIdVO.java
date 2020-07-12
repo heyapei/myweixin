@@ -40,6 +40,11 @@ public class VoteDetailTwoByWorkIdVO {
      * 活动名称
      */
     private String activeName;
+
+    /**
+     * 活动介绍
+     */
+    private String activeDesc;
     /**
      * 活动图片
      */

@@ -69,6 +69,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         if (weixinVoteBase == null) {
             throw new MyDefinitionException("没有通过活动ID找到任何活动");
         }
+        voteDetailTwoByWorkIdVO.setActiveDesc(weixinVoteBase.getActiveDesc());
         voteDetailTwoByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg().replace(imgSeparator, ""));
         voteDetailTwoByWorkIdVO.setActiveName(weixinVoteBase.getActiveName());
         String activeDescImg = weixinVoteBase.getActiveDescImg();
