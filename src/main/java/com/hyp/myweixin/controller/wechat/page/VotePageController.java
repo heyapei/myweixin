@@ -8,6 +8,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWorkComment;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailTwoByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
@@ -49,6 +50,31 @@ public class VotePageController {
 
     @Autowired
     private WeixinVoteWorkCommentService weixinVoteWorkCommentService;
+
+
+    @ApiOperation("通过活动信息页面点入活动详情页，查询条件是活动ID")
+    @PostMapping("/work/detail/votedetailtwo")
+    public Result getVoteDetailTwoByWorkIdVOById(HttpServletRequest request,
+                                                 int workId) {
+
+        boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        VoteDetailTwoByWorkIdVO voteDetailTwoByWorkIdVOById = null;
+        try {
+            voteDetailTwoByWorkIdVOById = weixinVoteBaseService.getVoteDetailTwoByWorkIdVOById(workId);
+        } catch (MyDefinitionException e) {
+            e.printStackTrace();
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        if (voteDetailTwoByWorkIdVOById == null) {
+            return Result.buildResult(Result.Status.NOT_FOUND);
+        }
+        return Result.buildResult(Result.Status.OK, voteDetailTwoByWorkIdVOById);
+    }
+
 
     @ApiOperation("根据workId查询活动的详情")
     @PostMapping("/work/detail")

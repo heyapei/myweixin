@@ -1,9 +1,11 @@
 package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailTwoByWorkIdVO;
 
 import java.util.List;
 
@@ -17,13 +19,22 @@ public interface WeixinVoteBaseService {
 
 
     /**
+     * 通过活动信息页面点入活动详情页 通过ID查询
+     *
+     * @param voteWorkId 活动的主键
+     * @return
+     * @throws MyDefinitionException
+     */
+    VoteDetailTwoByWorkIdVO getVoteDetailTwoByWorkIdVOById(Integer voteWorkId) throws MyDefinitionException;
+
+
+    /**
      * 更新内容 按照主键 只更新有值的内容
      *
      * @param weixinVoteBase 活动内容
      * @return
      */
     int updateVoteBaseVote(WeixinVoteBase weixinVoteBase);
-
 
 
     /**

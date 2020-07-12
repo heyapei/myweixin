@@ -11,7 +11,10 @@ import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
 import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailTwoByWorkIdVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
+import com.hyp.myweixin.service.WeixinVoteConfService;
+import com.hyp.myweixin.service.WeixinVoteOrganisersService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +47,76 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
     private WeixinMusicMapper weixinMusicMapper;
     @Autowired
     private WeixinVoteOrganisersMapper weixinVoteOrganisersMapper;
+    @Autowired
+    private WeixinVoteOrganisersService weixinVoteOrganisersService;
+
+    @Autowired
+    private WeixinVoteConfService weixinVoteConfService;
+
+
+    /**
+     * 通过活动信息页面点入活动详情页 通过ID查询
+     *
+     * @param voteWorkId 活动的主键
+     * @return
+     */
+    @Override
+    public VoteDetailTwoByWorkIdVO getVoteDetailTwoByWorkIdVOById(Integer voteWorkId) throws MyDefinitionException {
+        VoteDetailTwoByWorkIdVO voteDetailTwoByWorkIdVO = VoteDetailTwoByWorkIdVO.init();
+
+        String imgSeparator = ";";
+        WeixinVoteBase weixinVoteBase = getWeixinVoteBaseByWorkId(voteWorkId);
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("没有通过活动ID找到任何活动");
+        }
+        voteDetailTwoByWorkIdVO.setActiveImg(weixinVoteBase.getActiveImg().replace(imgSeparator, ""));
+        voteDetailTwoByWorkIdVO.setActiveName(weixinVoteBase.getActiveName());
+        String activeDescImg = weixinVoteBase.getActiveDescImg();
+        if (activeDescImg.contains(imgSeparator)) {
+            voteDetailTwoByWorkIdVO.setActiveDescImgS(activeDescImg.split(imgSeparator));
+        } else {
+            voteDetailTwoByWorkIdVO.setActiveDescImgS(new String[0]);
+        }
+
+
+        voteDetailTwoByWorkIdVO.setActiveRewardDesc(weixinVoteBase.getActiveReward());
+
+        String activeRewardImg = weixinVoteBase.getActiveRewardImg();
+        if (activeRewardImg.contains(imgSeparator)) {
+            voteDetailTwoByWorkIdVO.setActiveRewardImgS(activeRewardImg.split(imgSeparator));
+        } else {
+            voteDetailTwoByWorkIdVO.setActiveRewardImgS(new String[0]);
+        }
+
+
+        voteDetailTwoByWorkIdVO.setActiveStartTime(weixinVoteBase.getActiveStartTime());
+        voteDetailTwoByWorkIdVO.setActiveEndTime(weixinVoteBase.getActiveEndTime());
+        WeixinVoteOrganisers weixinVoteOrganisers = weixinVoteOrganisersService.getWeixinVoteConfByVoteWorkId(voteWorkId);
+        if (weixinVoteOrganisers != null) {
+            voteDetailTwoByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
+            voteDetailTwoByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
+            voteDetailTwoByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
+        }
+
+
+        WeixinVoteConf weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(voteWorkId);
+        if (weixinVoteConf != null) {
+            String rule = "";
+            if (weixinVoteConf.getActiveConfRepeatVote() == 0) {
+                rule = "只允许投票一次";
+            } else if (weixinVoteConf.getActiveConfRepeatVote() == 1) {
+                rule = "每人每天可点赞" + weixinVoteConf.getActiveConfVoteType();
+            } else if (weixinVoteConf.getActiveConfRepeatVote() == 2) {
+                rule = "每人总共可点赞" + weixinVoteConf.getActiveConfVoteType();
+            }
+            voteDetailTwoByWorkIdVO.setActiveRule(rule);
+            voteDetailTwoByWorkIdVO.setActiveConfRepeatVote(weixinVoteConf.getActiveConfRepeatVote());
+            voteDetailTwoByWorkIdVO.setActiveConfVoteType(weixinVoteConf.getActiveConfVoteType());
+        }
+
+
+        return voteDetailTwoByWorkIdVO;
+    }
 
     /**
      * 更新内容
@@ -187,8 +260,6 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         /*example.orderBy("createTime").desc();
         example.orderBy("viewCountNum").desc();*/
         example.orderBy("activeStartTime").desc();
-
-
 
 
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
