@@ -298,7 +298,7 @@
     </dependencies>
 
     <build>
-        <finalName>myweixin</finalName>
+        <finalName>weixin</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
