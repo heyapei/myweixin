@@ -35,10 +35,12 @@ public class WeixinVoteConf {
     private Integer activeConfRepeatVote;
 
     /**
+     * 改成string类型的，格式为 类型;票数
+     * 例如：1,4 每天；4票
      * 投票类型限制例如1天1票 投票类型配置表中设置
      */
     @Column(name = "active_conf_vote_type")
-    private Integer activeConfVoteType;
+    private String activeConfVoteType;
 
     /**
      * 是否开启用户自己上传作品 0 默认开启 1 不开启
@@ -194,24 +196,6 @@ public class WeixinVoteConf {
      */
     public void setActiveConfRepeatVote(Integer activeConfRepeatVote) {
         this.activeConfRepeatVote = activeConfRepeatVote;
-    }
-
-    /**
-     * 获取投票类型限制例如1天1票 投票类型配置表中设置
-     *
-     * @return active_conf_vote_type - 投票类型限制例如1天1票 投票类型配置表中设置
-     */
-    public Integer getActiveConfVoteType() {
-        return activeConfVoteType;
-    }
-
-    /**
-     * 设置投票类型限制例如1天1票 投票类型配置表中设置
-     *
-     * @param activeConfVoteType 投票类型限制例如1天1票 投票类型配置表中设置
-     */
-    public void setActiveConfVoteType(Integer activeConfVoteType) {
-        this.activeConfVoteType = activeConfVoteType;
     }
 
     /**

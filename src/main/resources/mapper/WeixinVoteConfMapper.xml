@@ -9,7 +9,7 @@
     <result column="active_vote_base_id" jdbcType="INTEGER" property="activeVoteBaseId" />
     <result column="active_conf_music_id" jdbcType="INTEGER" property="activeConfMusicId" />
     <result column="active_conf_repeat_vote" jdbcType="INTEGER" property="activeConfRepeatVote" />
-    <result column="active_conf_vote_type" jdbcType="INTEGER" property="activeConfVoteType" />
+    <result column="active_conf_vote_type" jdbcType="VARCHAR" property="activeConfVoteType" />
     <result column="active_conf_sign_up" jdbcType="INTEGER" property="activeConfSignUp" />
     <result column="active_conf_verify" jdbcType="INTEGER" property="activeConfVerify" />
     <result column="active_conf_num_hide" jdbcType="INTEGER" property="activeConfNumHide" />

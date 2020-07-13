@@ -1,5 +1,4 @@
 package com.hyp.myweixin.service.impl;
-import java.util.Date;
 
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
@@ -10,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
 
 /**
  * @Author 何亚培
@@ -27,6 +28,12 @@ public class WeixinVoteUserWorkServiceImplTest {
     private WeixinVoteWorkServiceImpl weixinVoteWorkService;
 
     @Test
+    public void getWeixinVoteUserWorkNumByOpenIdTime() {
+        Integer weixinVoteUserWorkNumByOpenIdTime = weixinVoteUserWorkService.getWeixinVoteUserWorkNumByOpenIdTime(1, "!@",1, new Date(), new Date());
+        log.info("查询结果：{}", weixinVoteUserWorkNumByOpenIdTime);
+    }
+
+    @Test
     public void justVoteLegal() {
         WeixinVoteUserWork weixinVoteUserWork = new WeixinVoteUserWork();
         weixinVoteUserWork.setId(0);
@@ -36,7 +43,7 @@ public class WeixinVoteUserWorkServiceImplTest {
         weixinVoteUserWork.setCity("");
         weixinVoteUserWork.setProvince("");
         weixinVoteUserWork.setCountry("");
-        Date as = new Date(new Date().getTime()-24*60*60*1000);
+        Date as = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
         weixinVoteUserWork.setCreateTime(as);
         weixinVoteUserWork.setUpdateTime(new Date());
         weixinVoteUserWork.setWorkId(8);
@@ -65,8 +72,6 @@ public class WeixinVoteUserWorkServiceImplTest {
         int i = weixinVoteUserWorkService.addUserVote(weixinVoteUserWork);
         log.info("查询出来的数据：" + i);
     }
-
-
 
 
     @Test

@@ -86,13 +86,19 @@ public class VoteDetailTwoByWorkIdVO {
 
 
     /**
-     * 投票模式
+     * 是否允许投票
      */
     private Integer activeConfRepeatVote;
     /**
-     * 允许投票次数
+     * 允许投票模式
      */
     private Integer activeConfVoteType;
+
+    /**
+     * 允许投票次数
+     */
+    private Integer activeConfVoteTypeNum;
+
 
 
 }

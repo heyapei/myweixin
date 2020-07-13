@@ -211,11 +211,11 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             Integer activeConfRepeatVote = page3RegulationQuery.getActiveConfRepeatVote();
             //log.info("允许重复投票吗？"+activeConfRepeatVote);
             /* 0默认不开启 1开启*/
-            if (activeConfRepeatVote == null || activeConfRepeatVote != 1) {
+            if (activeConfRepeatVote == null) {
+                weixinVoteConf.setActiveConfRepeatVote(activeConfRepeatVote);
+                weixinVoteConf.setActiveConfVoteType(page3RegulationQuery.getActiveConfVoteType());
                 //log.info("不允许");
-                weixinVoteConf.setActiveConfRepeatVote(0);
-                weixinVoteConf.setActiveConfVoteType(1);
-            } else {
+            }/* else {
                 String activeConfVoteType = page3RegulationQuery.getActiveConfVoteType();
                 if (StringUtils.isNotBlank(activeConfVoteType) && activeConfVoteType.contains(";")) {
                     String[] activeConfVoteTypeSplit = activeConfVoteType.split(";");
@@ -225,7 +225,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
                 } else {
                     myErrorList.add("当前投票配置模式下有必填项没有完整填写");
                 }
-            }
+            }*/
         }
 
         /*是否允许用户自主上传配置*/
@@ -300,7 +300,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
                 weixinVoteConf.setActiveVoteBaseId(voteWorkId);
                 weixinVoteConf.setActiveConfMusicId(0);
                 weixinVoteConf.setActiveConfRepeatVote(0);
-                weixinVoteConf.setActiveConfVoteType(0);
+                weixinVoteConf.setActiveConfVoteType("1,1");
                 weixinVoteConf.setActiveConfSignUp(0);
                 weixinVoteConf.setActiveConfVerify(0);
                 weixinVoteConf.setActiveConfNumHide(0);

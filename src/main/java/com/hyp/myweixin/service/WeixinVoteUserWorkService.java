@@ -1,6 +1,7 @@
 package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 
 import java.util.Date;
@@ -13,6 +14,20 @@ import java.util.List;
  * @Description: TODO
  */
 public interface WeixinVoteUserWorkService {
+
+
+    /**
+     * 通过活动基础表 用户openId 查询用户在这个活动中的投票情况 有时间范围
+     * @param baseId 活动ID
+     * @param openId 用户标识
+     * @param workId 作品ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 在时间范围内容 某个用户在一定时间范围内的投票总数
+     * @throws MyDefinitionException
+     */
+    Integer getWeixinVoteUserWorkNumByOpenIdTime(Integer baseId,String openId,Integer workId,
+                                                 Date startTime, Date endTime) throws MyDefinitionException;
 
 
 

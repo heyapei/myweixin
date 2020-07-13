@@ -35,7 +35,7 @@ public class MyDateUtil {
     }
 
     /**
-     * 获取每天的开始时间 23:59:59:999
+     * 获取每天的结束时间 23:59:59:999
      *
      * @param date
      * @return

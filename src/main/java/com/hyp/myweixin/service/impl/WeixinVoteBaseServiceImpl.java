@@ -103,16 +103,36 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         WeixinVoteConf weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(voteWorkId);
         if (weixinVoteConf != null) {
             String rule = "";
-            if (weixinVoteConf.getActiveConfRepeatVote() == 0) {
+            /*if (weixinVoteConf.getActiveConfRepeatVote() == 0) {
                 rule = "只允许投票一次";
             } else if (weixinVoteConf.getActiveConfRepeatVote() == 1) {
                 rule = "每人每天可点赞" + weixinVoteConf.getActiveConfVoteType();
             } else if (weixinVoteConf.getActiveConfRepeatVote() == 2) {
                 rule = "每人总共可点赞" + weixinVoteConf.getActiveConfVoteType();
+            }*/
+            String[] split = weixinVoteConf.getActiveConfVoteType().split(";");
+            if (weixinVoteConf.getActiveConfRepeatVote() == 0) {
+                /*不允许重复投票*/
+                if (Integer.parseInt(split[0]) == 1) {
+                    rule = "每人每天可投票" + split[1] + "次，且不允许重复投票";
+                } else if (Integer.parseInt(split[0]) == 2) {
+                    rule = "每人总共可投票" + split[1] + "次，且不允许重复投票";
+                }
+
+            } else if (weixinVoteConf.getActiveConfRepeatVote() == 1) {
+                /*允许重复投票*/
+                if (Integer.parseInt(split[0]) == 1) {
+                    rule = "每人每天可重复投票" + split[1] + "次，且允许重复投票";
+                } else if (Integer.parseInt(split[0]) == 2) {
+                    rule = "每人总共可重复投票" + split[1] + "次，且允许重复投票";
+                }
             }
+
             voteDetailTwoByWorkIdVO.setActiveRule(rule);
             voteDetailTwoByWorkIdVO.setActiveConfRepeatVote(weixinVoteConf.getActiveConfRepeatVote());
-            voteDetailTwoByWorkIdVO.setActiveConfVoteType(weixinVoteConf.getActiveConfVoteType());
+
+            voteDetailTwoByWorkIdVO.setActiveConfVoteType(Integer.parseInt(split[0]));
+            voteDetailTwoByWorkIdVO.setActiveConfVoteTypeNum(Integer.parseInt(split[1]));
         }
 
 
