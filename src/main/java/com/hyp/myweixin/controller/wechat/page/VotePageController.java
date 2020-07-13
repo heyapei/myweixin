@@ -6,6 +6,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWorkComment;
+import com.hyp.myweixin.pojo.vo.page.PageEditWorkDetailVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailTwoByWorkIdVO;
@@ -50,6 +51,10 @@ public class VotePageController {
 
     @Autowired
     private WeixinVoteWorkCommentService weixinVoteWorkCommentService;
+
+
+
+
 
 
     @ApiOperation("通过活动信息页面点入活动详情页，查询条件是活动ID")
