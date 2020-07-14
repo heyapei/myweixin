@@ -48,6 +48,41 @@ public class WeixinVoteConf {
     @Column(name = "active_conf_sign_up")
     private Integer activeConfSignUp;
 
+    public enum ActiveConfSignUpEnum{
+        CAN_SIGN_UP(0, "允许用户上传"),
+        CANT_SIGN_UP(1, "禁止用户上传");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        ActiveConfSignUpEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+
+        @Override
+        public String toString() {
+            return "ActiveConfSignUpEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+    }
+
     /**
      * 活动是否需要验证码 0默认不开启 1 开启
      */

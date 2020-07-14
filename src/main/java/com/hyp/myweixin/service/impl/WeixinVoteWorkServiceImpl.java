@@ -4,12 +4,18 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteWorkMapper;
+import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.modal.WeixinVoteConf;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
-import com.hyp.myweixin.pojo.vo.page.*;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
+import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
+import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
+import com.hyp.myweixin.service.WeixinVoteConfService;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -19,6 +25,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +47,35 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private WeixinVoteBaseService weixinVoteBaseService;
 
+    @Autowired
+    private WeixinVoteConfService weixinVoteConfService;
+
+    /**
+     * 通过userID和activeId查询某个人在某个活动中提交作品的内容
+     *
+     * @param userId   用户ID
+     * @param activeId 活动ID
+     * @return 作品列表
+     * @throws MyDefinitionException
+     */
+    @Override
+    public List<WeixinVoteWork> getWeiXinVoteWorkListByUserId(Integer userId, Integer activeId) throws MyDefinitionException {
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("voteWorkUserId", userId);
+        criteria.andEqualTo("activeVoteBaseId", activeId);
+
+
+        List<WeixinVoteWork> weixinVoteWorks = null;
+        try {
+            weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
+        } catch (Exception e) {
+            log.error("查询用户在某个活动中的作品内容列表操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("查询用户在某个活动中的作品内容列表操作过程错误");
+        }
+        return weixinVoteWorks;
+    }
+
     /**
      * 用户上传个人的作品  需要完整属性
      *
@@ -51,12 +87,55 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     public Result createWeixinVoteWorkReturnPK(SaveVoteUserQuery saveVoteUserQuery) throws MyDefinitionException {
 
         /*查询活动是否存在*/
-        VoteDetailByWorkIdVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(saveVoteUserQuery.getActiveId());
+        WeixinVoteBase voteWorkByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(saveVoteUserQuery.getActiveId());
         if (voteWorkByWorkId == null) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "作品所属活动不明确");
+        } else {
+            /*如果存在判断是否允许用户上传*/
+            WeixinVoteConf weixinVoteConfByVoteWorkId = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(saveVoteUserQuery.getActiveId());
+            if (weixinVoteConfByVoteWorkId == null) {
+                return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "没有查找到活动配置数据");
+            } else {
+                if (weixinVoteConfByVoteWorkId.getActiveConfSignUp().
+                        equals(WeixinVoteConf.ActiveConfSignUpEnum.CAN_SIGN_UP.getCode())) {
+                    /*如果允许个人用户上传则先判断是否已经上传过了*/
+                    List<WeixinVoteWork> weiXinVoteWorkListByUserId = null;
+                    try {
+                        weiXinVoteWorkListByUserId = getWeiXinVoteWorkListByUserId(saveVoteUserQuery.getUserId(), saveVoteUserQuery.getActiveId());
+                    } catch (MyDefinitionException e) {
+                        return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+                    }
+                    if (weiXinVoteWorkListByUserId != null) {
+                        if (weiXinVoteWorkListByUserId.size() >= 1) {
+                            return Result.buildResult(Result.Status.UNAUTHORIZED, "已有作品在该活动中");
+                        }
+                    }
+
+                    /*如果允许个人用户上传则再判断是否在允许上传时间范围内*/
+                    Date nowDate = new Date();
+                    Date activeUploadStartTime = weixinVoteConfByVoteWorkId.getActiveUploadStartTime();
+                    Date activeUploadEndTime = weixinVoteConfByVoteWorkId.getActiveUploadEndTime();
+                    boolean voteTimeLegal = activeUploadStartTime.before(nowDate);
+                    if (!voteTimeLegal) {
+                        return Result.buildResult(Result.Status.UNAUTHORIZED, "作品上传时间未开始");
+                    }
+                    voteTimeLegal = activeUploadEndTime.before(nowDate);
+                    if (voteTimeLegal) {
+                        return Result.buildResult(Result.Status.UNAUTHORIZED, "作品上传时间已结束");
+                    }
+
+                } else if (weixinVoteConfByVoteWorkId.getActiveConfSignUp().
+                        equals(WeixinVoteConf.ActiveConfSignUpEnum.CANT_SIGN_UP.getCode())) {
+                    /*不要允许用户上传数据*/
+                    if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
+                        return Result.buildResult(Result.Status.UNAUTHORIZED, "当前活动不允许用户上传作品");
+                    }
+                }
+            }
+
         }
 
-        /*查询用户是否存在*/
+        /*查询用户是否存在 如果存在判断用户状态是否是可以使用状态*/
         WeixinVoteUser userById = weixinVoteUserService.getUserById(saveVoteUserQuery.getUserId());
         if (userById == null) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "作品所属用户不明确");

@@ -53,7 +53,14 @@ public class VoteUserWorkController {
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.SERVER_ERROR, e.getMessage());
         }
-        return Result.buildResult(Result.Status.OK, weixinVoteWorkReturnPK);
+        //log.info("创建结果：{}", weixinVoteWorkReturnPK.toString());
+        if (!weixinVoteWorkReturnPK.getStatus().equals(Result.Status.OK.getCode())) {
+            return weixinVoteWorkReturnPK;
+        } else {
+            return Result.buildResult(Result.Status.OK, weixinVoteWorkReturnPK.getData());
+        }
+
+
     }
 
 

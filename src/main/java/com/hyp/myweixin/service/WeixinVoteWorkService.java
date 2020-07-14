@@ -18,6 +18,17 @@ import java.util.List;
  */
 public interface WeixinVoteWorkService {
 
+
+    /**
+     * 通过userID和activeId查询某个人在某个活动中提交作品的内容
+     * @param userId 用户ID
+     * @param activeId 活动ID
+     * @return 作品列表
+     * @throws MyDefinitionException
+     */
+    List<WeixinVoteWork> getWeiXinVoteWorkListByUserId(Integer userId, Integer activeId) throws MyDefinitionException;
+
+
     /**
      * 用户上传个人的作品  需要完整属性
      *
