@@ -211,7 +211,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             Integer activeConfRepeatVote = page3RegulationQuery.getActiveConfRepeatVote();
             //log.info("允许重复投票吗？"+activeConfRepeatVote);
             /* 0默认不开启 1开启*/
-            if (activeConfRepeatVote == null) {
+            if (activeConfRepeatVote != null) {
                 weixinVoteConf.setActiveConfRepeatVote(activeConfRepeatVote);
                 weixinVoteConf.setActiveConfVoteType(page3RegulationQuery.getActiveConfVoteType());
                 //log.info("不允许");
@@ -300,7 +300,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
                 weixinVoteConf.setActiveVoteBaseId(voteWorkId);
                 weixinVoteConf.setActiveConfMusicId(0);
                 weixinVoteConf.setActiveConfRepeatVote(0);
-                weixinVoteConf.setActiveConfVoteType("1,1");
+                weixinVoteConf.setActiveConfVoteType("1;1");
                 weixinVoteConf.setActiveConfSignUp(0);
                 weixinVoteConf.setActiveConfVerify(0);
                 weixinVoteConf.setActiveConfNumHide(0);
