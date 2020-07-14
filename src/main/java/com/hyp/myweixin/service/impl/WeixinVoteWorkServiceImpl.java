@@ -165,7 +165,7 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         weixinVoteWork.setVoteWorkUserPhone(saveVoteUserQuery.getUserPhone());
         weixinVoteWork.setVoteWorkUserWeixin(saveVoteUserQuery.getUserWeixin());
         weixinVoteWork.setVoteWorkName(saveVoteUserQuery.getVoteWorkName());
-        weixinVoteWork.setVoteWorkUserName(saveVoteUserQuery.getVoteWorkUserName());
+        weixinVoteWork.setVoteWorkUserName(userById.getNickName());
         weixinVoteWork.setVoteWorkDesc(saveVoteUserQuery.getVoteWorkDesc());
         Integer saveWeixinVoteWorkReturnPK = null;
         try {
