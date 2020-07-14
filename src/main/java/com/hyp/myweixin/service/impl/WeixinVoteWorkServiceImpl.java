@@ -6,10 +6,10 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteWorkMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
-import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
-import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
-import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
-import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
+import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
+import com.hyp.myweixin.pojo.vo.page.*;
+import com.hyp.myweixin.pojo.vo.result.Result;
+import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -37,6 +37,90 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
 
+    @Autowired
+    private WeixinVoteBaseService weixinVoteBaseService;
+
+    /**
+     * 用户上传个人的作品  需要完整属性
+     *
+     * @param saveVoteUserQuery 前端上传回来的用户作品数据
+     * @return 如果有错误返回错误信息
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Result createWeixinVoteWorkReturnPK(SaveVoteUserQuery saveVoteUserQuery) throws MyDefinitionException {
+
+        /*查询活动是否存在*/
+        VoteDetailByWorkIdVO voteWorkByWorkId = weixinVoteBaseService.getVoteWorkByWorkId(saveVoteUserQuery.getActiveId());
+        if (voteWorkByWorkId == null) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "作品所属活动不明确");
+        }
+
+        /*查询用户是否存在*/
+        WeixinVoteUser userById = weixinVoteUserService.getUserById(saveVoteUserQuery.getUserId());
+        if (userById == null) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "作品所属用户不明确");
+        } else {
+            Integer enable = userById.getEnable();
+            if (!enable.equals(WeixinVoteUser.ENABLEENUM.ENABLE.getCode())) {
+                return Result.buildResult(Result.Status.UNAUTHORIZED, "当前账户已被禁用");
+            }
+        }
+        /*查询当前作品下面有多少作品了 然后用户给新创建的作品排序*/
+        Integer countWorkByVoteBaseId = null;
+        try {
+            countWorkByVoteBaseId = getUserWorkCountByActiveId(saveVoteUserQuery.getActiveId());
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        /*创建作品*/
+        /*获取当前该作品在活动中的序号*/
+        Integer voteWorkOr = countWorkByVoteBaseId++;
+        /*新作品实例化*/
+        WeixinVoteWork weixinVoteWork = WeixinVoteWork.init();
+        weixinVoteWork.setVoteWorkOr(voteWorkOr);
+        weixinVoteWork.setActiveVoteBaseId(saveVoteUserQuery.getActiveId());
+        weixinVoteWork.setVoteWorkImg(saveVoteUserQuery.getVoteWorkImgS());
+        weixinVoteWork.setVoteWorkUserId(saveVoteUserQuery.getUserId());
+        weixinVoteWork.setVoteWorkUserPhone(saveVoteUserQuery.getUserPhone());
+        weixinVoteWork.setVoteWorkUserWeixin(saveVoteUserQuery.getUserWeixin());
+        weixinVoteWork.setVoteWorkName(saveVoteUserQuery.getVoteWorkName());
+        weixinVoteWork.setVoteWorkUserName(saveVoteUserQuery.getVoteWorkUserName());
+        weixinVoteWork.setVoteWorkDesc(saveVoteUserQuery.getVoteWorkDesc());
+        Integer saveWeixinVoteWorkReturnPK = null;
+        try {
+            saveWeixinVoteWorkReturnPK = saveWeixinVoteWorkReturnPK(weixinVoteWork);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return Result.buildResult(Result.Status.OK, saveWeixinVoteWorkReturnPK);
+    }
+
+    /**
+     * 查询一个活动下面有多少作品数量了 通过活动ID查询
+     *
+     * @param voteWorkId 活动的主键
+     * @return 作品数量
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer getUserWorkCountByActiveId(Integer voteWorkId) throws MyDefinitionException {
+        if (voteWorkId == null) {
+            throw new MyDefinitionException("查询一个活动下面有多少作品数量的参数不能为空");
+        }
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeVoteBaseId", voteWorkId);
+        int i = 0;
+        try {
+            i = weixinVoteWorkMapper.selectCountByExample(example);
+        } catch (Exception e) {
+            log.error("查询一个活动下面有多少作品数量操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("查询一个活动下面有多少作品数量操作过程错误");
+        }
+        return i;
+    }
 
     /**
      * 获取作品点赞比当前作品多的作品
@@ -427,5 +511,28 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         return i;
     }
 
-
+    /**
+     * 保存用户作品 返回主键 需要完整属性
+     *
+     * @param weixinVoteWork
+     * @return 创建完成后的主键
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer saveWeixinVoteWorkReturnPK(WeixinVoteWork weixinVoteWork) throws MyDefinitionException {
+        if (weixinVoteWork == null) {
+            throw new MyDefinitionException("保存用户作品实体类参数不能为空");
+        }
+        Integer pk = null;
+        try {
+            int i = weixinVoteWorkMapper.insertUseGeneratedKeys(weixinVoteWork);
+            if (i > 0) {
+                pk = weixinVoteWork.getId();
+            }
+        } catch (Exception e) {
+            log.error("保存用户作品错误操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("保存用户作品错误操作过程错误");
+        }
+        return pk;
+    }
 }

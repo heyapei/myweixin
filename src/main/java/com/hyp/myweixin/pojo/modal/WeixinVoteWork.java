@@ -16,6 +16,32 @@ import java.util.Date;
 @Mapper
 @Data
 public class WeixinVoteWork {
+
+
+    /**
+     * 数据实例化
+     * @return
+     */
+    public static WeixinVoteWork init() {
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setVoteWorkUserName("");
+        weixinVoteWork.setVoteWorkUserId(0);
+        weixinVoteWork.setVoteWorkUserPhone("");
+        weixinVoteWork.setVoteWorkUserWeixin("");
+        weixinVoteWork.setVoteWorkDesc("");
+        weixinVoteWork.setVoteWorkName("");
+        weixinVoteWork.setVoteWorkVideoUrl("");
+        weixinVoteWork.setVoteWorkCreateTime(new Date());
+        weixinVoteWork.setActiveVoteBaseId(0);
+        weixinVoteWork.setVoteWorkStatus(0);
+        weixinVoteWork.setVoteWorkShowOrder(0);
+        weixinVoteWork.setVoteWorkCountNum(0);
+        weixinVoteWork.setVoteWorkImg("");
+        weixinVoteWork.setVoteWorkCountViewNum(0);
+        weixinVoteWork.setVoteWorkOr(0);
+        return weixinVoteWork;
+    }
+
     /**
      * 主键
      */

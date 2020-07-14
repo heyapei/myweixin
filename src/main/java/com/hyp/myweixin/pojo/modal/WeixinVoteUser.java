@@ -64,6 +64,43 @@ public class WeixinVoteUser {
      */
     private Integer enable = 0;
 
+    public enum ENABLEENUM {
+
+        ENABLE(0, "正常"),
+        UN_ENABLE(1, "禁用");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        ENABLEENUM(Integer type, String msg) {
+            this.code = type;
+            this.msg = msg;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        @Override
+        public String toString() {
+            return "ENABLEENUM{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+    }
+
+
     /**
      * 创建时间
      */

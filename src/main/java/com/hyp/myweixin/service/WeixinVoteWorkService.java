@@ -3,9 +3,10 @@ package com.hyp.myweixin.service;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
-import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
+import com.hyp.myweixin.pojo.vo.result.Result;
 
 import java.util.List;
 
@@ -16,6 +17,25 @@ import java.util.List;
  * @Description: TODO
  */
 public interface WeixinVoteWorkService {
+
+    /**
+     * 用户上传个人的作品  需要完整属性
+     *
+     * @param saveVoteUserQuery 前端上传回来的用户作品数据
+     * @return 如果有错误返回错误信息
+     * @throws MyDefinitionException
+     */
+    Result createWeixinVoteWorkReturnPK(SaveVoteUserQuery saveVoteUserQuery) throws MyDefinitionException;
+
+
+    /**
+     * 查询一个活动下面有多少作品数量了 通过活动ID查询
+     *
+     * @param voteWorkId 活动的主键
+     * @return 作品数量
+     * @throws MyDefinitionException
+     */
+    Integer getUserWorkCountByActiveId(Integer voteWorkId) throws MyDefinitionException;
 
 
     /**
@@ -120,7 +140,6 @@ public interface WeixinVoteWorkService {
     WeixinVoteWork getVoteWorkByUserWorkId(Integer userWorkId);
 
 
-
     /**
      * 通过作品的ID更新被投票次数
      *
@@ -129,8 +148,14 @@ public interface WeixinVoteWorkService {
      */
     int updateVoteWorkVoteNum(Integer userWorkId);
 
-
-
+    /**
+     * 保存用户作品 返回主键 需要完整属性
+     *
+     * @param weixinVoteWork
+     * @return 创建完成后的主键
+     * @throws MyDefinitionException
+     */
+    Integer saveWeixinVoteWorkReturnPK(WeixinVoteWork weixinVoteWork) throws MyDefinitionException;
 
 
 }

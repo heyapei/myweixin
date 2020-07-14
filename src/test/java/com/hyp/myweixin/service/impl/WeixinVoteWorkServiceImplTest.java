@@ -1,6 +1,9 @@
 package com.hyp.myweixin.service.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
+import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -22,6 +25,37 @@ public class WeixinVoteWorkServiceImplTest {
 
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+
+    @Test
+    public void createWeixinVoteWorkReturnPK() {
+        SaveVoteUserQuery saveVoteUserQuery = new SaveVoteUserQuery();
+        saveVoteUserQuery.setUserId(0);
+        saveVoteUserQuery.setActiveId(0);
+        saveVoteUserQuery.setVoteWorkUserName("");
+        saveVoteUserQuery.setVoteWorkName("");
+        saveVoteUserQuery.setVoteWorkDesc("");
+        saveVoteUserQuery.setUserPhone("");
+        saveVoteUserQuery.setUserWeixin("");
+        saveVoteUserQuery.setVoteWorkImgS("");
+
+        Result weixinVoteWorkReturnPK = weixinVoteWorkService.
+                createWeixinVoteWorkReturnPK(saveVoteUserQuery);
+        log.info("查询结果：" + weixinVoteWorkReturnPK.toString());
+    }
+
+    @Test
+    public void saveWeixinVoteWorkReturnPK() {
+        WeixinVoteWork weixinVoteWork = WeixinVoteWork.init();
+        Integer saveWeixinVoteWorkReturnPK = weixinVoteWorkService.
+                saveWeixinVoteWorkReturnPK(weixinVoteWork);
+        log.info("查询结果：" + saveWeixinVoteWorkReturnPK);
+    }
+
+    @Test
+    public void getUserWorkCountByActiveId() {
+        Integer userWorkCountByActiveId = weixinVoteWorkService.getUserWorkCountByActiveId(500);
+        log.info("查询结果：" + userWorkCountByActiveId);
+    }
 
     @Test
     public void getCountWorkByVoteBaseId() {

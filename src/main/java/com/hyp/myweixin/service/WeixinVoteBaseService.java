@@ -18,6 +18,10 @@ import java.util.List;
 public interface WeixinVoteBaseService {
 
 
+
+
+
+
     /**
      * 通过活动信息页面点入活动详情页 通过ID查询
      *
