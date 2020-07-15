@@ -86,7 +86,7 @@ public class VoteController {
         if (StringUtils.isBlank(weixinVoteUserWork.getOpenId())) {
             return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
         }
-        log.info("投票的请求参数是：{}",weixinVoteUserWork.toString());
+        log.info("投票的请求参数是：{}", weixinVoteUserWork.toString());
 
 
         /*投票数据限制*/
@@ -96,11 +96,14 @@ public class VoteController {
             return Result.buildResult(Result.Status.UNAUTHORIZED, judgeVoteLegalResult);
         }
 
+        log.info("投票数据限制判断完成{}", judgeVoteLegalResult.toString());
+
 
         WeixinUserOptionLog weixinUserOptionLog = new WeixinUserOptionLog();
         weixinUserOptionLog.setOptionType(WeixinUserOptionConfig.typeEnum.VOTE_WEiXIN_VOTE_WORK.getType());
         weixinUserOptionLog.setOptionDesc(WeixinUserOptionConfig.typeEnum.VOTE_WEiXIN_VOTE_WORK.getMsg());
         weixinUserOptionLog.setOptionObject(weixinVoteUserWork.getWorkId() + "");
+        log.info("微信用户操作数据：{}", weixinUserOptionLog.toString());
         userNoOpenIdIdLog.addUserOperationLog(weixinUserOptionLog, httpServletRequest);
 
 

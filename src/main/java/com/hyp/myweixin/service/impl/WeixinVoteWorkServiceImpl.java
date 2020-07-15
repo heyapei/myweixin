@@ -155,7 +155,7 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
         /*创建作品*/
         /*获取当前该作品在活动中的序号*/
-        Integer voteWorkOr = countWorkByVoteBaseId++;
+        Integer voteWorkOr = ++countWorkByVoteBaseId;
         /*新作品实例化*/
         WeixinVoteWork weixinVoteWork = WeixinVoteWork.init();
         weixinVoteWork.setVoteWorkOr(voteWorkOr);
@@ -396,6 +396,13 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
                 }
             }
 
+            if (weixinVoteWork.getVoteWorkOr() != null) {
+                if (weixinVoteWork.getVoteWorkOr() < 0) {
+                    example.orderBy("voteWorkOr").asc();
+                } else {
+                    example.orderBy("voteWorkOr").desc();
+                }
+            }
             if (weixinVoteWork.getVoteWorkCountNum() != null) {
                 if (weixinVoteWork.getVoteWorkCountNum() < 0) {
                     example.orderBy("voteWorkCountNum").asc();
@@ -412,13 +419,6 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
                 }
             }
 
-            if (weixinVoteWork.getVoteWorkOr() != null) {
-                if (weixinVoteWork.getVoteWorkOr() < 0) {
-                    example.orderBy("voteWorkOr").asc();
-                } else {
-                    example.orderBy("voteWorkOr").desc();
-                }
-            }
 
             if (weixinVoteWork.getVoteWorkCreateTime() != null) {
                 example.orderBy("voteWorkCreateTime").desc();

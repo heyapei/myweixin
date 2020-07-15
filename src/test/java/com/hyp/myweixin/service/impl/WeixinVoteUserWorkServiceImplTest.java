@@ -1,6 +1,8 @@
 package com.hyp.myweixin.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +30,25 @@ public class WeixinVoteUserWorkServiceImplTest {
     private WeixinVoteWorkServiceImpl weixinVoteWorkService;
 
     @Test
+    public void getVoteWorkAllWorkByPage() {
+        PageInfo pageInfo = new PageInfo();
+        pageInfo.setPageNum(1);
+        pageInfo.setPageSize(1);
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setActiveVoteBaseId(1);
+        weixinVoteWork.setVoteWorkShowOrder(0);
+        weixinVoteWork.setVoteWorkOr(-1);
+        weixinVoteWork.setVoteWorkCountNum(null);
+
+        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
+
+        log.info("查询结果：{}", voteWorkAllWorkByPage.toString());
+
+    }
+
+    @Test
     public void getWeixinVoteUserWorkNumByOpenIdTime() {
-        Integer weixinVoteUserWorkNumByOpenIdTime = weixinVoteUserWorkService.getWeixinVoteUserWorkNumByOpenIdTime(1, "!@",1, new Date(), new Date());
+        Integer weixinVoteUserWorkNumByOpenIdTime = weixinVoteUserWorkService.getWeixinVoteUserWorkNumByOpenIdTime(1, "!@", 1, new Date(), new Date());
         log.info("查询结果：{}", weixinVoteUserWorkNumByOpenIdTime);
     }
 

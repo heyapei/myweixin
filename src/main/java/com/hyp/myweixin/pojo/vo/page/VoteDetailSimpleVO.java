@@ -16,6 +16,7 @@ public class VoteDetailSimpleVO {
 
     private Integer id;
     private String voteWorkUserName;
+    private String voteWorkName;
     private Integer voteWorkCountNum;
     private String voteWorkImg;
     private Integer voteWorkCountViewNum;

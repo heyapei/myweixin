@@ -4,7 +4,6 @@ import com.hyp.myweixin.mapper.WeixinUserOptionLogMapper;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.dto.bdmap.BDMapResSimpleDTO;
 import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
-import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.service.UserNoOpenIdIdLog;
 import com.hyp.myweixin.utils.MyIpMacUtil;
 import com.hyp.myweixin.utils.bdmaputil.BDMapUtilService;
@@ -52,19 +51,20 @@ public class UserNoOpenIdIdLogImpl implements UserNoOpenIdIdLog {
 
         String userAgent = httpServletRequest.getHeader("User-Agent");
         String realIP = myIpMacUtil.getRealIP(httpServletRequest);
+        //String realIP = "222.69.128.114";
         if (StringUtils.isBlank(realIP)) {
             log.error("该服务类要求必须传递IP地址");
             return 0;
         }
 
-        if (StringUtils.isNotBlank(weixinUserOptionLog.getOptionObject())) {
+        /*if (StringUtils.isNotBlank(weixinUserOptionLog.getOptionObject())) {
             WeixinVoteBase weixinVoteBase = weixinVoteBaseMapper.selectByPrimaryKey(Integer.parseInt(weixinUserOptionLog.getOptionObject()));
             //log.info("查询活动数据：" + weixinVoteBase.toString());
             if (weixinVoteBase == null) {
                 log.error("未能查询到用户浏览的活动数据，浏览的活动ID为：{}", weixinUserOptionLog.getOptionObject());
                 return 0;
             }
-        }
+        }*/
 
 
         //AmapIpToAddressDTO ipPositionNoAsync = amapApiUtil.getIpPositionNoAsync(realIP);

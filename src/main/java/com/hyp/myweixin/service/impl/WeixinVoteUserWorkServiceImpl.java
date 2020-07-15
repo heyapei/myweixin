@@ -90,6 +90,8 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
         Integer activeConfRepeatVote = weixinVoteConf.getActiveConfRepeatVote();
         if (activeConfRepeatVote != null) {
 
+            log.info("判断是否允许重复投票");
+
 
             /*如果activeConfRepeatVote为0标识只允许投票一次
             等于别的标识可以投票多次 具体多少次 按照activeConfVoteType判断*/
@@ -100,6 +102,8 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
 
 
             if (activeConfRepeatVote == 0) {
+                log.info("不允许");
+                log.info("不允许{}；{}",activeVoteType,activeConfVoteTypeNum);
                 /*List<WeixinVoteUserWork> weixinVoteUserWorkS = getWeixinVoteUserWorkS(weixinVoteUserWork.getOpenId(),
                         weixinVoteUserWork.getWorkId());
                 if (weixinVoteUserWorkS != null && weixinVoteUserWorkS.size() >= 1) {
@@ -150,25 +154,32 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
                 }
             } else if (activeConfRepeatVote == 1) {
 
+                log.info("允许{}；{}",activeVoteType,activeConfVoteTypeNum);
+
 
                 /*这里是允许重复投票的*/
                 if (activeVoteType == 1) {
+                    log.info("允许1");
                     /*是1说明是每天*/
                     Integer weixinVoteUserWorkNumByOpenIdTime =
                             getWeixinVoteUserWorkNumByOpenIdTime(weixinVoteBase.getId(),
                                     weixinVoteUserWork.getOpenId(), weixinVoteUserWork.getWorkId(),
                                     MyDateUtil.getStartTime(new Date()), MyDateUtil.getEndTime(new Date()));
+
+                    log.info("允许1{};{}",weixinVoteUserWorkNumByOpenIdTime,weixinVoteUserWorkNumByOpenIdTime);
                     if (weixinVoteUserWorkNumByOpenIdTime != null && weixinVoteUserWorkNumByOpenIdTime > 0) {
                         if (weixinVoteUserWorkNumByOpenIdTime >= activeConfVoteTypeNum) {
                             return "当前活动允许重复对选手投票但每人每天限制投票数为：" + activeConfVoteTypeNum + "票，您已用完投票次数";
                         }
                     }
                 } else if (activeVoteType == 2) {
+                    log.info("允许2");
                     /*如果是2说明是总共*/
                     Integer weixinVoteUserWorkNumByOpenIdTime =
                             getWeixinVoteUserWorkNumByOpenIdTime(weixinVoteBase.getId(),
                                     weixinVoteUserWork.getOpenId(), weixinVoteUserWork.getWorkId(),
                                     weixinVoteBase.getActiveStartTime(), weixinVoteBase.getActiveEndTime());
+                    log.info("允许2{};{}",weixinVoteUserWorkNumByOpenIdTime,weixinVoteUserWorkNumByOpenIdTime);
                     if (weixinVoteUserWorkNumByOpenIdTime != null && weixinVoteUserWorkNumByOpenIdTime > 0) {
                         if (weixinVoteUserWorkNumByOpenIdTime >= activeConfVoteTypeNum) {
                             return "当前活动每天允许重复对选手投票但每人限制投票总数为：" + activeConfVoteTypeNum + "票，您已用完投票次数";

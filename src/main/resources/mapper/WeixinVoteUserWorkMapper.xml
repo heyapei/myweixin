@@ -33,7 +33,7 @@ and wvuw.open_id =  #{openId}
         <if test='workId!=null'>
             and wvuw.work_id=  #{workId}
         </if>
-and wvb.create_time
+and wvuw.create_time
 between  #{startTime}
 and  #{endTime}
     </select>
