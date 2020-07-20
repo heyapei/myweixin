@@ -5,6 +5,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
+import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
@@ -18,6 +19,15 @@ import java.util.List;
  * @Description: TODO
  */
 public interface WeixinVoteWorkService {
+
+
+    /**
+     * 更新作品的状态
+     * @param updateUserWorkStatusQuery
+     * @return 返回更新的行数
+     * @throws MyDefinitionException
+     */
+    Integer updateUserWorkStatus(UpdateUserWorkStatusQuery updateUserWorkStatusQuery) throws MyDefinitionException;
 
 
     /**

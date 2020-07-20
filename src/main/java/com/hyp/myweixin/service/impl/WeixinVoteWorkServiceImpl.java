@@ -10,6 +10,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
+import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
@@ -51,6 +52,48 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
 
+
+    /**
+     * 更新作品的状态
+     *
+     * @param updateUserWorkStatusQuery
+     * @return 返回更新的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateUserWorkStatus(UpdateUserWorkStatusQuery updateUserWorkStatusQuery) throws MyDefinitionException {
+
+        WeixinVoteWork voteWorkByUserWorkId = getVoteWorkByUserWorkId(updateUserWorkStatusQuery.getUserWorkId());
+
+        if (voteWorkByUserWorkId == null) {
+            throw new MyDefinitionException("没有找到当前作品信息");
+        }
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkByUserWorkId.getActiveVoteBaseId());
+        if (weixinVoteBaseByWorkId == null) {
+            throw new MyDefinitionException("没有找到当前活动信息");
+        }
+
+        if (!weixinVoteBaseByWorkId.getCreateSysUserId().equals(updateUserWorkStatusQuery.getUserId())) {
+            throw new MyDefinitionException("您不是当前活动的管理员");
+        }
+
+        if (voteWorkByUserWorkId.getVoteWorkStatus().equals(updateUserWorkStatusQuery.getWorkStatus())) {
+            throw new MyDefinitionException("无需重复更改当前作品的状态");
+        }
+
+        voteWorkByUserWorkId.setVoteWorkStatus(updateUserWorkStatusQuery.getWorkStatus());
+        Integer rowAffect = null;
+        try {
+            int i = weixinVoteWorkMapper.updateByPrimaryKeySelective(voteWorkByUserWorkId);
+            if (i > 0) {
+                rowAffect = i;
+            }
+        } catch (Exception e) {
+            log.error("更新作品状态操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("更新作品状态操作过程错");
+        }
+        return rowAffect;
+    }
 
     /**
      * 通过查询条件获取当前活动下面的数据 当然分页查询

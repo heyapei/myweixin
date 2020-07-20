@@ -6,6 +6,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
+import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -41,10 +42,27 @@ public class VoteUserWorkController {
     private WeixinVoteWorkService weixinVoteWorkService;
 
 
+    @ApiOperation("管理员操作活动状态，更新作品的状态")
+    @PostMapping("/updateUserWorkStatus")
+    public Result updateUserWorkStatus(@ApiParam(name = "更新作品的状态", value = "", required = true)
+                                       @Validated UpdateUserWorkStatusQuery updateUserWorkStatusQuery) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        Integer rowAffect = weixinVoteWorkService.updateUserWorkStatus(updateUserWorkStatusQuery);
+        if (rowAffect == null) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "更新作品状态失败");
+        }
+        return Result.buildResult(Result.Status.OK, "更新作品状态成功");
+    }
+
+
     @ApiOperation("管理员查看当前活动下的作品数据")
     @PostMapping("/getUserWorkListByType")
     public Result getUserWorkListByType(@ApiParam(name = "查询活动下的作品数据", value = "", required = true)
-                                                @Validated ActiveUserWorkQuery activeUserWorkQuery) {
+                                        @Validated ActiveUserWorkQuery activeUserWorkQuery) {
         boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
