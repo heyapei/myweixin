@@ -37,5 +37,10 @@ public class VoteDetailByWorkIdVO {
      */
     private Integer activeConfSignUp;
 
+    /**
+     * 创建人的id
+     */
+    private Integer systemUserId;
+
 
 }

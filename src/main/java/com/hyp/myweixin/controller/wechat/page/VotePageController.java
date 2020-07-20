@@ -76,6 +76,9 @@ public class VotePageController {
     }
 
 
+
+
+
     @ApiOperation("根据workId查询活动的详情")
     @PostMapping("/work/detail")
     public Result getVoteWorkByPage(HttpServletRequest request,
