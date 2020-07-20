@@ -407,6 +407,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
             voteDetailByWorkIdVO.setActiveCreateUserId(weixinVoteBase.getCreateSysUserId());
             voteDetailByWorkIdVO.setActiveConfSignUp(weixinVoteConf.getActiveConfSignUp());
+            voteDetailByWorkIdVO.setSystemUserId(weixinVoteBase.getCreateSysUserId());
 
         }
 
