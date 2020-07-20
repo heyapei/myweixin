@@ -1,7 +1,10 @@
 package com.hyp.myweixin.controller.wechat.voteactive;
 
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
@@ -10,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +39,22 @@ public class VoteUserWorkController {
     private HttpServletRequest httpServletRequest;
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+
+
+    @ApiOperation("管理员查看当前活动下的作品数据")
+    @PostMapping("/getUserWorkListByType")
+    public Result getUserWorkListByType(@ApiParam(name = "查询活动下的作品数据", value = "", required = true)
+                                                @Validated ActiveUserWorkQuery activeUserWorkQuery) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        PageInfo<WeixinVoteWork> userWorkListByTypePage = weixinVoteWorkService.getUserWorkListByTypePage(activeUserWorkQuery);
+
+        return Result.buildResult(Result.Status.OK, userWorkListByTypePage);
+    }
+
 
     @ApiOperation("保存用户在当前活动下提交的作品")
     @PostMapping("/saveVoteUserWork")

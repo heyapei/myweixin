@@ -108,6 +108,36 @@ public class WeixinVoteWork {
     @Column(name = "vote_work_status")
     private Integer voteWorkStatus;
 
+    public enum VoteWorkStatusEnum{
+        UN_REVIEW(0,"等待审核"),
+        OFFLINE(2,"下线"),
+        ONLINE(1,"上线");
+
+        private Integer code;
+        private String msg;
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        @Override
+        public String toString() {
+            return "VoteWorkStatusEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+
+        VoteWorkStatusEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+    }
+
     /**
      * 作品的展示排序
      */

@@ -8,6 +8,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.modal.WeixinVoteConf;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
@@ -49,6 +50,51 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
+
+
+    /**
+     * 通过查询条件获取当前活动下面的数据 当然分页查询
+     *
+     * @param activeUserWorkQuery 活动下作品的数据
+     * @return 作品列表
+     * @throws MyDefinitionException
+     */
+    @Override
+    public PageInfo<WeixinVoteWork> getUserWorkListByTypePage(ActiveUserWorkQuery activeUserWorkQuery) throws MyDefinitionException {
+
+        if (activeUserWorkQuery == null) {
+            throw new MyDefinitionException("查询参数不能为空");
+        }
+
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(activeUserWorkQuery.getActiveId());
+        if (weixinVoteBaseByWorkId == null) {
+            throw new MyDefinitionException("未发现当前活动项");
+        }
+
+        if (!activeUserWorkQuery.getUserId().equals(weixinVoteBaseByWorkId.getCreateSysUserId())) {
+            throw new MyDefinitionException("您不是当前活动的管理员");
+        }
+        PageHelper.startPage(activeUserWorkQuery.getPageNum(), activeUserWorkQuery.getPageSize());
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.orderBy("voteWorkShowOrder").desc();
+        example.orderBy("voteWorkCreateTime").desc();
+        Integer workStatus = activeUserWorkQuery.getWorkStatus();
+        if (workStatus != null && workStatus != -1) {
+            criteria.andEqualTo("voteWorkStatus", activeUserWorkQuery.getWorkStatus());
+        }
+
+        List<WeixinVoteWork> weixinVoteWorks = null;
+        try {
+            weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("查询活动下的作品操作过程失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("查询活动下的作品操作过程失败");
+        }
+        PageInfo<WeixinVoteWork> pageInfo = new PageInfo(weixinVoteWorks);
+        return pageInfo;
+    }
 
     /**
      * 通过userID和activeId查询某个人在某个活动中提交作品的内容

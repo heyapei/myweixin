@@ -3,6 +3,7 @@ package com.hyp.myweixin.service;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
@@ -17,6 +18,16 @@ import java.util.List;
  * @Description: TODO
  */
 public interface WeixinVoteWorkService {
+
+
+    /**
+     * 通过查询条件获取当前活动下面的数据 当然分页查询
+     * @param activeUserWorkQuery 活动下作品的数据
+     * @return 作品列表
+     * @throws MyDefinitionException
+     */
+    PageInfo<WeixinVoteWork> getUserWorkListByTypePage(ActiveUserWorkQuery activeUserWorkQuery) throws MyDefinitionException;
+
 
 
     /**

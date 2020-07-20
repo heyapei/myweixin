@@ -76,9 +76,6 @@ public class VotePageController {
     }
 
 
-
-
-
     @ApiOperation("根据workId查询活动的详情")
     @PostMapping("/work/detail")
     public Result getVoteWorkByPage(HttpServletRequest request,
@@ -116,7 +113,11 @@ public class VotePageController {
         weixinVoteWork.setActiveVoteBaseId(activeId);
         weixinVoteWork.setVoteWorkShowOrder(0);
         weixinVoteWork.setVoteWorkOr(-1);
-        weixinVoteWork.setVoteWorkCountNum(null);
+        weixinVoteWork.setVoteWorkCountNum(WeixinVoteWork.VoteWorkStatusEnum.ONLINE.getCode());
+        /**
+         * 作品的状态 0默认等待审核 1上线 2下线
+         */
+        weixinVoteWork.setVoteWorkStatus(1);
 
         PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
         return Result.buildResult(Result.Status.OK, voteWorkAllWorkByPage);
