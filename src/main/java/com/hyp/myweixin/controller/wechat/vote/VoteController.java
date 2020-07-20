@@ -2,13 +2,11 @@ package com.hyp.myweixin.controller.wechat.vote;
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.modal.WeixinUserOptionConfig;
-import com.hyp.myweixin.pojo.modal.WeixinUserOptionLog;
-import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
-import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.UserNoOpenIdIdLog;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
+import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyIpMacUtil;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +42,8 @@ public class VoteController {
     private WeixinVoteUserWorkService weixinVoteUserWorkService;
     @Autowired
     private MyIpMacUtil myIpMacUtil;
+    @Autowired
+    private WeixinVoteWorkService weixinVoteWorkService;
 
 
     @RequestMapping("/add")
@@ -89,11 +89,19 @@ public class VoteController {
         log.info("投票的请求参数是：{}", weixinVoteUserWork.toString());
 
 
+        /*看剩余票数*/
+        WeixinVoteWork voteWorkByUserWorkId = weixinVoteWorkService.getVoteWorkByUserWorkId(weixinVoteUserWork.getWorkId());
+        Integer remainderByOpenIdTime = weixinVoteUserWorkService.
+                getRemainderByOpenIdTime(voteWorkByUserWorkId.getActiveVoteBaseId(), weixinVoteUserWork.getOpenId());
+        if (remainderByOpenIdTime <= 0) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "你已用完当前所有的投票次数", remainderByOpenIdTime);
+        }
+
         /*投票数据限制*/
 
         String judgeVoteLegalResult = weixinVoteUserWorkService.judgeVoteLegal(weixinVoteUserWork);
         if (StringUtils.isNotBlank(judgeVoteLegalResult)) {
-            return Result.buildResult(Result.Status.UNAUTHORIZED, judgeVoteLegalResult);
+            return Result.buildResult(Result.Status.UNAUTHORIZED, judgeVoteLegalResult, remainderByOpenIdTime);
         }
 
         log.info("投票数据限制判断完成{}", judgeVoteLegalResult.toString());
@@ -110,7 +118,7 @@ public class VoteController {
         weixinVoteUserWork.setIp(myIpMacUtil.ipToLong(myIpMacUtil.getRealIP(httpServletRequest)));
         int i = weixinVoteUserWorkService.addUserVote(weixinVoteUserWork);
         if (i > 0) {
-            return Result.buildResult(Result.Status.OK, "保存用户对作品：" + weixinVoteUserWork.getWorkId() + "进行投票，成功");
+            return Result.buildResult(Result.Status.OK, "保存用户对作品：" + weixinVoteUserWork.getWorkId() + "进行投票，成功", remainderByOpenIdTime);
         } else {
             return Result.buildResult(Result.Status.SERVER_ERROR);
         }

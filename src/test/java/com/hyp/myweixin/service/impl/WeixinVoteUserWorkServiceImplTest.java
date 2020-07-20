@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -28,6 +29,22 @@ public class WeixinVoteUserWorkServiceImplTest {
     private WeixinVoteUserWorkService weixinVoteUserWorkService;
     @Autowired
     private WeixinVoteWorkServiceImpl weixinVoteWorkService;
+
+    @Test
+    public void getRemainderByOpenIdTime() {
+
+        Integer remainderByOpenIdTime = weixinVoteUserWorkService.
+                getRemainderByOpenIdTime(1, "1231");
+        log.info("查询结果：{}",remainderByOpenIdTime.toString());
+    }
+
+    @Test
+    public void getWeiXinVoteWorkListByUserId() {
+
+        List<WeixinVoteWork> weiXinVoteWorkListByUserId = weixinVoteWorkService.
+                getWeiXinVoteWorkListByUserId(27, 76);
+        log.info("查询结果：{}",weiXinVoteWorkListByUserId.toString());
+    }
 
     @Test
     public void getVoteWorkAllWorkByPage() {

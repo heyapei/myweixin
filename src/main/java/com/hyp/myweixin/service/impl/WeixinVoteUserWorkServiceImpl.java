@@ -41,6 +41,49 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
 
+    /**
+     * 获取剩余票数
+     *
+     * @param baseId
+     * @param openId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer getRemainderByOpenIdTime(Integer baseId, String openId) throws MyDefinitionException {
+
+        log.info("当前请求参数：{}，{}", baseId, openId);
+        try {
+            WeixinVoteConf weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(baseId);
+            WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(baseId);
+
+            String activeConfVoteType = weixinVoteConf.getActiveConfVoteType();
+            String[] split = activeConfVoteType.split(";");
+            Integer activeVoteType = Integer.parseInt(split[0]);
+            Integer activeConfVoteTypeNum = Integer.parseInt(split[1]);
+
+            if (activeVoteType == 1) {
+                Integer weixinVoteUserWorkNumByOpenIdTime =
+                        getWeixinVoteUserWorkNumByOpenIdTime(baseId,
+                                openId, null,
+                                MyDateUtil.getStartTime(new Date()), MyDateUtil.getEndTime(new Date()));
+                return activeConfVoteTypeNum - weixinVoteUserWorkNumByOpenIdTime;
+            } else if (activeVoteType == 2) {
+                Integer weixinVoteUserWorkNumByOpenIdTime =
+                        getWeixinVoteUserWorkNumByOpenIdTime(baseId,
+                                openId, null,
+                                MyDateUtil.getStartTime(weixinVoteBaseByWorkId.getActiveStartTime()), MyDateUtil.getEndTime(weixinVoteBaseByWorkId.getActiveEndTime()));
+                return activeConfVoteTypeNum - weixinVoteUserWorkNumByOpenIdTime;
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return null;
+        } catch (MyDefinitionException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
 
     /**
      * 判断当前投票的合法性
@@ -102,15 +145,18 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
 
 
             if (activeConfRepeatVote == 0) {
-                log.info("不允许");
-                log.info("不允许{}；{}",activeVoteType,activeConfVoteTypeNum);
+                //log.info("不允许");
+                //log.info("不允许{}；{}",activeVoteType,activeConfVoteTypeNum);
                 /*List<WeixinVoteUserWork> weixinVoteUserWorkS = getWeixinVoteUserWorkS(weixinVoteUserWork.getOpenId(),
                         weixinVoteUserWork.getWorkId());
                 if (weixinVoteUserWorkS != null && weixinVoteUserWorkS.size() >= 1) {
                     return "当前活动不允许重复投票";
                 }*/
 
-                /**因为不允许重复投票所以这部分可以直接先做一下是否已经投票了*/
+                /**
+                 * 因为不允许重复投票所以这部分可以直接先做一下是否已经投票了
+                 *
+                 */
                 List<WeixinVoteUserWork> weixinVoteUserWorkS = getWeixinVoteUserWorkS(weixinVoteUserWork.getOpenId(),
                         weixinVoteUserWork.getWorkId());
                 if (weixinVoteUserWorkS != null && weixinVoteUserWorkS.size() >= 1) {
@@ -154,7 +200,10 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
                 }
             } else if (activeConfRepeatVote == 1) {
 
-                log.info("允许{}；{}",activeVoteType,activeConfVoteTypeNum);
+                log.info("允许{}；{}", activeVoteType, activeConfVoteTypeNum);
+
+
+
 
 
                 /*这里是允许重复投票的*/
@@ -163,23 +212,25 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
                     /*是1说明是每天*/
                     Integer weixinVoteUserWorkNumByOpenIdTime =
                             getWeixinVoteUserWorkNumByOpenIdTime(weixinVoteBase.getId(),
-                                    weixinVoteUserWork.getOpenId(), weixinVoteUserWork.getWorkId(),
+                                    weixinVoteUserWork.getOpenId(), null,
                                     MyDateUtil.getStartTime(new Date()), MyDateUtil.getEndTime(new Date()));
 
-                    log.info("允许1{};{}",weixinVoteUserWorkNumByOpenIdTime,weixinVoteUserWorkNumByOpenIdTime);
+                    log.info("允许1{};{}", weixinVoteUserWorkNumByOpenIdTime, weixinVoteUserWorkNumByOpenIdTime);
                     if (weixinVoteUserWorkNumByOpenIdTime != null && weixinVoteUserWorkNumByOpenIdTime > 0) {
                         if (weixinVoteUserWorkNumByOpenIdTime >= activeConfVoteTypeNum) {
                             return "当前活动允许重复对选手投票但每人每天限制投票数为：" + activeConfVoteTypeNum + "票，您已用完投票次数";
                         }
                     }
                 } else if (activeVoteType == 2) {
+
+
                     log.info("允许2");
                     /*如果是2说明是总共*/
                     Integer weixinVoteUserWorkNumByOpenIdTime =
                             getWeixinVoteUserWorkNumByOpenIdTime(weixinVoteBase.getId(),
-                                    weixinVoteUserWork.getOpenId(), weixinVoteUserWork.getWorkId(),
+                                    weixinVoteUserWork.getOpenId(), null,
                                     weixinVoteBase.getActiveStartTime(), weixinVoteBase.getActiveEndTime());
-                    log.info("允许2{};{}",weixinVoteUserWorkNumByOpenIdTime,weixinVoteUserWorkNumByOpenIdTime);
+                    log.info("允许2{};{}", weixinVoteUserWorkNumByOpenIdTime, weixinVoteUserWorkNumByOpenIdTime);
                     if (weixinVoteUserWorkNumByOpenIdTime != null && weixinVoteUserWorkNumByOpenIdTime > 0) {
                         if (weixinVoteUserWorkNumByOpenIdTime >= activeConfVoteTypeNum) {
                             return "当前活动每天允许重复对选手投票但每人限制投票总数为：" + activeConfVoteTypeNum + "票，您已用完投票次数";

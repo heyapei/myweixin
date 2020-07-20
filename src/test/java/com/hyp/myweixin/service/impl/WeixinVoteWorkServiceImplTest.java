@@ -29,15 +29,14 @@ public class WeixinVoteWorkServiceImplTest {
     @Test
     public void createWeixinVoteWorkReturnPK() {
         SaveVoteUserQuery saveVoteUserQuery = new SaveVoteUserQuery();
-        saveVoteUserQuery.setUserId(0);
-        saveVoteUserQuery.setActiveId(0);
+        saveVoteUserQuery.setUserId(25);
+        saveVoteUserQuery.setActiveId(76);
         saveVoteUserQuery.setVoteWorkUserName("");
         saveVoteUserQuery.setVoteWorkName("");
         saveVoteUserQuery.setVoteWorkDesc("");
         saveVoteUserQuery.setUserPhone("");
         saveVoteUserQuery.setUserWeixin("");
         saveVoteUserQuery.setVoteWorkImgS("");
-
         Result weixinVoteWorkReturnPK = weixinVoteWorkService.
                 createWeixinVoteWorkReturnPK(saveVoteUserQuery);
         log.info("查询结果：" + weixinVoteWorkReturnPK.toString());

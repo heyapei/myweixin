@@ -28,5 +28,14 @@ public class VoteDetailByWorkIdVO {
 
     private String organisersPhone;
 
+    /**
+     * 创建人id
+     */
+    private Integer activeCreateUserId;
+    /**
+     * 是否开启用户自己上传作品 0 默认开启 1 不开启
+     */
+    private Integer activeConfSignUp;
+
 
 }

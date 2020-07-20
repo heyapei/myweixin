@@ -405,6 +405,9 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";", ""));
             voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode().replaceAll(";", ""));
             voteDetailByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
+            voteDetailByWorkIdVO.setActiveCreateUserId(weixinVoteBase.getCreateSysUserId());
+            voteDetailByWorkIdVO.setActiveConfSignUp(weixinVoteConf.getActiveConfSignUp());
+
         }
 
         return voteDetailByWorkIdVO;
