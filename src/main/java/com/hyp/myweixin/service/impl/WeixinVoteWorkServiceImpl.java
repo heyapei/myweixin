@@ -55,7 +55,6 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     private static final String SEMICOLON_SEPARATOR = ";";
 
 
-
     /**
      * 更新作品的状态
      *
@@ -207,9 +206,13 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
                     } catch (MyDefinitionException e) {
                         return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
                     }
+                    /*如果是创建人则不进行是否有活动的判断*/
                     if (weiXinVoteWorkListByUserId != null) {
-                        if (weiXinVoteWorkListByUserId.size() >= 1) {
-                            return Result.buildResult(Result.Status.UNAUTHORIZED, "已有作品在该活动中");
+                        if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
+                            if (weiXinVoteWorkListByUserId.size() >= 1 &&
+                                    !weiXinVoteWorkListByUserId.get(0).getVoteWorkStatus().equals(WeixinVoteWork.VoteWorkStatusEnum.OFFLINE.getCode())) {
+                                return Result.buildResult(Result.Status.UNAUTHORIZED, "已有作品在该活动中");
+                            }
                         }
                     }
 
