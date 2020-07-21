@@ -43,4 +43,15 @@ public class VoteDetailByWorkIdVO {
     private Integer systemUserId;
 
 
+    /**
+     * 允许上传开始的时间
+     */
+    private Date activeUploadStartTime;
+
+
+    /**
+     * 允许上传结束的时间
+     */
+    private Date activeUploadEndTime;
+
 }

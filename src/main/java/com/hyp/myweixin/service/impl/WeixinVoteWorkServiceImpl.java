@@ -52,6 +52,9 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
 
+    private static final String SEMICOLON_SEPARATOR = ";";
+
+
 
     /**
      * 更新作品的状态
@@ -123,6 +126,7 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         example.orderBy("voteWorkShowOrder").desc();
         example.orderBy("voteWorkCreateTime").desc();
         Integer workStatus = activeUserWorkQuery.getWorkStatus();
+        criteria.andEqualTo("activeVoteBaseId", activeUserWorkQuery.getActiveId());
         if (workStatus != null && workStatus != -1) {
             criteria.andEqualTo("voteWorkStatus", activeUserWorkQuery.getWorkStatus());
         }
@@ -136,6 +140,15 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
             throw new MyDefinitionException("查询活动下的作品操作过程失败");
         }
         PageInfo<WeixinVoteWork> pageInfo = new PageInfo(weixinVoteWorks);
+        List<WeixinVoteWork> list = pageInfo.getList();
+        List<WeixinVoteWork> list1 = new ArrayList<>();
+        for (WeixinVoteWork weixinVoteWork : list) {
+
+            String[] split = weixinVoteWork.getVoteWorkImg().split(SEMICOLON_SEPARATOR);
+            weixinVoteWork.setVoteWorkImg(split[0]);
+            list1.add(weixinVoteWork);
+        }
+        pageInfo.setList(list1);
         return pageInfo;
     }
 

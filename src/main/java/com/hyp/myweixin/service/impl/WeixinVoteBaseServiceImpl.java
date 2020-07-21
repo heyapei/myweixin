@@ -408,6 +408,8 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setActiveCreateUserId(weixinVoteBase.getCreateSysUserId());
             voteDetailByWorkIdVO.setActiveConfSignUp(weixinVoteConf.getActiveConfSignUp());
             voteDetailByWorkIdVO.setSystemUserId(weixinVoteBase.getCreateSysUserId());
+            voteDetailByWorkIdVO.setActiveUploadStartTime(weixinVoteConf.getActiveUploadStartTime());
+            voteDetailByWorkIdVO.setActiveUploadEndTime(weixinVoteConf.getActiveUploadEndTime());
 
         }
 

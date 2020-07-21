@@ -51,7 +51,12 @@ public class VoteUserWorkController {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
 
-        Integer rowAffect = weixinVoteWorkService.updateUserWorkStatus(updateUserWorkStatusQuery);
+        Integer rowAffect = null;
+        try {
+            rowAffect = weixinVoteWorkService.updateUserWorkStatus(updateUserWorkStatusQuery);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "更新作品状态失败," + e.getMessage());
+        }
         if (rowAffect == null) {
             return Result.buildResult(Result.Status.UNAUTHORIZED, "更新作品状态失败");
         }
