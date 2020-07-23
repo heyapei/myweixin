@@ -3,6 +3,7 @@ package com.hyp.myweixin.service;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserUploadRightVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.UserWorkDetailVO;
 
 import java.util.Date;
@@ -17,6 +18,17 @@ import java.util.List;
 public interface WeixinVoteUserWorkService {
 
     /**
+     * 用户上传作品前判断需要什么信息以及是否允许上传
+     *
+     * @param activeId 活动ID
+     * @param userId 用户ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    UserUploadRightVO judgeUserUploadRight(Integer userId,Integer activeId) throws MyDefinitionException;
+
+
+    /**
      * 管理员查看作品详情
      *
      * @param userId
@@ -25,7 +37,6 @@ public interface WeixinVoteUserWorkService {
      * @throws MyDefinitionException
      */
     UserWorkDetailVO getUserWorkDetailByWorkId(Integer userId, Integer userWorkId) throws MyDefinitionException;
-
 
 
     /**

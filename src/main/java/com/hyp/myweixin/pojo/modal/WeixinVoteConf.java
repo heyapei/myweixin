@@ -149,11 +149,77 @@ public class WeixinVoteConf {
     @Column(name = "active_conf_need_weixin")
     private Integer activeConfNeedWeixin;
 
+    public enum ActiveConfNeedWeixinEnum{
+        NEED_WEIXIN(1, "不需要"),
+        NOT_NEED_WEIXIN(0, "需要");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        ActiveConfNeedWeixinEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+
+        @Override
+        public String toString() {
+            return "ActiveConfNeedWeixinEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+        public Integer getCode() {
+            return code;
+        }
+        public String getMsg() {
+            return msg;
+        }
+    }
+
     /**
      * 是否需要手机号（0 默认不需要 1 需要）
      */
     @Column(name = "active_conf_need_phone")
     private Integer activeConfNeedPhone;
+
+    public enum ActiveConfNeedPhoneEnum{
+        NEED_PHONE(1, "不需要"),
+        NOT_NEED_PHONE(0, "需要");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        ActiveConfNeedPhoneEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+
+        @Override
+        public String toString() {
+            return "ActiveConfNeedPhoneEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+        public Integer getCode() {
+            return code;
+        }
+        public String getMsg() {
+            return msg;
+        }
+    }
 
     /**
      * 用于分享的图片

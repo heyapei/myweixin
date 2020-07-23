@@ -7,6 +7,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserUploadRightVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.UserWorkDetailVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
@@ -45,10 +46,34 @@ public class VoteUserWorkController {
     @Autowired
     private WeixinVoteUserWorkService weixinVoteUserWorkService;
 
+
+    @ApiOperation("用户上传作品前判断需要什么信息以及是否允许上传")
+    @PostMapping("/judgeUserUploadRight")
+    public Result judgeUserUploadRight(@ApiParam(name = "活动ID", value = "activeId", required = true)
+                                               Integer activeId,
+                                       @ApiParam(name = "用户ID", value = "userId", required = true)
+                                               Integer userId) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+        UserUploadRightVO userUploadRightVO = null;
+        try {
+            userUploadRightVO = weixinVoteUserWorkService.judgeUserUploadRight(userId, activeId);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.BAD_REQUEST, e.getMessage());
+        }
+
+        return Result.buildResult(Result.Status.OK, userUploadRightVO);
+    }
+
+
     @ApiOperation("管理员查看作品的详情信息")
     @PostMapping("/getUserWorkDetailByWorkId")
-    public Result getUserWorkDetailByWorkId(@ApiParam(name = "查看作品的详细信息", value = "", required = true)
-                                        Integer userId, Integer workId) {
+    public Result getUserWorkDetailByWorkId(@ApiParam(name = "用户ID", value = "userId", required = true)
+                                                    Integer userId,
+                                            @ApiParam(name = "作品ID", value = "workId", required = true)
+                                                    Integer workId) {
         boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");

@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserUploadRightVO;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -35,7 +36,17 @@ public class WeixinVoteUserWorkServiceImplTest {
 
         Integer remainderByOpenIdTime = weixinVoteUserWorkService.
                 getRemainderByOpenIdTime(1, "1231");
-        log.info("查询结果：{}",remainderByOpenIdTime.toString());
+        log.info("查询结果：{}", remainderByOpenIdTime.toString());
+    }
+
+    @Test
+    public void judgeUserUploadRight() {
+        UserUploadRightVO userUploadRightVO = weixinVoteUserWorkService.
+                judgeUserUploadRight(25, 76);
+        log.info("查询结果：{}", userUploadRightVO.toString());
+
+        /*log.info("查询结果：{}",weixinVoteUserWorkService.
+                judgeUserUploadRight(25, 77));*/
     }
 
     @Test
@@ -43,7 +54,7 @@ public class WeixinVoteUserWorkServiceImplTest {
 
         List<WeixinVoteWork> weiXinVoteWorkListByUserId = weixinVoteWorkService.
                 getWeiXinVoteWorkListByUserId(27, 76);
-        log.info("查询结果：{}",weiXinVoteWorkListByUserId.toString());
+        log.info("查询结果：{}", weiXinVoteWorkListByUserId.toString());
     }
 
     @Test

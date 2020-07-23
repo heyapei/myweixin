@@ -7,8 +7,10 @@ import com.hyp.myweixin.mapper.WeixinVoteUserWorkMapper;
 import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkSimpleVO;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserUploadRightVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.UserWorkDetailVO;
 import com.hyp.myweixin.service.*;
+import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,8 +45,115 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     private WeixinVoteConfService weixinVoteConfService;
     @Autowired
     private AdministratorsOptionService administratorsOptionService;
+    @Autowired
+    private MyErrorList myErrorList;
+
 
     private static final String SEMICOLON_SEPARATOR = ";";
+
+    /**
+     * 用户上传作品前判断需要什么信息以及是否允许上传
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public UserUploadRightVO judgeUserUploadRight(Integer userId, Integer activeId) throws MyDefinitionException {
+        if (activeId == null) {
+            throw new MyDefinitionException("参数不可以为空");
+        }
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(activeId);
+        if (weixinVoteBaseByWorkId == null) {
+            throw new MyDefinitionException("未能查找到活动信息");
+        }
+        WeixinVoteConf weixinVoteConfByVoteWorkId = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(weixinVoteBaseByWorkId.getId());
+        if (weixinVoteConfByVoteWorkId == null) {
+            throw new MyDefinitionException("未能查找到活动配置信息");
+        }
+
+        WeixinVoteUser weixinVoteUser = weixinVoteUserService.getUserById(userId);
+        if (weixinVoteUser == null) {
+            throw new MyDefinitionException("未能查找到用户信息");
+        }
+
+
+        UserUploadRightVO userUploadRightVO = new UserUploadRightVO();
+        userUploadRightVO.setMessage("允许上传");
+        userUploadRightVO.setAllowUploadResult(true);
+        Integer activeConfSignUp = weixinVoteConfByVoteWorkId.getActiveConfSignUp();
+        if (activeConfSignUp.equals(WeixinVoteConf.ActiveConfSignUpEnum.CAN_SIGN_UP.getCode())) {
+            userUploadRightVO.setAllowUploadConf(true);
+        } else if (activeConfSignUp.equals(WeixinVoteConf.ActiveConfSignUpEnum.CANT_SIGN_UP.getCode())) {
+            userUploadRightVO.setAllowUploadConf(false);
+            userUploadRightVO.setAllowUploadResult(false);
+            myErrorList.add("当前活动不允许自主上传作品，不允许上传");
+        }
+        userUploadRightVO.setActiveStartTime(weixinVoteBaseByWorkId.getActiveStartTime());
+        userUploadRightVO.setActiveEndTime(weixinVoteBaseByWorkId.getActiveEndTime());
+
+        userUploadRightVO.setAllowUploadStartTimeConf(weixinVoteConfByVoteWorkId.getActiveUploadStartTime());
+        userUploadRightVO.setAllowUploadEndTimeConf(weixinVoteConfByVoteWorkId.getActiveUploadEndTime());
+
+
+        List<WeixinVoteWork> weiXinVoteWorkListByUserId = null;
+        try {
+            weiXinVoteWorkListByUserId = weixinVoteWorkService.getWeiXinVoteWorkListByUserId(userId, activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        userUploadRightVO.setHasUploaded(false);
+        /*如果是创建人则不进行是否有活动的判断*/
+        if (weiXinVoteWorkListByUserId != null) {
+            if (weiXinVoteWorkListByUserId.size() >= 1 &&
+                    !weiXinVoteWorkListByUserId.get(0).getVoteWorkStatus().equals(WeixinVoteWork.VoteWorkStatusEnum.OFFLINE.getCode())) {
+                userUploadRightVO.setHasUploaded(true);
+                userUploadRightVO.setAllowUploadResult(false);
+                //userUploadRightVO.setMessage("该活动中已有作品，不允许上传");
+                myErrorList.add("该活动中已有作品，不允许上传");
+            }
+        }
+
+        Integer activeConfNeedWeixin = weixinVoteConfByVoteWorkId.getActiveConfNeedWeixin();
+        if (activeConfNeedWeixin.equals(WeixinVoteConf.ActiveConfNeedWeixinEnum.NEED_WEIXIN.getCode())) {
+            userUploadRightVO.setNeedUserWeixin(true);
+        } else if (activeConfNeedWeixin.equals(WeixinVoteConf.ActiveConfNeedWeixinEnum.NOT_NEED_WEIXIN.getCode())) {
+            userUploadRightVO.setNeedUserWeixin(false);
+        }
+        Integer activeConfNeedPhone = weixinVoteConfByVoteWorkId.getActiveConfNeedPhone();
+        if (activeConfNeedPhone.equals(WeixinVoteConf.ActiveConfNeedPhoneEnum.NEED_PHONE.getCode())) {
+            userUploadRightVO.setNeedUserPhone(true);
+        } else if (activeConfNeedPhone.equals(WeixinVoteConf.ActiveConfNeedPhoneEnum.NOT_NEED_PHONE.getCode())) {
+            userUploadRightVO.setNeedUserPhone(false);
+        }
+
+
+        Date nowDate = new Date();
+        if (!userUploadRightVO.getAllowUploadStartTimeConf().before(nowDate)) {
+            // userUploadRightVO.setMessage("未到作品上传开始时间，不允许上传");
+            myErrorList.add("未到作品上传开始时间，不允许上传");
+            userUploadRightVO.setAllowUploadResult(false);
+        } else if (userUploadRightVO.getAllowUploadEndTimeConf().before(nowDate)) {
+            //userUploadRightVO.setMessage("作品上传结束时间已到，不允许上传");
+            myErrorList.add("作品上传结束时间已结束，不允许上传");
+            userUploadRightVO.setAllowUploadResult(false);
+        }
+
+
+        if (weixinVoteUser.getEnable().equals(WeixinVoteUser.ENABLEENUM.UN_ENABLE.getCode())) {
+            //userUploadRightVO.setMessage("用户已被禁用，不允许上传");
+            myErrorList.add("用户已被禁用，不允许上传");
+            userUploadRightVO.setAllowUploadResult(false);
+        }
+
+        if (myErrorList.hasErrors()) {
+            userUploadRightVO.setMessage(myErrorList.toPlainString());
+        }
+
+        return userUploadRightVO;
+    }
 
     /**
      * 管理员查看作品详情
