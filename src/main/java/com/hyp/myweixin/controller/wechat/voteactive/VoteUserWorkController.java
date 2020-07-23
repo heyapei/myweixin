@@ -7,7 +7,9 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserWorkDetailVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
+import com.hyp.myweixin.service.WeixinVoteUserWorkService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +42,26 @@ public class VoteUserWorkController {
     private HttpServletRequest httpServletRequest;
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+    @Autowired
+    private WeixinVoteUserWorkService weixinVoteUserWorkService;
+
+    @ApiOperation("管理员查看作品的详情信息")
+    @PostMapping("/getUserWorkDetailByWorkId")
+    public Result getUserWorkDetailByWorkId(@ApiParam(name = "查看作品的详细信息", value = "", required = true)
+                                        Integer userId, Integer workId) {
+        boolean b = myRequestValidateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        UserWorkDetailVO userWorkDetailByWorkId = null;
+        try {
+            userWorkDetailByWorkId = weixinVoteUserWorkService.getUserWorkDetailByWorkId(userId, workId);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.BAD_REQUEST, e.getMessage());
+        }
+        return Result.buildResult(Result.Status.OK, userWorkDetailByWorkId);
+    }
 
 
     @ApiOperation("管理员操作活动状态，更新作品的状态")

@@ -7,6 +7,7 @@ import com.hyp.myweixin.mapper.WeixinVoteUserWorkMapper;
 import com.hyp.myweixin.pojo.modal.*;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailCompleteVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkSimpleVO;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserWorkDetailVO;
 import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,55 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     private WeixinVoteUserService weixinVoteUserService;
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
+
+    private static final String SEMICOLON_SEPARATOR = ";";
+
+    /**
+     * 管理员查看作品详情
+     *
+     * @param userId
+     * @param userWorkId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public UserWorkDetailVO getUserWorkDetailByWorkId(Integer userId, Integer userWorkId) throws MyDefinitionException {
+
+        if (userId == null || userWorkId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        WeixinVoteWork weixinVoteWork = weixinVoteWorkService.getVoteWorkByUserWorkId(userWorkId);
+        if (weixinVoteWork == null) {
+            throw new MyDefinitionException("未发现作品数据");
+        }
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(weixinVoteWork.getActiveVoteBaseId());
+        if (weixinVoteBaseByWorkId == null) {
+            throw new MyDefinitionException("未找到对应的活动数据");
+        }
+        if (!administratorsOptionService.isSuperAdministrators(userId)) {
+            if (!weixinVoteBaseByWorkId.getCreateSysUserId().equals(userId)) {
+                throw new MyDefinitionException("您不是当前作品的管理员");
+            }
+        }
+        UserWorkDetailVO userWorkDetailVO = new UserWorkDetailVO();
+
+        userWorkDetailVO.setUserPhone(weixinVoteWork.getVoteWorkUserPhone());
+        userWorkDetailVO.setUserWeixin(weixinVoteWork.getVoteWorkUserWeixin());
+        userWorkDetailVO.setUserWorkDesc(weixinVoteWork.getVoteWorkDesc());
+        userWorkDetailVO.setUserWorkId(weixinVoteWork.getId());
+        userWorkDetailVO.setUserWorkName(weixinVoteWork.getVoteWorkName());
+        userWorkDetailVO.setUserWorkOr(weixinVoteWork.getVoteWorkOr());
+        String voteWorkImg = weixinVoteWork.getVoteWorkImg();
+        if (voteWorkImg != null && voteWorkImg.contains(SEMICOLON_SEPARATOR)) {
+            userWorkDetailVO.setUserWorkImgS(voteWorkImg.split(SEMICOLON_SEPARATOR));
+        } else {
+            userWorkDetailVO.setUserWorkImgS(new String[0]);
+        }
+        return userWorkDetailVO;
+    }
 
     /**
      * 获取剩余票数

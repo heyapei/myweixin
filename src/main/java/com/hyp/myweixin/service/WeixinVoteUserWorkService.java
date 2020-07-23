@@ -3,6 +3,7 @@ package com.hyp.myweixin.service;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.UserWorkDetailVO;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,17 @@ import java.util.List;
  * @Description: TODO
  */
 public interface WeixinVoteUserWorkService {
+
+    /**
+     * 管理员查看作品详情
+     *
+     * @param userId
+     * @param userWorkId
+     * @return
+     * @throws MyDefinitionException
+     */
+    UserWorkDetailVO getUserWorkDetailByWorkId(Integer userId, Integer userWorkId) throws MyDefinitionException;
+
 
 
     /**
