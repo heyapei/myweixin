@@ -3,6 +3,7 @@ package com.hyp.myweixin.service.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditFirstVO;
+import com.hyp.myweixin.service.AdministratorsOptionService;
 import com.hyp.myweixin.service.WeixinVoteBaseEditService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,9 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
     private WeixinVoteBaseService weixinVoteBaseService;
 
     private static final String SEMICOLON_SEPARATOR = ";";
+
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
 
 
     /**
@@ -51,8 +55,12 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         if (weixinVoteBase == null) {
             throw new MyDefinitionException("想要查询的活动不存在");
         } else {
-            if (!weixinVoteBase.getCreateSysUserId().equals(userId)) {
-                throw new MyDefinitionException("您不是该活动的管理员");
+            /*判断是否为超级管理员 如果是就不做任何判断*/
+            if (!administratorsOptionService.isSuperAdministrators(userId)) {
+
+                if (!weixinVoteBase.getCreateSysUserId().equals(userId)) {
+                    throw new MyDefinitionException("您不是该活动的管理员");
+                }
             }
         }
 

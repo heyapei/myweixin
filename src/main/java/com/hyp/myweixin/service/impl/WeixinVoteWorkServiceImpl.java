@@ -16,10 +16,7 @@ import com.hyp.myweixin.pojo.vo.page.VoteDetailSimpleVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
-import com.hyp.myweixin.service.WeixinVoteBaseService;
-import com.hyp.myweixin.service.WeixinVoteConfService;
-import com.hyp.myweixin.service.WeixinVoteUserService;
-import com.hyp.myweixin.service.WeixinVoteWorkService;
+import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +52,10 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     private static final String SEMICOLON_SEPARATOR = ";";
 
 
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
+
+
     /**
      * 更新作品的状态
      *
@@ -75,9 +76,13 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
             throw new MyDefinitionException("没有找到当前活动信息");
         }
 
-        if (!weixinVoteBaseByWorkId.getCreateSysUserId().equals(updateUserWorkStatusQuery.getUserId())) {
-            throw new MyDefinitionException("您不是当前活动的管理员");
+        /*判断是否为超级管理员 如果是就不做任何判断*/
+        if (!administratorsOptionService.isSuperAdministrators(updateUserWorkStatusQuery.getUserId())) {
+            if (!weixinVoteBaseByWorkId.getCreateSysUserId().equals(updateUserWorkStatusQuery.getUserId())) {
+                throw new MyDefinitionException("您不是当前活动的管理员");
+            }
         }
+
 
         if (voteWorkByUserWorkId.getVoteWorkStatus().equals(updateUserWorkStatusQuery.getWorkStatus())) {
             throw new MyDefinitionException("无需重复更改当前作品的状态");
@@ -116,8 +121,11 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
             throw new MyDefinitionException("未发现当前活动项");
         }
 
-        if (!activeUserWorkQuery.getUserId().equals(weixinVoteBaseByWorkId.getCreateSysUserId())) {
-            throw new MyDefinitionException("您不是当前活动的管理员");
+        /*判断是否为超级管理员 如果是就不做任何判断*/
+        if (!administratorsOptionService.isSuperAdministrators(activeUserWorkQuery.getUserId())) {
+            if (!activeUserWorkQuery.getUserId().equals(weixinVoteBaseByWorkId.getCreateSysUserId())) {
+                throw new MyDefinitionException("您不是当前活动的管理员");
+            }
         }
         PageHelper.startPage(activeUserWorkQuery.getPageNum(), activeUserWorkQuery.getPageSize());
         Example example = new Example(WeixinVoteWork.class);

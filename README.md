@@ -3,6 +3,18 @@
 ## 2020年5月28日23点22分 完成了最基础本地小程序的调用后端数据的实验
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
 
+```text
+2020年7月23日
+添加了配置超级管理员的资源配置项
+administrators.super.user.ids=25;27
+这样可以在代码中这样读取
+@PropertySource("classpath:administrators.properties")
+@Value("#{'${administrators.super.user.ids}'.split(';')}")
+private Integer[] superUserIds;
+这样就可以读取了
+
+```
+
 
 ```$xslt
 2020年7月13日
