@@ -136,6 +136,15 @@ public class WeixinVoteWork {
             this.code = code;
             this.msg = msg;
         }
+
+        public static VoteWorkStatusEnum getVoteWorkStatusEnum(int code) {
+            for (VoteWorkStatusEnum paymentTypeEnum : VoteWorkStatusEnum.values()) {
+                if (code == paymentTypeEnum.getCode()) {
+                    return paymentTypeEnum;
+                }
+            }
+            return null;
+        }
     }
 
     /**

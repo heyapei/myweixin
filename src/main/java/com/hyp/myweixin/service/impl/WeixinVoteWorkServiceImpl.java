@@ -55,6 +55,32 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private AdministratorsOptionService administratorsOptionService;
 
+    /**
+     * 获取activeId下面的根据状态值查询所有符合要求的作品
+     *
+     * @param activeId 活动ID
+     * @param status   状态值 如果为null则不进入查询条件
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public List<WeixinVoteWork> getWeixinVoteWorkListByWorkStatus(Integer activeId, Integer status) throws MyDefinitionException {
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeVoteBaseId", activeId);
+        if (status != null) {
+            criteria.andEqualTo("voteWorkStatus", status);
+        }
+        List<WeixinVoteWork> weixinVoteWorks = null;
+        try {
+            weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("查询活动下符合活动状态作品操作过程失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("查询活动下符合活动状态作品操作过程失败");
+        }
+        return weixinVoteWorks;
+    }
 
     /**
      * 更新作品的状态

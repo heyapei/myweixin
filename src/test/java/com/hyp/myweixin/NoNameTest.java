@@ -47,15 +47,23 @@ public class NoNameTest {
     private HttpServletResponse httpServletResponse;
 
     @Test
+    public void testExcelExportRedis() throws Exception {
+        long expire = redisUtil.getExpire("active_excel_port_" + 89);
+        log.info("time:{}", expire);
+    }
+
+    @Test
     public void testmyEnDecryptionUtil() throws Exception {
+
+        String s = myEnDecryptionUtil.aesGenerateSecret(256);
+        log.info("处理结果：{}", s);
         /*String s = myEnDecryptionUtil.md516Low("12341");
         log.info("处理结果：{}", s);
         s = myEnDecryptionUtil.md516Upp("12341");
         log.info("处理结果：{}", s);
         s = myEnDecryptionUtil.md532Low("12341");
         log.info("处理结果：{}", s);
-        s = myEnDecryptionUtil.aesGenerateSecret(128);
-        log.info("处理结果：{}", s);
+
         String s1 = myEnDecryptionUtil.aesEncrypt("12341", s);
         log.info("处理结果：{}", s1);
         s = myEnDecryptionUtil.aesDecrypt(s1, s);

@@ -22,7 +22,19 @@ public interface WeixinVoteWorkService {
 
 
     /**
+     * 获取activeId下面的根据状态值查询所有符合要求的作品
+     *
+     * @param activeId 活动ID 必填
+     * @param status   状态值 如果为null则不进入查询条件
+     * @return
+     * @throws MyDefinitionException
+     */
+    List<WeixinVoteWork> getWeixinVoteWorkListByWorkStatus(Integer activeId, Integer status) throws MyDefinitionException;
+
+
+    /**
      * 更新作品的状态
+     *
      * @param updateUserWorkStatusQuery
      * @return 返回更新的行数
      * @throws MyDefinitionException
@@ -32,6 +44,7 @@ public interface WeixinVoteWorkService {
 
     /**
      * 通过查询条件获取当前活动下面的数据 当然分页查询
+     *
      * @param activeUserWorkQuery 活动下作品的数据
      * @return 作品列表
      * @throws MyDefinitionException
@@ -39,10 +52,10 @@ public interface WeixinVoteWorkService {
     PageInfo<WeixinVoteWork> getUserWorkListByTypePage(ActiveUserWorkQuery activeUserWorkQuery) throws MyDefinitionException;
 
 
-
     /**
      * 通过userID和activeId查询某个人在某个活动中提交作品的内容
-     * @param userId 用户ID
+     *
+     * @param userId   用户ID
      * @param activeId 活动ID
      * @return 作品列表
      * @throws MyDefinitionException

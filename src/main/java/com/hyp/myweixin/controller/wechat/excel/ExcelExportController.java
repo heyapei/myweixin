@@ -1,18 +1,27 @@
 package com.hyp.myweixin.controller.wechat.excel;
 
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.pojo.vo.excel.active.ActiveVoteWorkExcelExportVO;
 import com.hyp.myweixin.service.ExcelOptionService;
+import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
+import com.hyp.myweixin.utils.dateutil.DateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -35,6 +44,31 @@ public class ExcelExportController {
     private SecretKeyPropertiesValue secretKeyPropertiesValue;
     @Autowired
     private ExcelOptionService excelOptionService;
+    @Autowired
+    private WeixinVoteBaseService weixinVoteBaseService;
+
+
+    @GetMapping("/exportExcel")
+    public void exportExcel(String sk) throws IOException {
+        Integer activeId = excelOptionService.judgeExportRight(sk);
+        List<ActiveVoteWorkExcelExportVO> list = excelOptionService.exportActiveVoteWorkExcelExportVOByActiveId(activeId);
+        ServletOutputStream out = httpServletResponse.getOutputStream();
+        ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX, true);
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(activeId);
+        String fileName = weixinVoteBaseByWorkId.getActiveName() + "_" + MyDateUtil.DateToString(new Date(), DateStyle.YYYY_MM_DD_HH_MM);
+        Sheet sheet = new Sheet(1, 0, ActiveVoteWorkExcelExportVO.class);
+        //设置自适应宽度
+        sheet.setAutoWidth(Boolean.TRUE);
+        // 第一个 sheet 名称
+        sheet.setSheetName("作品信息");
+        writer.write(list, sheet);
+        //通知浏览器以附件的形式下载处理，设置返回头要注意文件名有中文
+        httpServletResponse.setHeader("Content-disposition", "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1") + ".xlsx");
+        writer.finish();
+        httpServletResponse.setContentType("multipart/form-data");
+        httpServletResponse.setCharacterEncoding("utf-8");
+        out.flush();
+    }
 
 
     /**
@@ -45,7 +79,7 @@ public class ExcelExportController {
      */
     @PostMapping("/getActiveExcelUrl")
     @ResponseBody
-    public String export(Integer activeId, Integer userId) {
+    public String getActiveExcelUrl(Integer activeId, Integer userId) {
 
         /*鉴权*/
         boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
@@ -54,6 +88,7 @@ public class ExcelExportController {
         }
 
         String excelExportUrlByActiveId = excelOptionService.getExcelExportUrlByActiveId(activeId, userId);
+
         return excelExportUrlByActiveId;
     }
 
