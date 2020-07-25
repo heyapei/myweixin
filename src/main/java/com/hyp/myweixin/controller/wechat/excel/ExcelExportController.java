@@ -69,6 +69,8 @@ public class ExcelExportController {
         httpServletResponse.setContentType("multipart/form-data");
         httpServletResponse.setCharacterEncoding("utf-8");
         out.flush();
+
+        out.close();
     }
 
 
