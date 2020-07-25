@@ -7,6 +7,7 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.vo.excel.active.ActiveVoteWorkExcelExportVO;
+import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.ExcelOptionService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -79,7 +80,7 @@ public class ExcelExportController {
      */
     @PostMapping("/getActiveExcelUrl")
     @ResponseBody
-    public String getActiveExcelUrl(Integer activeId, Integer userId) {
+    public Result getActiveExcelUrl(Integer activeId, Integer userId) {
 
         /*鉴权*/
         boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
@@ -87,9 +88,17 @@ public class ExcelExportController {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
 
-        String excelExportUrlByActiveId = excelOptionService.getExcelExportUrlByActiveId(activeId, userId);
+        String excelExportUrlByActiveId = null;
+        try {
+            excelExportUrlByActiveId = excelOptionService.getExcelExportUrlByActiveId(activeId, userId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("获取excel导出链接错误，" + e.getMessage());
+        }
+        if (excelExportUrlByActiveId == null) {
+            return Result.buildResult(Result.Status.NOT_FOUND, "获取导出链接错误");
+        }
 
-        return excelExportUrlByActiveId;
+        return Result.buildResult(Result.Status.OK, "请求成功", excelExportUrlByActiveId);
     }
 
 

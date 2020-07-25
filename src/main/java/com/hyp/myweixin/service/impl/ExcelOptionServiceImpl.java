@@ -162,6 +162,7 @@ public class ExcelOptionServiceImpl implements ExcelOptionService {
         jsonObject.put("activeId", activeId);
         jsonObject.put("urlValue", excelExportValue);
         jsonObject.put("timestamp", timeMillis);
+
         String urlKey = null;
         try {
             urlKey = myEnDecryptionUtil.aesEncrypt(jsonObject.toString(), AES_KEY);
@@ -177,6 +178,6 @@ public class ExcelOptionServiceImpl implements ExcelOptionService {
             log.error("excel导出请求地址加密失败，失败原因：{}", e.toString());
             throw new MyDefinitionException("excel导出请求地址加密失败");
         }
-        return urlKey;
+        return "/data/export/exportExcel?sk=" + urlKey;
     }
 }
