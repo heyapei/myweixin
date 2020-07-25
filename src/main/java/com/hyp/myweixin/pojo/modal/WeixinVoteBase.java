@@ -67,14 +67,14 @@ public class WeixinVoteBase {
     private Date activeEndTime = new Date();
 
     /**
-     * 是否公开到首页 0默认公开 1不公开
+     * 是否公开到首页
      */
     @Column(name = "active_public")
     private Integer activePublic = 1;
 
     public enum ActivePublicEnum {
-        SHOW_PUBLIC(0, "公开"),
-        NOT_SHOW_PUBLIC(1, "不公开");
+        SHOW_PUBLIC(0, "不公开"),
+        NOT_SHOW_PUBLIC(1, "公开");
 
         /**
          * 类型码
@@ -119,6 +119,46 @@ public class WeixinVoteBase {
      */
     private Integer status = 0;
 
+    public enum ActiveStatusEnum {
+        UN_VERIFY(0, "待审核"),
+        ONLINE(1, "上线"),
+        PAUSE(5, "暂停"),
+        END(3, "已结束"),
+        UN_COMPLETE(4, "未完成"),
+        offline(2, "下线");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        @Override
+        public String toString() {
+            return "ActiveStatusEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+
+        ActiveStatusEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+    }
+
+
     /**
      * 活动创建时间
      */
@@ -142,7 +182,7 @@ public class WeixinVoteBase {
     @Column(name = "view_count_num")
     private Integer viewCountNum;
     /**
-     * 被浏览总次数
+     * 被投票总次数
      */
     @Column(name = "vote_count_num")
     private Integer voteCountNum;

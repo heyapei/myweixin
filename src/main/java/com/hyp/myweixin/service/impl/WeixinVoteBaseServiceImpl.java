@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -277,7 +278,13 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
                 criteria.andEqualTo("status", weixinVoteBase.getStatus());
             }
         }
+
+       /* criteria.andGreaterThanOrEqualTo("activeEndTime", new Date());
+        criteria.andLessThanOrEqualTo("activeStartTime", new Date());*/
+
+
         example.orderBy("activeShowOrder").desc();
+        example.orderBy("voteCountNum").desc();
         /*example.orderBy("createTime").desc();
         example.orderBy("viewCountNum").desc();*/
         example.orderBy("activeStartTime").desc();

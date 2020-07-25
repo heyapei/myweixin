@@ -77,9 +77,9 @@ public class WeixinVoteBaseServiceImplTest {
         pageInfo.setPageNum(2);
         pageInfo.setPageSize(2);
         PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(null, pageInfo);
-        //log.info("分页查询出来的数据：" + voteWorkByPage.toString());
+        log.info("分页查询出来的数据：" + voteWorkByPage.toString());
 
-        List<WeixinVoteBase> list = voteWorkByPage.getList();
+        /*List<WeixinVoteBase> list = voteWorkByPage.getList();
         List<IndexWorksVO> indexWorksVOS = new ArrayList<>(5);
         for (WeixinVoteBase weixinVoteBase : list) {
             Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(weixinVoteBase.getId());
@@ -94,7 +94,7 @@ public class WeixinVoteBaseServiceImplTest {
         }
         voteWorkByPage.setList(indexWorksVOS);
         log.info("pageINfo数据：" + voteWorkByPage.toString());
-        log.info("实体类数据" + voteWorkByPage.getList().toString());
+        log.info("实体类数据" + voteWorkByPage.getList().toString());*/
 
     }
 
