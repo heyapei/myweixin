@@ -50,6 +50,23 @@ public class WeixinVoteWorkCommentServiceImpl implements WeixinVoteWorkCommentSe
     @Override
     public int addWeixinVoteWorkComment(WeixinVoteWorkComment weixinVoteWorkComment) {
 
+        if (weixinVoteWorkComment == null) {
+            throw new MyDefinitionException("评论不能为空");
+        }
+
+        /*先判断是否违规在处理吧 能少点数据库操作就少点*/
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(weixinVoteWorkComment.getWorkComment(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的文字内容违规，请重新输入");
+        }
+
         WeixinVoteUser userById = weixinVoteUserService.getUserById(weixinVoteWorkComment.getVoteUserId());
         if (userById == null) {
             log.error("保存用户评论错误，需要保存的数据：{}，错误原因：{}", weixinVoteWorkComment.toString(), "未发现评论用户");
@@ -62,17 +79,6 @@ public class WeixinVoteWorkCommentServiceImpl implements WeixinVoteWorkCommentSe
             throw new MyDefinitionException("保存用户评论错误，未发现作品");
         }
 
-        Boolean aBoolean = null;
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(weixinVoteWorkComment.getWorkComment(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException(e.getMessage());
-        }
-
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("当前提交的文字内容违规，请重新输入");
-        }
 
         int commentOr = 1;
         WeixinVoteWorkComment latestCommentByWorkId = getLatestCommentByWorkId(weixinVoteWorkComment.getVoteWorkId());
