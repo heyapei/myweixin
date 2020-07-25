@@ -5,8 +5,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 
 /**
  * @Author 何亚培
@@ -15,6 +14,76 @@ import java.security.NoSuchAlgorithmException;
  * @Description: TODO 加密解密工具
  */
 public interface MyEnDecryptionUtil {
+
+
+    /**
+     * 获取RAS的密钥对
+     *
+     * @return
+     * @throws Exception
+     */
+    KeyPair rsaGetKeyPair() throws Exception;
+
+    /**
+     * 获取私钥
+     *
+     * @param privateKey 私钥字符串
+     * @return
+     * @throws Exception
+     */
+    PrivateKey rsaGetPrivateKey(String privateKey) throws Exception;
+
+
+    /**
+     * 获取公钥
+     *
+     * @param publicKey 公钥字符串
+     * @return
+     * @throws Exception
+     */
+    PublicKey rsaGetPublicKey(String publicKey) throws Exception;
+
+    /**
+     * RSA加密
+     *
+     * @param data      待加密数据
+     * @param publicKey 公钥
+     * @return
+     * @throws Exception
+     */
+    String rsaEncrypt(String data, PublicKey publicKey) throws Exception;
+
+    /**
+     * RSA解密
+     *
+     * @param data       待解密数据
+     * @param privateKey 私钥
+     * @return
+     * @throws Exception
+     */
+    String rsaDecrypt(String data, PrivateKey privateKey) throws Exception;
+
+
+    /**
+     * 签名
+     *
+     * @param data       待签名数据
+     * @param privateKey 私钥
+     * @return 签名
+     * @throws Exception
+     */
+    String rsaSign(String data, PrivateKey privateKey) throws Exception;
+
+    /**
+     * 验签
+     *
+     * @param srcData   原始字符串
+     * @param publicKey 公钥
+     * @param sign      签名
+     * @return 是否验签通过
+     * @throws Exception
+     */
+    boolean rsaVerify(String srcData, PublicKey publicKey, String sign) throws Exception;
 
 
     /**

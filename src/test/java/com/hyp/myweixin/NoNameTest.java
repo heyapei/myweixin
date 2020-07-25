@@ -15,18 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.security.AlgorithmParameters;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import java.security.KeyPair;
 
 
 /**
@@ -52,8 +47,8 @@ public class NoNameTest {
     private HttpServletResponse httpServletResponse;
 
     @Test
-    public void testmyEnDecryptionUtil() throws NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, UnsupportedEncodingException {
-        String s = myEnDecryptionUtil.md516Low("12341");
+    public void testmyEnDecryptionUtil() throws Exception {
+        /*String s = myEnDecryptionUtil.md516Low("12341");
         log.info("处理结果：{}", s);
         s = myEnDecryptionUtil.md516Upp("12341");
         log.info("处理结果：{}", s);
@@ -64,7 +59,52 @@ public class NoNameTest {
         String s1 = myEnDecryptionUtil.aesEncrypt("12341", s);
         log.info("处理结果：{}", s1);
         s = myEnDecryptionUtil.aesDecrypt(s1, s);
-        log.info("处理结果：{}", s);
+        log.info("处理结果：{}", s);*/
+
+        try {
+            // 生成密钥对
+            KeyPair keyPair = myEnDecryptionUtil.rsaGetKeyPair();
+            String privateKey = new String(Base64.encodeBase64(keyPair.getPrivate().getEncoded()));
+            String publicKey = new String(Base64.encodeBase64(keyPair.getPublic().getEncoded()));
+            //String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDvVyDF5XUho4547Qk1IS4yLWzdWxjWY2gB83ZpI065yPeaHu0fmb4e2XGJ4F77mXyvSRk4NapwvT3dQsfhF6NfHcD2jklH8dsG1PWTv_-Bg9LnG_2UGRjGhgU_zI5_epBFdz4W7bXoqdOlmvpfSo1j6BSZaUVMIkzzSCrbdB5w6wIDAQAB";
+            // String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAO9XIMXldSGjjnjtCTUhLjItbN1bGNZjaAHzdmkjTrnI95oe7R-Zvh7ZcYngXvuZfK9JGTg1qnC9Pd1Cx-EXo18dwPaOSUfx2wbU9ZO__4GD0ucb_ZQZGMaGBT_Mjn96kEV3Phbtteip06Wa-l9KjWPoFJlpRUwiTPNIKtt0HnDrAgMBAAECgYA2EkMPMnWx8deALl0EKcjcATM1Fx2XYcHfnvdDbXydsG9v3EjJ-Nvg8FMcSRpsURLALw2Ji2ZELhzJ3gp2Kfb4WEJ9o4NwtocRp4PN89GYEValApkyLl0J8QqGHqaLMW0Jt_VPzdp1y1L5Vo2Y4L7bg5bXUeBfLvpsJB4LIzPuYQJBAP_fqw1VVP3QMx7F20a8Kh4MOtVyX0i7sl4DavAWTPNQhk0aQeOuyOZgQItZRq_-fMozHFMT_TrbW5S44mSavdMCQQDvdV7nQhjjhDx7EB-HwpmRk8yEiw3z9eKQ_FkCAzbIQanYgxI6BWaxJPRfApatuG35Jm0zqRyQ5TXurbTYndmJAkEAorrNPp2WgBV5bYjH_CSPZKzCfh1PHCLDPadOy4JjThtYTpD0dqkie-GbKwSMQEHJe48l5HBCDLyVcfBjizgeoQJAd7dpXBr6kHzjM-9qpBgRaOvImxdeQXLT9AKFiXEL6XCStrFI4oMixTuhhQKpTG7hZGfmvqY0puhBX3Ou74FzaQJAUEYb_Fn2cHNALgq5iFj9CoaGEo8a87HNOcSkKHCbn6lQy3LlU1x0OkllNFXMA-fxa34EkKfBDXFJyzOG_5aiyg";
+
+            System.out.println("私钥:" + privateKey);
+            System.out.println("公钥:" + publicKey);
+            // RSA加密
+            String data = "待加密的文字内容";
+            String encryptData = myEnDecryptionUtil.rsaEncrypt(data, myEnDecryptionUtil.rsaGetPublicKey(publicKey));
+            System.out.println("加密后内容:" + encryptData);
+            // RSA解密
+            String decryptData = myEnDecryptionUtil.rsaDecrypt(encryptData, myEnDecryptionUtil.rsaGetPrivateKey(privateKey));
+            System.out.println("解密后内容:" + decryptData);
+
+            // RSA签名
+            String sign = myEnDecryptionUtil.rsaSign(data, myEnDecryptionUtil.rsaGetPrivateKey(privateKey));
+            System.out.println("签名：" + sign);
+            // RSA验签
+            boolean result = myEnDecryptionUtil.rsaVerify(data, myEnDecryptionUtil.rsaGetPublicKey(publicKey), sign);
+            System.out.println("验签结果:" + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("加解密异常");
+        }
+
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDvVyDF5XUho4547Qk1IS4yLWzdWxjWY2gB83ZpI065yPeaHu0fmb4e2XGJ4F77mXyvSRk4NapwvT3dQsfhF6NfHcD2jklH8dsG1PWTv_-Bg9LnG_2UGRjGhgU_zI5_epBFdz4W7bXoqdOlmvpfSo1j6BSZaUVMIkzzSCrbdB5w6wIDAQAB";
+        String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAO9XIMXldSGjjnjtCTUhLjItbN1bGNZjaAHzdmkjTrnI95oe7R-Zvh7ZcYngXvuZfK9JGTg1qnC9Pd1Cx-EXo18dwPaOSUfx2wbU9ZO__4GD0ucb_ZQZGMaGBT_Mjn96kEV3Phbtteip06Wa-l9KjWPoFJlpRUwiTPNIKtt0HnDrAgMBAAECgYA2EkMPMnWx8deALl0EKcjcATM1Fx2XYcHfnvdDbXydsG9v3EjJ-Nvg8FMcSRpsURLALw2Ji2ZELhzJ3gp2Kfb4WEJ9o4NwtocRp4PN89GYEValApkyLl0J8QqGHqaLMW0Jt_VPzdp1y1L5Vo2Y4L7bg5bXUeBfLvpsJB4LIzPuYQJBAP_fqw1VVP3QMx7F20a8Kh4MOtVyX0i7sl4DavAWTPNQhk0aQeOuyOZgQItZRq_-fMozHFMT_TrbW5S44mSavdMCQQDvdV7nQhjjhDx7EB-HwpmRk8yEiw3z9eKQ_FkCAzbIQanYgxI6BWaxJPRfApatuG35Jm0zqRyQ5TXurbTYndmJAkEAorrNPp2WgBV5bYjH_CSPZKzCfh1PHCLDPadOy4JjThtYTpD0dqkie-GbKwSMQEHJe48l5HBCDLyVcfBjizgeoQJAd7dpXBr6kHzjM-9qpBgRaOvImxdeQXLT9AKFiXEL6XCStrFI4oMixTuhhQKpTG7hZGfmvqY0puhBX3Ou74FzaQJAUEYb_Fn2cHNALgq5iFj9CoaGEo8a87HNOcSkKHCbn6lQy3LlU1x0OkllNFXMA-fxa34EkKfBDXFJyzOG_5aiyg";
+
+        // RSA加密
+       /* String data = "待加密的文字内容";
+        String encryptData = myEnDecryptionUtil.rsaEncrypt(data, myEnDecryptionUtil.rsaGetPublicKey(publicKey));
+        System.out.println("加密后内容:" + encryptData);*/
+        // RSA解密
+        /*String decryptData = null;
+        try {
+            decryptData = myEnDecryptionUtil.rsaDecrypt(encryptData, myEnDecryptionUtil.rsaGetPrivateKey(privateKey));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("解密后内容:" + decryptData);*/
 
     }
 
