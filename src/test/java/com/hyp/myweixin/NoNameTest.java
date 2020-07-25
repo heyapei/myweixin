@@ -2,9 +2,10 @@ package com.hyp.myweixin;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.utils.MyEnDecryptionUtil;
 import com.hyp.myweixin.utils.MyEnumUtil;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
-import com.hyp.myweixin.utils.redis.RedisUtil;
+import com.hyp.myweixin.utils.redis.MyRedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -14,13 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.security.AlgorithmParameters;
+import java.security.InvalidKeyException;
 import java.security.Key;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.security.NoSuchAlgorithmException;
+
 
 /**
  * @Author 何亚培
@@ -37,11 +44,36 @@ public class NoNameTest {
     @Autowired
     private MyHttpClientUtil myHttpClientUtil;
     @Autowired
-    private RedisUtil redisUtil;
+    private MyRedisUtil redisUtil;
+    @Autowired
+    private MyEnDecryptionUtil myEnDecryptionUtil;
+
+    @Autowired
+    private HttpServletResponse httpServletResponse;
+
+    @Test
+    public void testmyEnDecryptionUtil() throws NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, UnsupportedEncodingException {
+        String s = myEnDecryptionUtil.md516Low("12341");
+        log.info("处理结果：{}", s);
+        s = myEnDecryptionUtil.md516Upp("12341");
+        log.info("处理结果：{}", s);
+        s = myEnDecryptionUtil.md532Low("12341");
+        log.info("处理结果：{}", s);
+        s = myEnDecryptionUtil.aesGenerateSecret(128);
+        log.info("处理结果：{}", s);
+        String s1 = myEnDecryptionUtil.aesEncrypt("12341", s);
+        log.info("处理结果：{}", s1);
+        s = myEnDecryptionUtil.aesDecrypt(s1, s);
+        log.info("处理结果：{}", s);
+
+    }
 
 
     @Test
     public void testInteger() {
+
+        String header = httpServletResponse.getHeader("123");
+        System.out.println(header);
 
 
         Integer activeStatus = 5;
