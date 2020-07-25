@@ -50,6 +50,43 @@ public class VoteActiveEditController {
 
 
     /**
+     * 更新活动状态
+     * 要求:
+     * 1. 判断是否为管理员
+     * 2. 需要更新到什么状态的值
+     *
+     * @return
+     */
+    @ApiOperation("更新活动状态值")
+    @PostMapping("changeActiveStatus")
+    public Result changeActiveStatus(
+            @ApiParam(name = "需要更新的活动状态", value = "activeStatus", required = true)
+                    Integer activeStatus,
+            @ApiParam(name = "用户ID", value = "userId", required = true)
+                    Integer userId,
+            @ApiParam(name = "活动ID", value = "activeId", required = true)
+                    Integer activeId
+    ) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        try {
+            Integer integer = weixinVoteBaseEditService.changeActiveStatus(userId, activeId, activeStatus);
+            if (integer <= 0) {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "更新活动状态值失败");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.SERVER_ERROR, e.getMessage());
+        }
+
+        return Result.buildResult(Result.Status.OK, "更新活动状态值成功");
+    }
+
+
+    /**
      * 更新活动编辑第四页的内容
      * 要求:
      * 1. 判断是否为管理员

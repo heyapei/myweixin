@@ -1,6 +1,8 @@
 package com.hyp.myweixin;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
+import com.hyp.myweixin.utils.MyEnumUtil;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
 import com.hyp.myweixin.utils.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.AlgorithmParameters;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author 何亚培
@@ -42,8 +43,20 @@ public class NoNameTest {
     @Test
     public void testInteger() {
 
-        Integer i = null;
-     log.info("查询结果：{}",i>0);
+
+        Integer activeStatus = 5;
+
+        Boolean enumKeyRight = MyEnumUtil.enumKeyRight(activeStatus, WeixinVoteBase.ActiveStatusEnum.class);
+        if (!enumKeyRight) {
+            throw new MyDefinitionException("更改的活动状态不被允许,请联系系统管理");
+        }
+
+        Integer activeStatus1 = 10;
+
+        Boolean valueRight = MyEnumUtil.enumValueRight(activeStatus1, WeixinVoteBase.ActiveStatusEnum.class);
+        if (!valueRight) {
+            throw new MyDefinitionException("更改的活动状态不被允许,请联系系统管理");
+        }
 
     }
 
@@ -104,8 +117,11 @@ public class NoNameTest {
     }
 
 
-    /** 加密  - AES/CBC/NoPadding
-     * @throws Exception **/
+    /**
+     * 加密  - AES/CBC/NoPadding
+     *
+     * @throws Exception
+     **/
     private static String Encode_AES_CBC_NoPadding(String key, String content) throws Exception {
         if (StringUtils.isBlank(key)) {
             throw new NullPointerException("key is null");
@@ -133,7 +149,9 @@ public class NoNameTest {
         }
     }
 
-    /** 解密  - AES/CBC/NoPadding **/
+    /**
+     * 解密  - AES/CBC/NoPadding
+     **/
     private String DeCode_AES_CBC_NoPadding(String key, String content) throws Exception {
         if (StringUtils.isBlank(key)) {
             throw new NullPointerException("key is null");
@@ -160,14 +178,6 @@ public class NoNameTest {
         params.init(new IvParameterSpec(iv));
         return params;
     }
-
-
-
-
-
-
-
-
 
 
 }

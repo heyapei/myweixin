@@ -12,6 +12,7 @@ import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditFourthVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditSecondVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditThirdVO;
 import com.hyp.myweixin.service.*;
+import com.hyp.myweixin.utils.MyEnumUtil;
 import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.dateutil.DateStyle;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
@@ -45,6 +46,61 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
     @Autowired
     private WeixinVoteOrganisersService weixinVoteOrganisersService;
 
+    /**
+     * 更新活动状态
+     * 要求必须是管理员
+     *
+     * @param userId
+     * @param activeId
+     * @param activeStatus
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer changeActiveStatus(Integer userId, Integer activeId, Integer activeStatus) throws MyDefinitionException {
+
+        if (activeId == null || userId == null) {
+            throw new MyDefinitionException("当前接口要求用户登录且活动指向明确");
+        }
+        if (activeStatus == null) {
+            throw new MyDefinitionException("必须指定要修改的活动状态值");
+        }
+
+        WeixinVoteBase weixinVoteBase = null;
+        try {
+            weixinVoteBase = weixinVoteBaseService.getWeixinVoteBaseByWorkId(activeId);
+        } catch (Exception e) {
+            throw new MyDefinitionException("查询操作错误，" + e.getMessage());
+        }
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("想要查询的活动不存在");
+        } else {
+            /*判断是否为超级管理员 如果是就不做任何判断*/
+            if (!administratorsOptionService.isSuperAdministrators(userId)) {
+                if (!weixinVoteBase.getCreateSysUserId().equals(userId)) {
+                    throw new MyDefinitionException("您不是该活动的管理员");
+                }
+            }
+        }
+
+        //是否允许更新的状态数据
+        Boolean enumKeyRight = MyEnumUtil.enumKeyRight(activeStatus, WeixinVoteBase.ActiveStatusEnum.class);
+        if (!enumKeyRight) {
+            throw new MyDefinitionException("想要更改的活动状态不被允许,请联系系统管理");
+        }
+
+        Integer status = weixinVoteBase.getStatus();
+        if (status.equals(activeStatus)) {
+            return 1;
+        }
+        weixinVoteBase.setStatus(activeStatus);
+        weixinVoteBase.setUpdateTime(new Date());
+        int i = weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
+        if (i > 0) {
+            return 1;
+        }
+        return i;
+    }
 
     /**
      * 根据以下数据进行更新活动第四页中信息操作
@@ -163,7 +219,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
             throw new MyDefinitionException("更新活动第三页信息的参数不能为空");
         }
 
-        log.info("更新第三页信息时候的请求参数：{}",activeEditThirdQuery.toString());
+        log.info("更新第三页信息时候的请求参数：{}", activeEditThirdQuery.toString());
         Integer activeId = activeEditThirdQuery.getActiveId();
         Integer userId = activeEditThirdQuery.getUserId();
         if (activeId == null || userId == null) {
@@ -273,7 +329,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 /*报名需要手机号 0 默认不需要 1 需要*/
                 if (myErrorList.noErrors()) {
                     Integer activeConfNeedPhone = activeEditThirdQuery.getActiveConfNeedPhone();
-                   // log.info("当前是否需要手机号：{}",activeConfNeedPhone);
+                    // log.info("当前是否需要手机号：{}",activeConfNeedPhone);
                     if (activeConfNeedPhone == null || activeConfNeedPhone == 0) {
                         weixinVoteConf.setActiveConfNeedPhone(0);
                     } else {

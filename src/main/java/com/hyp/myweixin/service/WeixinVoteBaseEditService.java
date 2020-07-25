@@ -17,6 +17,21 @@ import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditThirdVO;
  */
 public interface WeixinVoteBaseEditService {
 
+    /**
+     * 更新活动状态
+     * 要求必须是管理员
+     * <p>
+     * 如果需要修改的活动状态就是当前的活动状态则不进行任何更新操作
+     * 如果不是 则进行更新操作
+     *
+     * @param userId
+     * @param activeId
+     * @param activeStatus
+     * @return
+     * @throws MyDefinitionException
+     */
+    Integer changeActiveStatus(Integer userId, Integer activeId, Integer activeStatus) throws MyDefinitionException;
+
 
     /**
      * 根据以下数据进行更新活动第四页中信息操作
@@ -27,8 +42,6 @@ public interface WeixinVoteBaseEditService {
      * @throws MyDefinitionException
      */
     Integer editActiveEditFourthQuery(ActiveEditFourthQuery activeEditFourthQuery) throws MyDefinitionException;
-
-
 
 
     /**
@@ -43,7 +56,6 @@ public interface WeixinVoteBaseEditService {
     ActiveEditFourthVO getActiveEditFourthVOByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
 
 
-
     /**
      * 根据以下数据进行更新活动第三页中信息操作
      * 1. 要求是管理员
@@ -53,7 +65,6 @@ public interface WeixinVoteBaseEditService {
      * @throws MyDefinitionException
      */
     Integer editActiveEditThirdQuery(ActiveEditThirdQuery activeEditThirdQuery) throws MyDefinitionException;
-
 
 
     /**
