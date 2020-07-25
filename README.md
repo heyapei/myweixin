@@ -6,8 +6,16 @@
 ```$xslt
 2020年7月25日
 今天要解决的事情还有两个
-1.excel数据导出
+1.excel数据导出 2020年7月25日19点47分
+完成
+这里使用的是easyExcel
+public class ActiveVoteWorkExcelExportVO extends BaseRowModel implements Serializable 
+具体的还是要参考网络文档这里只是特别简单的使用了
 2.文字过滤系统
+微信的接口文档是真的垃圾
+也不说是不是要json数据格式 也没有什么规范 就硬写 微信是真的牛逼
+垃圾微信 我要是以后能很满意的用上微信的东西才怪 阿里系和百度系加油 争取第三方接口就用你们
+
 ```
 
 

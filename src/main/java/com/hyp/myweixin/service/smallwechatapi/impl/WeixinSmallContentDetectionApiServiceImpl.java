@@ -7,6 +7,7 @@ import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiSer
 import com.hyp.myweixin.utils.MyHttpClientUtil;
 import com.hyp.myweixin.utils.redis.MyRedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -50,6 +51,11 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     @Value("${weixin.small.check.msg_sec_check.url}")
     private String MSG_SEC_CHECK_URL;
 
+    /**
+     * 获取回来的accessToken的json中key值
+     */
+    private final String JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN = "access_token";
+
 
     @Autowired
     private WeChatPropertiesValue weChatPropertiesValue;
@@ -59,6 +65,81 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     @Autowired
     private MyRedisUtil myRedisUtil;
 
+
+    /**
+     * 违规文字检测
+     *
+     * @param msgText     文字
+     * @param accessToken 微信token
+     * @return boolean值
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Boolean checkMsgSecCheckApi(String msgText, String accessToken) throws MyDefinitionException {
+        if (StringUtils.isBlank(msgText)) {
+            throw new MyDefinitionException("判断文字是否违规要求文字内容必填");
+        }
+        JSONObject msgSecCheckApiMsg = null;
+        try {
+            msgSecCheckApiMsg = getMsgSecCheckApiMsg(msgText, accessToken);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("判断文字是否违规失败，" + e.getMessage());
+        }
+        if (msgSecCheckApiMsg.containsKey("errcode") && msgSecCheckApiMsg.getInteger("errcode").equals(0)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 违规文字检测
+     *
+     * @param msgText     文字
+     * @param accessToken 微信token
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public JSONObject getMsgSecCheckApiMsg(String msgText, String accessToken) throws MyDefinitionException {
+        if (StringUtils.isBlank(msgText)) {
+            throw new MyDefinitionException("检查文字违规要求文字内容必填");
+        }
+        Map<String, Object> parameterMap = new HashMap<>(1);
+        if (StringUtils.isBlank(accessToken)) {
+            JSONObject accessToken1 = null;
+            try {
+                accessToken1 = getAccessToken();
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+            accessToken = accessToken1.getString(JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN);
+        }
+        parameterMap.put("content", msgText);
+        String url = MSG_SEC_CHECK_URL + accessToken;
+        String msgCheckResult = null;
+        try {
+            msgCheckResult = myHttpClientUtil.postJson(url, parameterMap, null);
+        } catch (Exception e) {
+            log.error("违规文字检测请求失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("违规文字检测请求失败");
+        }
+
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = JSONObject.parseObject(msgCheckResult);
+        } catch (Exception e) {
+            log.error("违规文字检测数据转换失败，错误原因：{}", e.toString());
+            throw new MyDefinitionException("违规文字检测数据转换失败");
+        }
+
+        if (jsonObject == null) {
+            throw new MyDefinitionException("没有得到违规文字检测结果");
+        }
+
+        //{"errcode":87014,"errmsg":"risky content hint: [5JmdqHuhE-C6JiIa]"} 错误的结果
+        //{"errcode":0,"errmsg":"ok"}
+        return jsonObject;
+    }
 
     /**
      * 获取小程序全局唯一后台接口调用凭据（access_token）

@@ -11,6 +11,7 @@ import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkCommentVO;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.WeixinVoteWorkCommentService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class WeixinVoteWorkCommentServiceImpl implements WeixinVoteWorkCommentSe
     private WeixinVoteUserService weixinVoteUserService;
     @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
     /**
      * 添加作品评论
@@ -57,6 +60,18 @@ public class WeixinVoteWorkCommentServiceImpl implements WeixinVoteWorkCommentSe
         if (voteWorkByUserWorkId == null) {
             log.error("保存用户评论错误，需要保存的数据：{}，错误原因：{}", weixinVoteWorkComment.toString(), "未发现作品");
             throw new MyDefinitionException("保存用户评论错误，未发现作品");
+        }
+
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(weixinVoteWorkComment.getWorkComment(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的文字内容违规，请重新输入");
         }
 
         int commentOr = 1;

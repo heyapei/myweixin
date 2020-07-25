@@ -36,3 +36,4 @@ build/
 /src/main/resources/application-dev.properties
 
 generatorConfig.xml
+/src/main/resources/wechat.properties

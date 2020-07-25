@@ -14,14 +14,24 @@ public interface WeixinSmallContentDetectionApiService {
 
     /**
      * 违规文字检测
-     * @param msgText 文字
-     * @param token 微信token
+     *
+     * @param msgText     文字
+     * @param accessToken 微信token
+     * @return boolean值
+     * @throws MyDefinitionException
+     */
+    Boolean checkMsgSecCheckApi(String msgText, String accessToken) throws MyDefinitionException;
+
+
+    /**
+     * 违规文字检测
+     *
+     * @param msgText     文字
+     * @param accessToken 微信token
      * @return
      * @throws MyDefinitionException
      */
-    JSONObject msgSecCheckApi(String msgText,String token) throws MyDefinitionException;
-
-
+    JSONObject getMsgSecCheckApiMsg(String msgText, String accessToken) throws MyDefinitionException;
 
 
     /**
