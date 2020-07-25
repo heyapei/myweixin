@@ -162,6 +162,8 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         if (activeEditThirdQuery == null) {
             throw new MyDefinitionException("更新活动第三页信息的参数不能为空");
         }
+
+        log.info("更新第三页信息时候的请求参数：{}",activeEditThirdQuery.toString());
         Integer activeId = activeEditThirdQuery.getActiveId();
         Integer userId = activeEditThirdQuery.getUserId();
         if (activeId == null || userId == null) {
@@ -184,6 +186,9 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
             }
         }
         MyErrorList myErrorList = new MyErrorList();
+        /*if (myErrorList.noErrors()) {
+            log.info("当前操作下没有错误");
+        }*/
         /*绑定需要更新的数据*/
         /*活动开始结束时间*/
         if (myErrorList.noErrors()) {
@@ -257,6 +262,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 /*报名是否需要微信号 0 默认不需要 1 需要*/
                 if (myErrorList.noErrors()) {
                     Integer activeConfNeedWeixin = activeEditThirdQuery.getActiveConfNeedWeixin();
+                    //log.info("当前是否需要微信号：{}",activeConfNeedWeixin);
                     if (activeConfNeedWeixin == null || activeConfNeedWeixin == 0) {
                         weixinVoteConf.setActiveConfNeedWeixin(0);
                     } else {
@@ -267,6 +273,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 /*报名需要手机号 0 默认不需要 1 需要*/
                 if (myErrorList.noErrors()) {
                     Integer activeConfNeedPhone = activeEditThirdQuery.getActiveConfNeedPhone();
+                   // log.info("当前是否需要手机号：{}",activeConfNeedPhone);
                     if (activeConfNeedPhone == null || activeConfNeedPhone == 0) {
                         weixinVoteConf.setActiveConfNeedPhone(0);
                     } else {
@@ -326,6 +333,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         }
 
         ActiveEditThirdVO activeEditThirdVO = new ActiveEditThirdVO();
+        activeEditThirdVO.setActiveId(activeId);
         activeEditThirdVO.setActiveStartTime(weixinVoteBase.getActiveStartTime());
         activeEditThirdVO.setActiveEndTime(weixinVoteBase.getActiveEndTime());
         activeEditThirdVO.setActiveUploadStartTime(weixinVoteConf.getActiveUploadStartTime());
@@ -393,9 +401,16 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
             }
         }
 
+        WeixinVoteOrganisers weixinVoteOrganisers = weixinVoteOrganisersService.getWeixinVoteConfByVoteWorkId(activeId);
         /*hasOrganisers等于1标识有公司信息 0标识没有*/
         if (activeEditSecondQuery.getHasOrganisers() == 1) {
-            WeixinVoteOrganisers weixinVoteOrganisers = weixinVoteOrganisersService.getWeixinVoteConfByVoteWorkId(activeId);
+
+            if (activeEditSecondQuery.getOrganisersName() == null || activeEditSecondQuery.getOrganisersLogo() == null
+                    || activeEditSecondQuery.getOrganisersPhone() == null || activeEditSecondQuery.getOrganisersWeixinCode() == null) {
+                throw new MyDefinitionException("主办方信息必须填写");
+            }
+
+
             if (weixinVoteOrganisers == null) {
                 weixinVoteOrganisers = WeixinVoteOrganisers.init();
                 weixinVoteOrganisers.setVoteBaseId(activeId);
@@ -418,11 +433,14 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 }
             }
         } else {
-            WeixinVoteOrganisers weixinVoteOrganisers = WeixinVoteOrganisers.init();
-            weixinVoteOrganisers.setVoteBaseId(activeId);
-            Integer saveWeixinVoteOrganisers = weixinVoteOrganisersService.saveWeixinVoteOrganisers(weixinVoteOrganisers);
-            if (saveWeixinVoteOrganisers == null || saveWeixinVoteOrganisers <= 0) {
-                throw new MyDefinitionException("更新活动主办方信息中新增错误");
+            if (weixinVoteOrganisers != null) {
+                WeixinVoteOrganisers weixinVoteOrganisersTemp = WeixinVoteOrganisers.init();
+                weixinVoteOrganisersTemp.setId(weixinVoteOrganisers.getId());
+                weixinVoteOrganisersTemp.setVoteBaseId(weixinVoteOrganisers.getVoteBaseId());
+                Integer saveWeixinVoteOrganisers = weixinVoteOrganisersService.updateSelectiveWeixinVoteOrganisers(weixinVoteOrganisersTemp);
+                if (saveWeixinVoteOrganisers == null || saveWeixinVoteOrganisers <= 0) {
+                    throw new MyDefinitionException("更新活动主办方信息错误");
+                }
             }
         }
         return 1;
@@ -477,13 +495,13 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         activeEditSecondVO.setActiveShareImg(weixinVoteConf.getActiveConfShareImg().replaceAll(SEMICOLON_SEPARATOR, ""));
         String organisersName = weixinVoteOrganisers.getName();
         if (StringUtils.isNotBlank(organisersName)) {
-            activeEditSecondVO.setHasOrganisers(0);
+            activeEditSecondVO.setHasOrganisers(1);
             activeEditSecondVO.setOrganisersName(organisersName);
             activeEditSecondVO.setOrganisersPhone(weixinVoteOrganisers.getPhone().replaceAll(SEMICOLON_SEPARATOR, ""));
             activeEditSecondVO.setOrganisersWeixinCode(weixinVoteOrganisers.getWeixinQrCode().replaceAll(SEMICOLON_SEPARATOR, ""));
             activeEditSecondVO.setOrganisersLogo(weixinVoteOrganisers.getLogoImg().replaceAll(SEMICOLON_SEPARATOR, ""));
         } else {
-            activeEditSecondVO.setHasOrganisers(1);
+            activeEditSecondVO.setHasOrganisers(0);
         }
         return activeEditSecondVO;
     }

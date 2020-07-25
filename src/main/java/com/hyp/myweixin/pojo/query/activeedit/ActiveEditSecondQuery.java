@@ -30,7 +30,8 @@ public class ActiveEditSecondQuery {
     @NotNull
     private String activeShareImg;
 
-    @ApiModelProperty(value = "是否有主办方信息，默认值为0", name = "hasOrganisers", required = true)
+    @ApiModelProperty(value = "是否有主办方信息，默认值为0，如果选择了有主办方信息，则下面的主办方具体信息必须填写",
+            name = "hasOrganisers", required = true)
     @NotNull
     private Integer hasOrganisers;
 

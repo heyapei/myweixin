@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -288,22 +289,22 @@ public class VoteActiveEditController {
     @PostMapping("editFirstPage")
     public Result editFirstPage(
             @ApiParam(name = "用户ID，用于判断是否为管理员", value = "userId", required = true)
-                    int userId,
+            @RequestParam(required = true) int userId,
             @ApiParam(name = "活动ID，用于标记更新的活动", value = "voteWorkId", required = true)
-                    int voteWorkId,
+            @RequestParam(required = true) int activeId,
             @ApiParam(name = "文字类型，用于保存当前提交上来的文字信息", value = "activeText", required = true)
-                    String activeText,
+            @RequestParam(required = true) String activeText,
             @ApiParam(name = "图片信息，用于图片数据 使用半角分号(;)进行拼接", value = "activeImg", required = true)
-                    String activeImg,
+            @RequestParam(required = true) String activeImg,
             @ApiParam(name = "数据类型，用于分辨当前提交上来的数据的类型，也是通过该数据类型判断需要更新那些字段数据", value = "type", required = true)
-                    String type
+            @RequestParam(required = true) String type
     ) {
         /*鉴权*/
         boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-        Integer baseVoteWorkSavePageAndImg = weixinVoteBaseEditService.editBaseVoteWorkSavePageAndImg(userId, voteWorkId, type, activeText, activeImg);
+        Integer baseVoteWorkSavePageAndImg = weixinVoteBaseEditService.editBaseVoteWorkSavePageAndImg(userId, activeId, type, activeText, activeImg);
         if (baseVoteWorkSavePageAndImg == null || baseVoteWorkSavePageAndImg <= 0) {
             return Result.buildResult(Result.Status.DATA_IS_WRONG,
                     "数据未能保存成功，原因如下：当前用户不是管理员/" +
