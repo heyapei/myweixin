@@ -12,6 +12,26 @@ import java.util.Date;
 @Mapper
 @Data
 public class WeixinVoteOrganisers {
+
+
+    public static WeixinVoteOrganisers init() {
+        WeixinVoteOrganisers weixinVoteOrganisers = new WeixinVoteOrganisers();
+        weixinVoteOrganisers = new WeixinVoteOrganisers();
+        weixinVoteOrganisers.setVoteBaseId(0);
+        weixinVoteOrganisers.setName("");
+        weixinVoteOrganisers.setLogoImg("");
+        weixinVoteOrganisers.setOrganisersDesc("");
+        weixinVoteOrganisers.setPhone("");
+        weixinVoteOrganisers.setAddress("");
+        weixinVoteOrganisers.setCompany("");
+        weixinVoteOrganisers.setType("");
+        weixinVoteOrganisers.setJobMajor("");
+        weixinVoteOrganisers.setBuildTime(new Date());
+        weixinVoteOrganisers.setCorporate("");
+        weixinVoteOrganisers.setWeixinQrCode("");
+        return weixinVoteOrganisers;
+    }
+
     /**
      * 主键
      */

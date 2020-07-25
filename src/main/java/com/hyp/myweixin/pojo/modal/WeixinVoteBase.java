@@ -72,6 +72,42 @@ public class WeixinVoteBase {
     @Column(name = "active_public")
     private Integer activePublic = 1;
 
+    public enum ActivePublicEnum {
+        SHOW_PUBLIC(0, "公开"),
+        NOT_SHOW_PUBLIC(1, "不公开");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        @Override
+        public String toString() {
+            return "ActivePublicEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        ActivePublicEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+    }
+
+
     /**
      * 活动展示优先级 数值越高 优先级越高 默认为0 默认展示
      */

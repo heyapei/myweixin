@@ -10,6 +10,30 @@ import javax.persistence.*;
 @Mapper
 @Data
 public class WeixinVoteConf {
+
+
+    public static WeixinVoteConf init() {
+        WeixinVoteConf weixinVoteConf = new WeixinVoteConf();
+        weixinVoteConf.setActiveVoteBaseId(0);
+        weixinVoteConf.setActiveConfMusicId(0);
+        weixinVoteConf.setActiveConfRepeatVote(0);
+        weixinVoteConf.setActiveConfVoteType("1;1");
+        weixinVoteConf.setActiveConfSignUp(0);
+        weixinVoteConf.setActiveConfVerify(0);
+        weixinVoteConf.setActiveConfNumHide(0);
+        weixinVoteConf.setActiveConfUserHide(0);
+        weixinVoteConf.setActiveConfRankHide(0);
+        weixinVoteConf.setCreateTime(new Date());
+        weixinVoteConf.setUpdateTime(new Date());
+        weixinVoteConf.setActiveUploadStartTime(new Date());
+        weixinVoteConf.setActiveUploadEndTime(new Date());
+        weixinVoteConf.setActiveConfSex("");
+        weixinVoteConf.setActiveConfRegion("");
+        weixinVoteConf.setActiveConfNeedWeixin(0);
+        weixinVoteConf.setActiveConfNeedPhone(0);
+        weixinVoteConf.setActiveConfShareImg("");
+        return weixinVoteConf;
+    }
     /**
      * 主键
      */
