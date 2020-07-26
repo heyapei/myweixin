@@ -288,8 +288,14 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         return myErrorList;
     }
 
+    /**
+     *
+     * @param page2Query 查询实体类
+     * @return
+     * @throws MyDefinitionException
+     */
     @Override
-    public Integer createPage2AndImg(Page2OrgShowQuery page2Query) {
+    public Integer createPage2AndImg(Page2OrgShowQuery page2Query) throws MyDefinitionException{
         WeixinVoteBase weixinVoteBaseByWorkId;
         Integer userId = page2Query.getUserId();
         Integer voteWorkId = page2Query.getVoteWorkId();
@@ -301,10 +307,20 @@ public class VoteActiveServiceImpl implements VoteActiveService {
                     page2Query.getOrgName(),
                     null);
         } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("组办方名称:" + e.getMessage());
+            throw new MyDefinitionException("主办方名称:" + e.getMessage());
         }
         if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("当前提交的组办方名称内容存在违规，请重新输入");
+            throw new MyDefinitionException("当前提交的主办方名称内容存在违规，请重新输入");
+        }
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    page2Query.getOrgPhone(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("主办方手机号:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的主办方手机号存在违规，请重新输入");
         }
 
 
@@ -412,10 +428,11 @@ public class VoteActiveServiceImpl implements VoteActiveService {
      * @param activeText 上传的文本 非必须
      * @param activeImg  上传的图片 使用英文;拼接好的
      * @return
+     * @exception MyDefinitionException
      */
     @Override
     public Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type,
-                                                    String activeText, String activeImg) {
+                                                    String activeText, String activeImg) throws MyDefinitionException{
         WeixinVoteBase weixinVoteBase = null;
         // 先查询出来该用户下活动状态为4（未创建完成）的活动
         List<WeixinVoteBase> weixinVoteBaseByUserIdAndStatus = weixinVoteBaseService.getWeixinVoteBaseByUserIdAndStatus(userId, 4);
@@ -731,6 +748,18 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             throw new MyDefinitionException("上传文件为空");
         }
 
+        /*如果当前不在数据库中 则请求图片验证接口*/
+        Boolean aBoolean = false;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkImgSecCheckApi(file, null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        if (!aBoolean) {
+            throw new MyDefinitionException("图片违规重新选择");
+        }
+
         String path = null;
         try {
             path = ResourceUtils.getURL("classpath:").getPath();
@@ -755,17 +784,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             return Result.buildResult(Result.Status.OK, resourceSimpleDTO);
         }
 
-        /*如果当前不在数据库中 则请求图片验证接口*/
-        Boolean aBoolean = false;
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkImgSecCheckApi(file, null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException(e.getMessage());
-        }
 
-        if (!aBoolean) {
-            throw new MyDefinitionException("图片违规重新选择");
-        }
 
         int resource_config_id = 0;
         String savePath = path + imgVideResConfig.getActiveImgBasePath();

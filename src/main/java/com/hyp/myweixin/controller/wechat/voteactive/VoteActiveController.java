@@ -108,7 +108,12 @@ public class VoteActiveController {
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-        Integer page2AndImg = voteActiveService.createPage2AndImg(page2OrgShowQuery);
+        Integer page2AndImg = null;
+        try {
+            page2AndImg = voteActiveService.createPage2AndImg(page2OrgShowQuery);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, e.getMessage());
+        }
         if (page2AndImg == null || page2AndImg <= 0) {
             return Result.buildResult(Result.Status.DATA_IS_WRONG,
                     "数据未能保存成功，原因如下：创建人信息没有发现/" +
@@ -138,7 +143,12 @@ public class VoteActiveController {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
 
-        Integer baseVoteWork = voteActiveService.createBaseVoteWork(userId);
+        Integer baseVoteWork = null;
+        try {
+            baseVoteWork = voteActiveService.createBaseVoteWork(userId);
+        } catch (Exception e) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, e.getMessage());
+        }
         if (baseVoteWork <= 0) {
             return Result.buildResult(Result.Status.PARAM_NOT_COMPLETE);
         }
@@ -166,7 +176,12 @@ public class VoteActiveController {
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-        Integer baseVoteWorkSavePageAndImg = voteActiveService.createBaseVoteWorkSavePageAndImg(userId, voteWorkId, type, activeText, activeImg);
+        Integer baseVoteWorkSavePageAndImg = null;
+        try {
+            baseVoteWorkSavePageAndImg = voteActiveService.createBaseVoteWorkSavePageAndImg(userId, voteWorkId, type, activeText, activeImg);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, e.getMessage());
+        }
         if (baseVoteWorkSavePageAndImg == null || baseVoteWorkSavePageAndImg <= 0) {
             return Result.buildResult(Result.Status.DATA_IS_WRONG,
                     "数据未能保存成功，原因如下：用户没有未创建完成的活动/" +

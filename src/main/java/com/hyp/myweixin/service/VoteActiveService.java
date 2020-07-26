@@ -63,7 +63,7 @@ public interface VoteActiveService {
      * @param page2Query 查询实体类
      * @return
      */
-    Integer createPage2AndImg(Page2OrgShowQuery page2Query);
+    Integer createPage2AndImg(Page2OrgShowQuery page2Query) throws MyDefinitionException;
 
 
     /**
@@ -76,7 +76,8 @@ public interface VoteActiveService {
      * @param activeImg  上传的图片 使用英文;拼接好的
      * @return
      */
-    Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type, String activeText, String activeImg);
+    Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type,
+                                             String activeText, String activeImg) throws MyDefinitionException;
 
 
     /**
