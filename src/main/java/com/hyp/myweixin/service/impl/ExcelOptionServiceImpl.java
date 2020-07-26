@@ -119,6 +119,9 @@ public class ExcelOptionServiceImpl implements ExcelOptionService {
         if (o == null) {
             throw new MyDefinitionException("当前导出链接已过期，请再次获取导出链接！！");
         }
+
+        myRedisUtil.del(EXCEL_EXPORT_REDIS_KEY + activeId);
+
         return activeId;
     }
 
