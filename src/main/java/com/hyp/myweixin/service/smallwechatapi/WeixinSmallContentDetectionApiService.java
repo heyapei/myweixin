@@ -2,6 +2,7 @@ package com.hyp.myweixin.service.smallwechatapi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author 何亚培
@@ -11,12 +12,32 @@ import com.hyp.myweixin.exception.MyDefinitionException;
  */
 public interface WeixinSmallContentDetectionApiService {
 
+    /**
+     * 违规图片检测
+     *
+     * @param multipartFile        图片
+     * @param accessToken 微信token 填写null系统会自动请求
+     * @return boolean值
+     * @throws MyDefinitionException
+     */
+    Boolean checkImgSecCheckApi(MultipartFile multipartFile, String accessToken) throws MyDefinitionException;
+
+    /**
+     * 违规图片检测
+     *
+     * @param multipartFile        图片
+     * @param accessToken 微信token 填写null系统会自动请求
+     * @return
+     * @throws MyDefinitionException
+     */
+    JSONObject getImgSecCheckApiMsg(MultipartFile multipartFile, String accessToken) throws MyDefinitionException;
+
 
     /**
      * 违规文字检测
      *
      * @param msgText     文字
-     * @param accessToken 微信token
+     * @param accessToken 微信token 填写null系统会自动请求
      * @return boolean值
      * @throws MyDefinitionException
      */
@@ -27,7 +48,7 @@ public interface WeixinSmallContentDetectionApiService {
      * 违规文字检测
      *
      * @param msgText     文字
-     * @param accessToken 微信token
+     * @param accessToken 微信token 填写null系统会自动请求
      * @return
      * @throws MyDefinitionException
      */

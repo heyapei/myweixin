@@ -10,6 +10,7 @@ import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
 import com.hyp.myweixin.pojo.query.voteactive.Page4RegulationQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.*;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.dateutil.DateStyle;
@@ -54,6 +55,9 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     private WeixinVoteOrganisersService weixinVoteOrganisersService;
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
+
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
 
     /**
@@ -289,6 +293,21 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         WeixinVoteBase weixinVoteBaseByWorkId;
         Integer userId = page2Query.getUserId();
         Integer voteWorkId = page2Query.getVoteWorkId();
+
+
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    page2Query.getOrgName(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("组办方名称:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的组办方名称内容存在违规，请重新输入");
+        }
+
+
         if (judgeIsOperatorLegal(userId, voteWorkId)) {
             weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(voteWorkId);
             /*是否公开到首页 0默认不公开 1公开*/
@@ -395,7 +414,8 @@ public class VoteActiveServiceImpl implements VoteActiveService {
      * @return
      */
     @Override
-    public Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type, String activeText, String activeImg) {
+    public Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type,
+                                                    String activeText, String activeImg) {
         WeixinVoteBase weixinVoteBase = null;
         // 先查询出来该用户下活动状态为4（未创建完成）的活动
         List<WeixinVoteBase> weixinVoteBaseByUserIdAndStatus = weixinVoteBaseService.getWeixinVoteBaseByUserIdAndStatus(userId, 4);
@@ -413,6 +433,20 @@ public class VoteActiveServiceImpl implements VoteActiveService {
 
         if (StringUtils.isBlank(type)) {
             log.error("上传的文件数据没有指定文件类型：{}", type);
+        }
+
+
+        /*先判断是否违规在处理吧 能少点数据库操作就少点*/
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    activeText,
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的文字内容存在违规，请重新输入");
         }
 
         /*如果类型为activeCoverImg 则保存 封面图 和 活动标题*/
@@ -511,6 +545,54 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer createVoteWork(WeixinVoteWorkDTO weixinVoteWorkDTO) {
+
+
+
+        /*先判断是否违规在处理吧 能少点数据库操作就少点*/
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    weixinVoteWorkDTO.getActiveDesc(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("活动描述:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的活动描述内容违规，请重新输入");
+        }
+
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    weixinVoteWorkDTO.getActiveReward(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("活动描述:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的活动描述内容违规，请重新输入");
+        }
+
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    weixinVoteWorkDTO.getActiveName(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("活动描述:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的活动描述内容违规，请重新输入");
+        }
+
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    weixinVoteWorkDTO.getActiveName(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("活动描述:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的活动描述内容违规，请重新输入");
+        }
 
         /*在这里做一下预判断 因为有可能会出现图片链接地址出现空的情况*/
 
@@ -640,10 +722,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
      * @return
      */
     @Override
-    public Result saveSingleRes(MultipartFile file, String type) {
-
-        log.info("数据类型");
-        log.info("数据类型，{}", type);
+    public Result saveSingleRes(MultipartFile file, String type) throws MyDefinitionException {
 
         if (type == null) {
             throw new MyDefinitionException("未指定上传文件自定义类型");
@@ -651,7 +730,6 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         if (file == null) {
             throw new MyDefinitionException("上传文件为空");
         }
-
 
         String path = null;
         try {
@@ -662,13 +740,9 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             throw new MyDefinitionException("获取项目路径失败");
         }
 
-
         ResourceSimpleDTO resourceSimpleDTO = new ResourceSimpleDTO();
-
-
         String fileMd5 = MyFileUtil.getFileMd5(file);
         log.info("文件MD5：{}", fileMd5);
-
         WeixinResource weixinResourceByMD5 = weixinResourceService.getWeixinResourceByMD5(fileMd5);
         // 如果存在则直接返回数据
         if (weixinResourceByMD5 != null) {
@@ -681,7 +755,17 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             return Result.buildResult(Result.Status.OK, resourceSimpleDTO);
         }
 
-        log.info("数据类型：{}", type);
+        /*如果当前不在数据库中 则请求图片验证接口*/
+        Boolean aBoolean = false;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkImgSecCheckApi(file, null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        if (!aBoolean) {
+            throw new MyDefinitionException("图片违规重新选择");
+        }
 
         int resource_config_id = 0;
         String savePath = path + imgVideResConfig.getActiveImgBasePath();

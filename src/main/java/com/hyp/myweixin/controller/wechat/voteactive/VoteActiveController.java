@@ -205,8 +205,20 @@ public class VoteActiveController {
     }
 
     @RequestMapping("file/upload")
-    public Result fileUpload(@RequestParam("file") MultipartFile file, String type) {
-        Result coversImg = voteActiveService.saveSingleRes(file, type);
+    public Result fileUpload(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file, String type) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+
+        Result coversImg = null;
+        try {
+            coversImg = voteActiveService.saveSingleRes(file, type);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.BAD_REQUEST, e.getMessage());
+        }
         log.info("保存数据：{}", coversImg.toString());
         return coversImg;
     }

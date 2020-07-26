@@ -4,6 +4,30 @@
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
 
 ```$xslt
+2020年7月26日
+
+这个第三包中包含了文件上传需要的httpmime 如果把这个注释了 就需要自己引用一下httpmime包
+<!-- https://mvnrepository.com/artifact/com.arronlong/httpclientutil
+         https://github.com/Arronlong/httpclientutil
+         暂时不适用 其实还是有点用的
+         -->
+       <!-- <dependency>
+            <groupId>com.arronlong</groupId>
+            <artifactId>httpclientutil</artifactId>
+            <version>1.0.4</version>
+        </dependency>-->
+
+自己引用httpmime包
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5.12</version>
+        </dependency>
+```
+
+
+```$xslt
 2020年7月25日
 今天要解决的事情还有两个
 1.excel数据导出 2020年7月25日19点47分

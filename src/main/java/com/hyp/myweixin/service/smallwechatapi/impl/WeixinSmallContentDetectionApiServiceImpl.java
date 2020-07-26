@@ -6,13 +6,18 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
 import com.hyp.myweixin.utils.redis.MyRedisUtil;
+import com.hyp.myweixin.utils.thumbnailator.MyThumbnailImgOptionUtil;
+import com.hyp.myweixin.utils.thumbnailator.MyThumbnailImgType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +56,18 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     @Value("${weixin.small.check.msg_sec_check.url}")
     private String MSG_SEC_CHECK_URL;
 
+
+    /**
+     * 图片检测链接
+     */
+    @Value("${weixin.small.check.img_sec_check.url}")
+    private String IMG_SEC_CHECK_URL;
+
+    private static final Integer IMG_SEC_CHECK_WIDTH = 750;
+    private static final Integer IMG_SEC_CHECK_HEIGHT = 1334;
+    private static final Float IMG_SEC_CHECK_QUALITY = 0.8f;
+
+
     /**
      * 获取回来的accessToken的json中key值
      */
@@ -64,13 +81,104 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     private MyHttpClientUtil myHttpClientUtil;
     @Autowired
     private MyRedisUtil myRedisUtil;
+    @Autowired
+    private MyThumbnailImgOptionUtil myThumbnailImgOptionUtil;
 
+
+    /**
+     * 违规图片检测
+     *
+     * @param multipartFile 图片
+     * @param accessToken   微信token 填写null系统会自动请求
+     * @return boolean值
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Boolean checkImgSecCheckApi(MultipartFile multipartFile, String accessToken) throws MyDefinitionException {
+        if (multipartFile == null) {
+            throw new MyDefinitionException("检查图片违规要求图片内容必填");
+        }
+        JSONObject msgSecCheckApiMsg = null;
+        try {
+            msgSecCheckApiMsg = getImgSecCheckApiMsg(multipartFile, accessToken);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("判断图片是否违规失败，" + e.getMessage());
+        }
+        if (msgSecCheckApiMsg.containsKey("errcode") && msgSecCheckApiMsg.getInteger("errcode").equals(0)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 违规图片检测
+     *
+     * @param multipartFile 图片
+     * @param accessToken   微信token 填写null系统会自动请求
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public JSONObject getImgSecCheckApiMsg(MultipartFile multipartFile, String accessToken) throws MyDefinitionException {
+        if (multipartFile == null) {
+            throw new MyDefinitionException("检查图片违规要求图片内容必填");
+        }
+        if (StringUtils.isBlank(accessToken)) {
+            JSONObject accessToken1 = null;
+            try {
+                accessToken1 = getAccessToken();
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+            accessToken = accessToken1.getString(JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN);
+        }
+        /*生成待检测的文件*/
+        File testFile = null;
+        try {
+            testFile = new File(multipartFile.getOriginalFilename());
+            InputStream inputStream = myThumbnailImgOptionUtil.compressImage(multipartFile,
+                    MyThumbnailImgType.IMAGE_TYPE_JPG,
+                    IMG_SEC_CHECK_WIDTH, IMG_SEC_CHECK_HEIGHT, IMG_SEC_CHECK_QUALITY);
+            myThumbnailImgOptionUtil.inputStreamToFile(inputStream, testFile);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        Map<String, File> postFiles = new HashMap<>(1);
+        postFiles.put("media", testFile);
+        String url = IMG_SEC_CHECK_URL + accessToken;
+        String imgCheckResult = null;
+        try {
+            imgCheckResult = myHttpClientUtil.uploadFileByHttpPost(url, postFiles, null, null);
+        } catch (Exception e) {
+            log.error("违规图片检测请求失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("违规图片检测请求失败");
+        } finally {
+            /*删除临时文件*/
+            if (testFile.exists()) {
+                testFile.delete();
+            }
+        }
+        log.info("微信图片检查结果:{}", imgCheckResult);
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = JSONObject.parseObject(imgCheckResult);
+        } catch (Exception e) {
+            log.error("违规图片检测数据转换失败，错误原因：{}", e.toString());
+            throw new MyDefinitionException("违规图片检测数据转换失败");
+        }
+
+        if (jsonObject == null) {
+            throw new MyDefinitionException("没有得到违规图片检测结果");
+        }
+        return jsonObject;
+    }
 
     /**
      * 违规文字检测
      *
      * @param msgText     文字
-     * @param accessToken 微信token
+     * @param accessToken 微信token 填写null系统会自动请求
      * @return boolean值
      * @throws MyDefinitionException
      */
@@ -95,7 +203,7 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
      * 违规文字检测
      *
      * @param msgText     文字
-     * @param accessToken 微信token
+     * @param accessToken 微信token 填写null系统会自动请求
      * @return
      * @throws MyDefinitionException
      */
@@ -123,7 +231,7 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
             log.error("违规文字检测请求失败，失败原因：{}", e.toString());
             throw new MyDefinitionException("违规文字检测请求失败");
         }
-
+        log.info("微信文字检查结果:{}", msgCheckResult);
         JSONObject jsonObject = null;
         try {
             jsonObject = JSONObject.parseObject(msgCheckResult);

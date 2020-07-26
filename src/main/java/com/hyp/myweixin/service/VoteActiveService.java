@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.WeixinVoteWorkDTO;
 import com.hyp.myweixin.pojo.query.voteactive.Page2OrgShowQuery;
 import com.hyp.myweixin.pojo.query.voteactive.Page3RegulationQuery;
@@ -101,7 +102,8 @@ public interface VoteActiveService {
      * @param file
      * @param type
      * @return
+     * @throws MyDefinitionException
      */
-    Result saveSingleRes(MultipartFile file, String type);
+    Result saveSingleRes(MultipartFile file, String type) throws MyDefinitionException;
 
 }
