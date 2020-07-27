@@ -6,12 +6,12 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
+import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.query.voteactive.OwnerActiveQuery;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveWorkForOwnerVO;
-import com.hyp.myweixin.service.AdministratorsOptionService;
-import com.hyp.myweixin.service.UserActiveService;
-import com.hyp.myweixin.service.WeixinVoteUserService;
-import com.hyp.myweixin.service.WeixinVoteWorkService;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveWorkOverviewForOwnerVO;
+import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MyEnumUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +36,75 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Autowired
     private WeixinVoteBaseMapper weixinVoteBaseMapper;
     @Autowired
+    private WeixinVoteBaseService weixinVoteBaseService;
+    @Autowired
     private WeixinVoteWorkService weixinVoteWorkService;
 
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
     @Autowired
+    private WeixinVoteUserWorkService weixinVoteUserWorkService;
+    @Autowired
     private AdministratorsOptionService administratorsOptionService;
 
+
+    /**
+     * 获取用户活动的大致信息
+     *
+     * @param userId 用户ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public ActiveWorkOverviewForOwnerVO getActiveWorkOverviewForOwnerVOByUserId(Integer userId) throws MyDefinitionException {
+
+        if (userId == null) {
+            throw new MyDefinitionException("当前查询操作要求用户必须为登录状态");
+        }
+
+        WeixinVoteUser weixinVoteUser = weixinVoteUserService.getUserById(userId);
+        if (weixinVoteUser == null) {
+            throw new MyDefinitionException("没有知道到当前用户信息");
+        }
+        ActiveWorkOverviewForOwnerVO activeWorkOverviewForOwnerVO = ActiveWorkOverviewForOwnerVO.init();
+        activeWorkOverviewForOwnerVO.setUserId(weixinVoteUser.getId());
+        activeWorkOverviewForOwnerVO.setNickName(weixinVoteUser.getNickName());
+        activeWorkOverviewForOwnerVO.setAvatarUrl(weixinVoteUser.getAvatarUrl());
+
+        /*查询创建了多少活动了*/
+        OwnerActiveQuery ownerActiveQuery = new OwnerActiveQuery();
+        ownerActiveQuery.setUserId(userId);
+        ownerActiveQuery.setPageSize(1);
+        ownerActiveQuery.setPageNum(1);
+        ownerActiveQuery.setActiveStatus(null);
+        PageInfo<ActiveWorkForOwnerVO> activeWorkForOwnerVOListByUserId = getActiveWorkForOwnerVOListByUserId(ownerActiveQuery);
+        if (activeWorkForOwnerVOListByUserId != null) {
+            activeWorkOverviewForOwnerVO.setLaunchActiveNum((int) activeWorkForOwnerVOListByUserId.getTotal());
+        }
+
+        /*查询创建了提交了多少作品*/
+        try {
+            List<WeixinVoteWork> weixinVoteWorkListByUserId = weixinVoteWorkService.getWeixinVoteWorkListByUserId(userId);
+            if (weixinVoteWorkListByUserId != null) {
+                activeWorkOverviewForOwnerVO.setJoinUserWorkNum(weixinVoteWorkListByUserId.size());
+            }
+        } catch (MyDefinitionException e) {
+            //
+        }
+
+
+        /*查询点赞了多少的作品*/
+        try {
+            List<WeixinVoteUserWork> userJoinActiveWorkList = weixinVoteUserWorkService.getUserJoinActiveWorkList(userId, true);
+            if (userJoinActiveWorkList != null) {
+                activeWorkOverviewForOwnerVO.setVoteUserWorkNum(userJoinActiveWorkList.size());
+            }
+        } catch (MyDefinitionException e) {
+            //
+        }
+
+        return activeWorkOverviewForOwnerVO;
+    }
 
     /**
      * 查询用户名下所有的活动
