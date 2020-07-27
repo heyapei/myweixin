@@ -12,6 +12,7 @@ import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditFourthVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditSecondVO;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditThirdVO;
 import com.hyp.myweixin.service.*;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEnumUtil;
 import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.dateutil.DateStyle;
@@ -45,6 +46,9 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
 
     @Autowired
     private WeixinVoteOrganisersService weixinVoteOrganisersService;
+
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
     /**
      * 更新活动状态
@@ -439,6 +443,30 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
             }
         }
 
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    activeEditSecondQuery.getOrganisersName(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("主办方名称文字检查未通过:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的主办方名称内容存在违规，请重新输入");
+        }
+
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    activeEditSecondQuery.getOrganisersPhone(),
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("主办方手机号检查未通过:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的主办方手机号内容存在违规，请重新输入");
+        }
+
+
         WeixinVoteConf weixinVoteConf = weixinVoteConfService.getWeixinVoteConfByVoteWorkId(activeId);
         if (weixinVoteConf == null) {
             weixinVoteConf = WeixinVoteConf.init();
@@ -591,6 +619,20 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         if (StringUtils.isBlank(type)) {
             log.error("上传的文件数据没有指定文件类型：{}", type);
         }
+
+        Boolean aBoolean = null;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                    activeText,
+                    null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("违规内容检查未通过:" + e.getMessage());
+        }
+        if (aBoolean == null || aBoolean == false) {
+            throw new MyDefinitionException("当前提交的文字内容存在违规，请重新输入");
+        }
+
+
         /*如果类型为activeCoverImg 则保存 封面图 和 活动标题*/
         if (type.equalsIgnoreCase("activeCoverImg")) {
             if (activeImg != null) {
