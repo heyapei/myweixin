@@ -1,6 +1,6 @@
 package com.hyp.myweixin.utils.dateutil;
  
-public enum DateStyle {
+public enum MyDateStyle {
 	
 	YYYY_MM("yyyy-MM", false),
 	YYYY_MM_DD("yyyy-MM-dd", false),
@@ -36,7 +36,7 @@ public enum DateStyle {
 	
 	private boolean isShowOnly;
 	
-	DateStyle(String value, boolean isShowOnly) {
+	MyDateStyle(String value, boolean isShowOnly) {
 		this.value = value;
 		this.isShowOnly = isShowOnly;
 	}

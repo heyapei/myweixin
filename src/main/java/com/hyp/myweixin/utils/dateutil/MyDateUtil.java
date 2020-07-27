@@ -221,7 +221,7 @@ public class MyDateUtil {
      */
     private static String addInteger(String date, int dateType, int amount) {
         String dateString = null;
-        DateStyle dateStyle = getDateStyle(date);
+        MyDateStyle dateStyle = getDateStyle(date);
         if (dateStyle != null) {
             Date myDate = StringToDate(date, dateStyle);
             myDate = addInteger(myDate, dateType, amount);
@@ -326,11 +326,11 @@ public class MyDateUtil {
      * @param date 日期字符串
      * @return 日期风格
      */
-    public static DateStyle getDateStyle(String date) {
-        DateStyle dateStyle = null;
-        Map<Long, DateStyle> map = new HashMap<Long, DateStyle>();
+    public static MyDateStyle getDateStyle(String date) {
+        MyDateStyle dateStyle = null;
+        Map<Long, MyDateStyle> map = new HashMap<Long, MyDateStyle>();
         List<Long> timestamps = new ArrayList<Long>();
-        for (DateStyle style : DateStyle.values()) {
+        for (MyDateStyle style : MyDateStyle.values()) {
             if (style.isShowOnly()) {
                 continue;
             }
@@ -366,7 +366,7 @@ public class MyDateUtil {
      * @return 日期
      */
     public static Date StringToDate(String date) {
-        DateStyle dateStyle = getDateStyle(date);
+        MyDateStyle dateStyle = getDateStyle(date);
         return StringToDate(date, dateStyle);
     }
 
@@ -397,7 +397,7 @@ public class MyDateUtil {
      * @param dateStyle 日期风格
      * @return 日期
      */
-    public static Date StringToDate(String date, DateStyle dateStyle) {
+    public static Date StringToDate(String date, MyDateStyle dateStyle) {
         Date myDate = null;
         if (dateStyle != null) {
             myDate = StringToDate(date, dateStyle.getValue());
@@ -432,7 +432,7 @@ public class MyDateUtil {
      * @param dateStyle 日期风格
      * @return 日期字符串
      */
-    public static String DateToString(Date date, DateStyle dateStyle) {
+    public static String DateToString(Date date, MyDateStyle dateStyle) {
         String dateString = null;
         if (dateStyle != null) {
             dateString = DateToString(date, dateStyle.getValue());
@@ -448,7 +448,7 @@ public class MyDateUtil {
      * @return 新日期字符串
      */
     public static String StringToString(String date, String newPattern) {
-        DateStyle oldDateStyle = getDateStyle(date);
+        MyDateStyle oldDateStyle = getDateStyle(date);
         return StringToString(date, oldDateStyle, newPattern);
     }
 
@@ -459,8 +459,8 @@ public class MyDateUtil {
      * @param newDateStyle 新日期风格
      * @return 新日期字符串
      */
-    public static String StringToString(String date, DateStyle newDateStyle) {
-        DateStyle oldDateStyle = getDateStyle(date);
+    public static String StringToString(String date, MyDateStyle newDateStyle) {
+        MyDateStyle oldDateStyle = getDateStyle(date);
         return StringToString(date, oldDateStyle, newDateStyle);
     }
 
@@ -484,7 +484,7 @@ public class MyDateUtil {
      * @param newParttern  新日期格式
      * @return 新日期字符串
      */
-    public static String StringToString(String date, DateStyle olddDteStyle, String newParttern) {
+    public static String StringToString(String date, MyDateStyle olddDteStyle, String newParttern) {
         String dateString = null;
         if (olddDteStyle != null) {
             dateString = StringToString(date, olddDteStyle.getValue(), newParttern);
@@ -500,7 +500,7 @@ public class MyDateUtil {
      * @param newDateStyle 新日期风格
      * @return 新日期字符串
      */
-    public static String StringToString(String date, String olddPattern, DateStyle newDateStyle) {
+    public static String StringToString(String date, String olddPattern, MyDateStyle newDateStyle) {
         String dateString = null;
         if (newDateStyle != null) {
             dateString = StringToString(date, olddPattern, newDateStyle.getValue());
@@ -516,7 +516,7 @@ public class MyDateUtil {
      * @param newDateStyle 新日期风格
      * @return 新日期字符串
      */
-    public static String StringToString(String date, DateStyle olddDteStyle, DateStyle newDateStyle) {
+    public static String StringToString(String date, MyDateStyle olddDteStyle, MyDateStyle newDateStyle) {
         String dateString = null;
         if (olddDteStyle != null && newDateStyle != null) {
             dateString = StringToString(date, olddDteStyle.getValue(), newDateStyle.getValue());
@@ -783,7 +783,7 @@ public class MyDateUtil {
      * @return 日期
      */
     public static String getDate(String date) {
-        return StringToString(date, DateStyle.YYYY_MM_DD);
+        return StringToString(date, MyDateStyle.YYYY_MM_DD);
     }
 
     /**
@@ -793,7 +793,7 @@ public class MyDateUtil {
      * @return 日期
      */
     public static String getDate(Date date) {
-        return DateToString(date, DateStyle.YYYY_MM_DD);
+        return DateToString(date, MyDateStyle.YYYY_MM_DD);
     }
 
     /**
@@ -803,7 +803,7 @@ public class MyDateUtil {
      * @return 时间
      */
     public static String getTime(String date) {
-        return StringToString(date, DateStyle.HH_MM_SS);
+        return StringToString(date, MyDateStyle.HH_MM_SS);
     }
 
     /**
@@ -813,7 +813,7 @@ public class MyDateUtil {
      * @return 时间
      */
     public static String getTime(Date date) {
-        return DateToString(date, DateStyle.HH_MM_SS);
+        return DateToString(date, MyDateStyle.HH_MM_SS);
     }
 
     /**
@@ -824,7 +824,7 @@ public class MyDateUtil {
      */
     public static Week getWeek(String date) {
         Week week = null;
-        DateStyle dateStyle = getDateStyle(date);
+        MyDateStyle dateStyle = getDateStyle(date);
         if (dateStyle != null) {
             Date myDate = StringToDate(date, dateStyle);
             week = getWeek(myDate);
@@ -887,8 +887,8 @@ public class MyDateUtil {
      */
     public static int getIntervalDays(Date date, Date otherDate) {
         int num = -1;
-        Date dateTmp = MyDateUtil.StringToDate(MyDateUtil.getDate(date), DateStyle.YYYY_MM_DD);
-        Date otherDateTmp = MyDateUtil.StringToDate(MyDateUtil.getDate(otherDate), DateStyle.YYYY_MM_DD);
+        Date dateTmp = MyDateUtil.StringToDate(MyDateUtil.getDate(date), MyDateStyle.YYYY_MM_DD);
+        Date otherDateTmp = MyDateUtil.StringToDate(MyDateUtil.getDate(otherDate), MyDateStyle.YYYY_MM_DD);
         if (dateTmp != null && otherDateTmp != null) {
             long time = Math.abs(dateTmp.getTime() - otherDateTmp.getTime());
             num = (int) (time / (24 * 60 * 60 * 1000));
