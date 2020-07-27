@@ -13,12 +13,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Author 何亚培
@@ -51,8 +51,7 @@ public class UserActiveController {
      */
     @ApiOperation("查询个人活动相关数据")
     @PostMapping("owner/overview")
-    public Result<ActiveWorkOverviewForOwnerVO> getActiveWorkOverviewForOwnerVOByUserId(@PathVariable(required = true)
-                                                                                                Integer userId) {
+    public Result<ActiveWorkOverviewForOwnerVO> getActiveWorkOverviewForOwnerVOByUserId(@NotNull Integer userId) {
         /*鉴权*/
         boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
