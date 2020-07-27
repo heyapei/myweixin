@@ -37,7 +37,7 @@ public interface WeixinVoteUserWorkService {
      * @return
      * @throws MyDefinitionException
      */
-    List<WeixinVoteUserWork> getUserJoinActiveNum(Integer userId, boolean distinctUserWorkId) throws MyDefinitionException;
+    List<WeixinVoteUserWork> getUserJoinActiveWorkList(Integer userId, boolean distinctUserWorkId) throws MyDefinitionException;
 
 
     /**

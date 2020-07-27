@@ -84,7 +84,7 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
      * @throws MyDefinitionException
      */
     @Override
-    public List<WeixinVoteUserWork> getUserJoinActiveNum(Integer userId, boolean distinctUserWorkId) throws MyDefinitionException {
+    public List<WeixinVoteUserWork> getUserJoinActiveWorkList(Integer userId, boolean distinctUserWorkId) throws MyDefinitionException {
 
         if (userId == null) {
             throw new MyDefinitionException("用户ID必填");
