@@ -22,6 +22,16 @@ public interface WeixinVoteWorkService {
 
 
     /**
+     * 获取userId下所有的作品数据
+     *
+     * @param userId 用户ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    List<WeixinVoteWork> getWeixinVoteWorkListByUserId(Integer userId) throws MyDefinitionException;
+
+
+    /**
      * 获取activeId下面的根据状态值查询所有符合要求的作品
      *
      * @param activeId 活动ID 必填

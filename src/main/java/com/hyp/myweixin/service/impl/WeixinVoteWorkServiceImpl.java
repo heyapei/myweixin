@@ -55,6 +55,30 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private AdministratorsOptionService administratorsOptionService;
 
+
+    /**
+     * 获取userId下所有的作品数据
+     *
+     * @param userId 用户ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public List<WeixinVoteWork> getWeixinVoteWorkListByUserId(Integer userId) throws MyDefinitionException {
+        Example example = new Example(WeixinVoteWork.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("voteWorkUserId", userId);
+        List<WeixinVoteWork> weixinVoteWorks = null;
+        try {
+            weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("获取userId下所有的作品数据，失败原因：{}", e.toString());
+            throw new MyDefinitionException("获取userId下所有的作品数据");
+        }
+        return weixinVoteWorks;
+    }
+
     /**
      * 获取activeId下面的根据状态值查询所有符合要求的作品
      *
