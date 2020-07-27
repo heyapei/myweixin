@@ -3,6 +3,7 @@ package com.hyp.myweixin.pojo.query.user.supply;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ public class AddUserSupplyQuery {
         addUserSupplyQuery.setAddress("");
         addUserSupplyQuery.setEmail("");
         addUserSupplyQuery.setWechatNumber("");
-        addUserSupplyQuery.setBirthday(new Date());
+        addUserSupplyQuery.setBirthday(null);
         addUserSupplyQuery.setPhone("");
         addUserSupplyQuery.setGender(0);
         return addUserSupplyQuery;
@@ -58,6 +59,7 @@ public class AddUserSupplyQuery {
      * 邮件地址
      */
     @ApiModelProperty(value = "邮件地址", name = "email", required = true)
+    @Email
     private String email;
 
     /**
@@ -70,8 +72,8 @@ public class AddUserSupplyQuery {
      * 生日 采用时间戳格式
      */
     @ApiModelProperty(value = "生日", name = "birthday", required = true)
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date birthday;
 
     /**

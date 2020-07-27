@@ -3,6 +3,7 @@ package com.hyp.myweixin.service;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinUserInfoSupply;
 import com.hyp.myweixin.pojo.query.user.supply.AddUserSupplyQuery;
+import com.hyp.myweixin.pojo.vo.page.user.UserInfoSupplyDetailVO;
 
 /**
  * @Author 何亚培
@@ -11,6 +12,25 @@ import com.hyp.myweixin.pojo.query.user.supply.AddUserSupplyQuery;
  * @Description: TODO
  */
 public interface UserInfoSupplyService {
+
+    /**
+     * 更新微信补充信息
+     *
+     * @param addUserSupplyQuery 微信小程序提交上来的用户补充信息
+     * @return 返回影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer updateWeixinUserInfoSupplyByAddUserSupplyQuery(AddUserSupplyQuery addUserSupplyQuery) throws MyDefinitionException;
+
+
+    /**
+     * 通过用户Id查找到用户的补充信息
+     *
+     * @param userId 用户ID
+     * @return 返回主键
+     * @throws MyDefinitionException
+     */
+    UserInfoSupplyDetailVO getUserInfoSupplyDetailVOByUserId(Integer userId) throws MyDefinitionException;
 
 
     /**
@@ -24,6 +44,7 @@ public interface UserInfoSupplyService {
      */
     Integer addWeixinUserInfoSupply(AddUserSupplyQuery addUserSupplyQuery) throws MyDefinitionException;
 
+    /*通用方法*/
 
     /**
      * 添加微信补充信息 要求全部数据
@@ -51,6 +72,16 @@ public interface UserInfoSupplyService {
      * @throws MyDefinitionException
      */
     Integer updateSelectiveByPkId(WeixinUserInfoSupply weixinUserInfoSupply) throws MyDefinitionException;
+
+
+    /**
+     * 按照UserId更新数据 只更新有值的数据
+     *
+     * @param weixinUserInfoSupply 要更新的数据（含userId）
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer updateSelectiveByUserId(WeixinUserInfoSupply weixinUserInfoSupply) throws MyDefinitionException;
 
 
     /**

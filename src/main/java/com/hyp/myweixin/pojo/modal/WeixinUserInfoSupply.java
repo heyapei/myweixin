@@ -33,6 +33,7 @@ public class WeixinUserInfoSupply {
         weixinUserInfoSupply.setExt3("");
         weixinUserInfoSupply.setExt4("");
         weixinUserInfoSupply.setExt5("");
+        weixinUserInfoSupply.setWechatNumber("");
         weixinUserInfoSupply.setCreateDate(System.currentTimeMillis());
         weixinUserInfoSupply.setUpdateDate(System.currentTimeMillis());
         return weixinUserInfoSupply;
