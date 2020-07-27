@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -276,6 +275,10 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             }
             if (weixinVoteBase.getStatus() != null) {
                 criteria.andEqualTo("status", weixinVoteBase.getStatus());
+            }
+
+            if (weixinVoteBase.getCreateSysUserId() != null && weixinVoteBase.getCreateSysUserId() > 0) {
+                criteria.andEqualTo("createSysUserId", weixinVoteBase.getCreateSysUserId());
             }
         }
 

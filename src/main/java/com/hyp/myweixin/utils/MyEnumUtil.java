@@ -1,5 +1,9 @@
 package com.hyp.myweixin.utils;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
+import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +45,7 @@ import java.util.Map;
  * System.out.println("根据字段名称取值---------：" + str.getMsg());
  * System.out.println("获取枚举所有字段---------：" + Arrays.toString(Journal.StatusEnum.values()));
  */
+@Slf4j
 public class MyEnumUtil {
 
 
@@ -153,6 +158,59 @@ public class MyEnumUtil {
         return resut;
     }
 
+
+    /**
+     * 通过value值获取对应的描述信息 第二中方式
+     * 使用方式
+     * PaymentTypeEnum paymentTypeEnum=getByIntegerTypeCode(PaymentTypeEnum.class,"getCode",1);
+     * String message=paymentTypeEnum.getMessage();
+     *
+     * @param clazz
+     * @param getTypeCodeMethodName
+     * @param typeCode
+     * @param <T>
+     * @return
+     */
+    public static <T extends Enum<T>> T getByIntegerTypeCode(Class<T> clazz, String getTypeCodeMethodName, Integer typeCode) throws MyDefinitionException {
+        T result = null;
+        try {
+            //Enum接口中没有values()方法，我们仍然可以通过Class对象取得所有的enum实例
+            T[] arr = clazz.getEnumConstants();
+            //获取定义的方法
+            Method targetMethod = clazz.getDeclaredMethod(getTypeCodeMethodName);
+            Integer typeCodeVal = null;
+            //遍历枚举定义
+            for (T entity : arr) {
+                //获取传过来方法的
+                typeCodeVal = Integer.valueOf(targetMethod.invoke(entity).toString());
+                //执行的方法的值等于参数传过来要判断的值
+                if (typeCodeVal.equals(typeCode)) {
+                    //返回这个枚举
+                    result = entity;
+                    break;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            log.error("通过方法获取枚举信息值错误,错误原因:{}", e.toString());
+            throw new MyDefinitionException("通过方法获取枚举信息值错误");
+        } catch (IllegalArgumentException e) {
+
+            log.error("通过方法获取枚举信息值错误,错误原因:{}", e.toString());
+            throw new MyDefinitionException("通过方法获取枚举信息值错误");
+        } catch (InvocationTargetException e) {
+            log.error("通过方法获取枚举信息值错误,错误原因:{}", e.toString());
+            throw new MyDefinitionException("通过方法获取枚举信息值错误");
+        } catch (NoSuchMethodException e) {
+            log.error("通过方法获取枚举信息值错误,错误原因:{}", e.toString());
+            throw new MyDefinitionException("通过方法获取枚举信息值错误");
+        } catch (SecurityException e) {
+            log.error("通过方法获取枚举信息值错误,错误原因:{}", e.toString());
+            throw new MyDefinitionException("通过方法获取枚举信息值错误");
+        }
+        return result;
+    }
+
+
     /**
      * 通过value值获取对应的描述信息
      *
@@ -161,7 +219,7 @@ public class MyEnumUtil {
      * @param methodNames 指定枚举类的get方法名
      * @return enum description
      */
-    public static <T> Object getEnumDescriotionByValue(Object value,
+    public static <T> Object getEnumDescriptionByValue(Object value,
                                                        Class<T> enumT, String... methodNames) {
         if (!enumT.isEnum()) { //不是枚举则返回""
             return "";
