@@ -25,16 +25,38 @@
     </resultMap>
 
     <select id="getWeixinVoteUserWorkNumByOpenIdTime" resultType="java.lang.Integer">
-select count(*) from weixin_vote_base wvb
-    left join weixin_vote_work wvw on wvb.id = wvw.active_vote_base_id
-left join weixin_vote_user_work wvuw on wvw.id = wvuw.work_id
-where wvb.id =  #{baseId}
-and wvuw.open_id =  #{openId}
+        select count(*) from weixin_vote_base wvb
+        left join weixin_vote_work wvw on wvb.id = wvw.active_vote_base_id
+        left join weixin_vote_user_work wvuw on wvw.id = wvuw.work_id
+        where wvb.id = #{baseId}
+        and wvuw.open_id = #{openId}
         <if test='workId!=null'>
-            and wvuw.work_id=  #{workId}
+            and wvuw.work_id= #{workId}
         </if>
-and wvuw.create_time
-between  #{startTime}
-and  #{endTime}
+        and wvuw.create_time
+        between #{startTime}
+        and #{endTime}
     </select>
+
+
+    <!--好像我又不是很需要了-->
+    <resultMap id="userJoinActiveNumModal" type="com.hyp.myweixin.pojo.modal.daomodal.UserJoinActiveNumModal">
+        <result column="open_id" property="openId" jdbcType="VARCHAR"/>
+        <result column="work_id" property="workId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getUserVoteWorkId" resultType="java.lang.Integer">
+        select
+        <if test='distinctUserWorkId==true'>
+            distinct
+        </if>
+        work_id
+        from
+        weixin_vote_user_work
+        where
+        open_id = #{openId}
+        order by create_time desc
+    </select>
+
+
 </mapper>
