@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyp.myweixin.mapper.WeixinUserInfoSupplyMapper">
+    <resultMap id="BaseResultMap" type="com.hyp.myweixin.pojo.modal.WeixinUserInfoSupply">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="wechatNumber" property="wechatNumber" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="birthday" property="birthday" jdbcType="BIGINT"/>
+        <result column="create_date" property="createDate" jdbcType="BIGINT"/>
+        <result column="update_date" property="updateDate" jdbcType="BIGINT"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="INTEGER"/>
+        <result column="ext1" property="ext1" jdbcType="INTEGER"/>
+        <result column="ext2" property="ext2" jdbcType="INTEGER"/>
+        <result column="ext3" property="ext3" jdbcType="VARCHAR"/>
+        <result column="ext4" property="ext4" jdbcType="VARCHAR"/>
+        <result column="ext5" property="ext5" jdbcType="VARCHAR"/>
+    </resultMap>
+</mapper>

@@ -15,7 +15,7 @@ import com.hyp.myweixin.service.*;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEnumUtil;
 import com.hyp.myweixin.utils.MyErrorList;
-import com.hyp.myweixin.utils.dateutil.DateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateStyle;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -252,7 +252,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         /*绑定需要更新的数据*/
         /*活动开始结束时间*/
         if (myErrorList.noErrors()) {
-            Date date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveStartTime(), DateStyle.YYYY_MM_DD_HH_MM);
+            Date date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveStartTime(), MyDateStyle.YYYY_MM_DD_HH_MM);
             if (date != null) {
                 weixinVoteBase.setActiveStartTime(date);
             } else {
@@ -260,7 +260,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
             }
         }
         if (myErrorList.noErrors()) {
-            Date date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveEndTime(), DateStyle.YYYY_MM_DD_HH_MM);
+            Date date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveEndTime(), MyDateStyle.YYYY_MM_DD_HH_MM);
             if (date != null) {
                 weixinVoteBase.setActiveEndTime(date);
             } else {
@@ -303,7 +303,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
             } else {
                 weixinVoteConf.setActiveConfSignUp(0);
                 /*报名开始时间*/
-                Date date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveUploadStartTime(), DateStyle.YYYY_MM_DD_HH_MM);
+                Date date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveUploadStartTime(), MyDateStyle.YYYY_MM_DD_HH_MM);
                 if (date != null) {
                     weixinVoteConf.setActiveUploadStartTime(date);
                 } else {
@@ -311,7 +311,7 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 }
                 /*报名结束时间*/
                 if (myErrorList.noErrors()) {
-                    date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveUploadEndTime(), DateStyle.YYYY_MM_DD_HH_MM);
+                    date = MyDateUtil.StringToDate(activeEditThirdQuery.getActiveUploadEndTime(), MyDateStyle.YYYY_MM_DD_HH_MM);
                     if (date != null) {
                         weixinVoteConf.setActiveUploadEndTime(date);
                     } else {

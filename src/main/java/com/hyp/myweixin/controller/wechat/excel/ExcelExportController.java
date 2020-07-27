@@ -11,7 +11,7 @@ import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.ExcelOptionService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
-import com.hyp.myweixin.utils.dateutil.DateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateStyle;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class ExcelExportController {
         ServletOutputStream out = httpServletResponse.getOutputStream();
         ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX, true);
         WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(activeId);
-        String fileName = weixinVoteBaseByWorkId.getActiveName() + "_" + MyDateUtil.DateToString(new Date(), DateStyle.YYYY_MM_DD_HH_MM);
+        String fileName = weixinVoteBaseByWorkId.getActiveName() + "_" + MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD_HH_MM);
         Sheet sheet = new Sheet(1, 0, ActiveVoteWorkExcelExportVO.class);
         //设置自适应宽度
         sheet.setAutoWidth(Boolean.TRUE);
