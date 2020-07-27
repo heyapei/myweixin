@@ -8,7 +8,7 @@ import java.util.Date;
  * @Author 何亚培
  * @Version V1.0
  * @Date 2020/7/26 20:13
- * @Description: TODO
+ * @Description: TODO 我发起的活动数据
  */
 @Data
 public class ActiveWorkForOwnerVO {
