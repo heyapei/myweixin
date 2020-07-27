@@ -51,6 +51,68 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
 
     private static final String SEMICOLON_SEPARATOR = ";";
 
+
+    /**
+     * 通过主键查询用户投票信息
+     *
+     * @param pkId 主键ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public WeixinVoteUserWork getWeixinVoteUserWorkByPkId(Integer pkId) throws MyDefinitionException {
+
+        WeixinVoteUserWork weixinVoteUserWork = null;
+        try {
+            weixinVoteUserWork = weixinVoteUserWorkMapper.selectByPrimaryKey(pkId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("通过主键查询用户投票信息错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("通过主键查询用户投票信息错误");
+        }
+
+
+        return weixinVoteUserWork;
+    }
+
+    /**
+     * 获取用户点赞的作品信息
+     *
+     * @param userId             用户ID
+     * @param distinctUserWorkId 是否按照作品ID筛出 true筛出 false不筛除
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public List<WeixinVoteUserWork> getUserJoinActiveNum(Integer userId, boolean distinctUserWorkId) throws MyDefinitionException {
+
+        if (userId == null) {
+            throw new MyDefinitionException("用户ID必填");
+        }
+
+        WeixinVoteUser weixinVoteUser = weixinVoteUserService.getUserById(userId);
+
+        if (weixinVoteUser == null) {
+            throw new MyDefinitionException("当前查询的用户不存在");
+        }
+
+        List<Integer> userVoteWorkId = null;
+        try {
+            userVoteWorkId = weixinVoteUserWorkMapper.getUserVoteWorkId(weixinVoteUser.getOpenId(), distinctUserWorkId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("查询用户投票的作品ID操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("查询用户投票的作品ID操作过程错误");
+        }
+
+        List<WeixinVoteUserWork> weixinVoteUserWorkList = new ArrayList<>();
+        for (Integer userWorkId : userVoteWorkId) {
+            WeixinVoteUserWork weixinVoteUserWorkByPkId = getWeixinVoteUserWorkByPkId(userWorkId);
+            weixinVoteUserWorkList.add(weixinVoteUserWorkByPkId);
+        }
+        return weixinVoteUserWorkList;
+    }
+
     /**
      * 用户上传作品前判断需要什么信息以及是否允许上传
      *
@@ -627,7 +689,7 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
     }
 
     /**
-     * 保存用户对某个作品的投票记录
+     * 分页获取作品的投票信息
      *
      * @param weixinVoteUserWork
      * @param pageInfo

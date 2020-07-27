@@ -17,15 +17,38 @@ import java.util.List;
  */
 public interface WeixinVoteUserWorkService {
 
+
+    /**
+     * 通过主键查询用户投票信息
+     *
+     * @param pkId 主键ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    WeixinVoteUserWork getWeixinVoteUserWorkByPkId(Integer pkId) throws MyDefinitionException;
+
+
+
+    /**
+     * 获取用户点赞的作品信息
+     *
+     * @param userId             用户ID
+     * @param distinctUserWorkId 是否按照作品ID筛出 true筛出 false不筛除
+     * @return
+     * @throws MyDefinitionException
+     */
+    List<WeixinVoteUserWork> getUserJoinActiveNum(Integer userId, boolean distinctUserWorkId) throws MyDefinitionException;
+
+
     /**
      * 用户上传作品前判断需要什么信息以及是否允许上传
      *
      * @param activeId 活动ID
-     * @param userId 用户ID
+     * @param userId   用户ID
      * @return
      * @throws MyDefinitionException
      */
-    UserUploadRightVO judgeUserUploadRight(Integer userId,Integer activeId) throws MyDefinitionException;
+    UserUploadRightVO judgeUserUploadRight(Integer userId, Integer activeId) throws MyDefinitionException;
 
 
     /**
