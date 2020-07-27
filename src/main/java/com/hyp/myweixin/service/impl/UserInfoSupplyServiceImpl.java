@@ -57,59 +57,68 @@ public class UserInfoSupplyServiceImpl implements UserInfoSupplyService {
         }
 
         Boolean aBoolean = null;
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getAddress(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("地址内容违规检查未通过:" + e.getMessage());
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getAddress())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getAddress(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("地址内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("地址内容存在违规内容，请重新输入");
+            }
         }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("地址内容存在违规内容，请重新输入");
-        }
-
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getEmail(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("Email内容违规检查未通过:" + e.getMessage());
-        }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("Email内容存在违规内容，请重新输入");
-        }
-
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getPhone(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("手机号内容违规检查未通过:" + e.getMessage());
-        }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("手机号内容存在违规内容，请重新输入");
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getEmail())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getEmail(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("Email内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("Email内容存在违规内容，请重新输入");
+            }
         }
 
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getRealName(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("姓名内容违规检查未通过:" + e.getMessage());
-        }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("姓名内容存在违规内容，请重新输入");
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getPhone())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getPhone(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("手机号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("手机号内容存在违规内容，请重新输入");
+            }
         }
 
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getWechatNumber(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("微信号内容违规检查未通过:" + e.getMessage());
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getRealName())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getRealName(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("姓名内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("姓名内容存在违规内容，请重新输入");
+            }
         }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("微信号内容存在违规内容，请重新输入");
+
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getWechatNumber())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getWechatNumber(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("微信号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("微信号内容存在违规内容，请重新输入");
+            }
         }
 
         weixinUserInfoSupply.setUserId(addUserSupplyQuery.getUserId());
@@ -193,61 +202,70 @@ public class UserInfoSupplyServiceImpl implements UserInfoSupplyService {
         }
 
         Boolean aBoolean = null;
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getAddress(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("地址内容违规检查未通过:" + e.getMessage());
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getAddress())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getAddress(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("地址内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("地址内容存在违规内容，请重新输入");
+            }
         }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("地址内容存在违规内容，请重新输入");
-        }
-
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getEmail(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("Email内容违规检查未通过:" + e.getMessage());
-        }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("Email内容存在违规内容，请重新输入");
-        }
-
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getPhone(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("手机号内容违规检查未通过:" + e.getMessage());
-        }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("手机号内容存在违规内容，请重新输入");
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getEmail())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getEmail(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("Email内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("Email内容存在违规内容，请重新输入");
+            }
         }
 
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getRealName(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("姓名内容违规检查未通过:" + e.getMessage());
-        }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("姓名内容存在违规内容，请重新输入");
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getPhone())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getPhone(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("手机号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("手机号内容存在违规内容，请重新输入");
+            }
         }
 
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
-                    addUserSupplyQuery.getWechatNumber(),
-                    null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException("微信号内容违规检查未通过:" + e.getMessage());
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getRealName())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getRealName(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("姓名内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("姓名内容存在违规内容，请重新输入");
+            }
         }
-        if (aBoolean == null || aBoolean == false) {
-            throw new MyDefinitionException("微信号内容存在违规内容，请重新输入");
+
+        if (StringUtils.isNotBlank(addUserSupplyQuery.getWechatNumber())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        addUserSupplyQuery.getWechatNumber(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("微信号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("微信号内容存在违规内容，请重新输入");
+            }
         }
-        
+
         WeixinUserInfoSupply weixinUserInfoSupply = WeixinUserInfoSupply.init();
         weixinUserInfoSupply.setUserId(addUserSupplyQuery.getUserId());
         if (StringUtils.isNotBlank(addUserSupplyQuery.getAddress())) {

@@ -33,7 +33,7 @@ public class WeixinSmallContentDetectionApiServiceTest {
 
     @Test
     public void testmsgSecCheckApi() {
-        JSONObject jsonObject = weixinSmallContentDetectionApiService.getMsgSecCheckApiMsg("上海天气", null);
+        JSONObject jsonObject = weixinSmallContentDetectionApiService.getMsgSecCheckApiMsg("", null);
         log.info("查询结果：{}", jsonObject);
     }
 

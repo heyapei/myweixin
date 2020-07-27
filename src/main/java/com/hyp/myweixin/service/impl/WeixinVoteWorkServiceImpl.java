@@ -17,8 +17,10 @@ import com.hyp.myweixin.pojo.vo.page.WeixinVoteUserWorkDiffVO;
 import com.hyp.myweixin.pojo.vo.page.WeixinVoteWorkSimpleVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.*;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -54,6 +56,9 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
     @Autowired
     private AdministratorsOptionService administratorsOptionService;
+
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
 
     /**
@@ -244,6 +249,72 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
      */
     @Override
     public Result createWeixinVoteWorkReturnPK(SaveVoteUserQuery saveVoteUserQuery) throws MyDefinitionException {
+
+
+        Boolean aBoolean = null;
+        if (StringUtils.isNotBlank(saveVoteUserQuery.getUserPhone())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        saveVoteUserQuery.getUserPhone(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("手机号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("手机号内容存在违规内容，请重新输入");
+            }
+        }
+        if (StringUtils.isNotBlank(saveVoteUserQuery.getUserWeixin())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        saveVoteUserQuery.getUserWeixin(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("微信号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("微信号内容存在违规内容，请重新输入");
+            }
+        }
+        if (StringUtils.isNotBlank(saveVoteUserQuery.getVoteWorkName())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        saveVoteUserQuery.getVoteWorkName(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("活动名内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("活动名内容存在违规内容，请重新输入");
+            }
+
+        }
+        if (StringUtils.isNotBlank(saveVoteUserQuery.getVoteWorkDesc())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        saveVoteUserQuery.getVoteWorkDesc(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("活动描述内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("活动描述内容存在违规内容，请重新输入");
+            }
+        }
+
+
+        if (StringUtils.isNotBlank(saveVoteUserQuery.getVoteWorkUserName())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        saveVoteUserQuery.getVoteWorkUserName(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("活动用户名内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("活动用户名内容存在违规内容，请重新输入");
+            }
+        }
 
         /*查询活动是否存在*/
         WeixinVoteBase voteWorkByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(saveVoteUserQuery.getActiveId());
