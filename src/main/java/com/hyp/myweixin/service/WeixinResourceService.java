@@ -28,8 +28,16 @@ public interface WeixinResourceService {
      * @param md5 文件md5值
      * @return
      */
-   WeixinResource getWeixinResourceByMD5(String md5);
+    WeixinResource getWeixinResourceByMD5(String md5);
 
+    /**
+     * 通过md5值配合文件配置类型获取数据
+     *
+     * @param md5              文件md5值
+     * @param resourceConfigId 文件配置类型
+     * @return
+     */
+    WeixinResource getWeixinResourceByMD5AndConfigId(String md5, Integer resourceConfigId);
 
     /**
      * 保存资源文件

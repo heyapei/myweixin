@@ -25,6 +25,11 @@ public class ImgVideResConfig {
     @Value("${active.img.user.work.path}")
     private String activeUserWorkPath;
 
+    @Value("${active.img.vote.work.thumbnails.path}")
+    private String activeVoteWorkThumbnailsPath;
+
+    @Value("${active.img.user.work.thumbnails.path}")
+    private String activeUserWorkThumbnailsPath;
 
 
 }

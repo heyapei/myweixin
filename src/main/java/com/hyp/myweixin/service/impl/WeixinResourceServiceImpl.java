@@ -96,4 +96,30 @@ public class WeixinResourceServiceImpl implements WeixinResourceService {
             throw new MyDefinitionException("通过md5值获取数据错误");
         }
     }
+
+    /**
+     * 通过md5值配合文件配置类型获取数据
+     *
+     * @param md5              文件md5值
+     * @param resourceConfigId 文件配置类型
+     * @return
+     */
+    @Override
+    public WeixinResource getWeixinResourceByMD5AndConfigId(String md5, Integer resourceConfigId) {
+        Example example = new Example(WeixinResource.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("md5", md5);
+        criteria.andEqualTo("resourceConfigId", resourceConfigId);
+        try {
+            List<WeixinResource> weixinResources = weixinResourceMapper.selectByExample(example);
+            if (weixinResources != null && weixinResources.size() > 0) {
+                return weixinResources.get(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new MyDefinitionException("通过md5值获取数据错误");
+        }
+    }
 }

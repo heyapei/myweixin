@@ -17,6 +17,7 @@ import com.hyp.myweixin.utils.dateutil.MyDateStyle;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import com.hyp.myweixin.utils.fileutil.MyFileUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -289,13 +292,12 @@ public class VoteActiveServiceImpl implements VoteActiveService {
     }
 
     /**
-     *
      * @param page2Query 查询实体类
      * @return
      * @throws MyDefinitionException
      */
     @Override
-    public Integer createPage2AndImg(Page2OrgShowQuery page2Query) throws MyDefinitionException{
+    public Integer createPage2AndImg(Page2OrgShowQuery page2Query) throws MyDefinitionException {
         WeixinVoteBase weixinVoteBaseByWorkId;
         Integer userId = page2Query.getUserId();
         Integer voteWorkId = page2Query.getVoteWorkId();
@@ -428,11 +430,11 @@ public class VoteActiveServiceImpl implements VoteActiveService {
      * @param activeText 上传的文本 非必须
      * @param activeImg  上传的图片 使用英文;拼接好的
      * @return
-     * @exception MyDefinitionException
+     * @throws MyDefinitionException
      */
     @Override
     public Integer createBaseVoteWorkSavePageAndImg(int userId, int workId, String type,
-                                                    String activeText, String activeImg) throws MyDefinitionException{
+                                                    String activeText, String activeImg) throws MyDefinitionException {
         WeixinVoteBase weixinVoteBase = null;
         // 先查询出来该用户下活动状态为4（未创建完成）的活动
         List<WeixinVoteBase> weixinVoteBaseByUserIdAndStatus = weixinVoteBaseService.getWeixinVoteBaseByUserIdAndStatus(userId, 4);
@@ -769,22 +771,6 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             throw new MyDefinitionException("获取项目路径失败");
         }
 
-        ResourceSimpleDTO resourceSimpleDTO = new ResourceSimpleDTO();
-        String fileMd5 = MyFileUtil.getFileMd5(file);
-        log.info("文件MD5：{}", fileMd5);
-        WeixinResource weixinResourceByMD5 = weixinResourceService.getWeixinResourceByMD5(fileMd5);
-        // 如果存在则直接返回数据
-        if (weixinResourceByMD5 != null) {
-            resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getPath());
-            resourceSimpleDTO.setFileType(weixinResourceByMD5.getType());
-            resourceSimpleDTO.setSaveFileName(weixinResourceByMD5.getName());
-            resourceSimpleDTO.setOriginalFileName(weixinResourceByMD5.getRealName());
-            resourceSimpleDTO.setFileSize(weixinResourceByMD5.getSize());
-            log.info("直接返回数据：{}", weixinResourceByMD5.toString());
-            return Result.buildResult(Result.Status.OK, resourceSimpleDTO);
-        }
-
-
 
         int resource_config_id = 0;
         String savePath = path + imgVideResConfig.getActiveImgBasePath();
@@ -797,6 +783,28 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         } else {
             throw new MyDefinitionException("还未定义数据，还请和技术沟通");
         }
+
+
+        ResourceSimpleDTO resourceSimpleDTO = new ResourceSimpleDTO();
+        String fileMd5 = MyFileUtil.getFileMd5(file);
+        log.info("文件MD5：{}", fileMd5);
+        WeixinResource weixinResourceByMD5 = weixinResourceService.getWeixinResourceByMD5AndConfigId(fileMd5, resource_config_id);
+        // 如果存在则直接返回数据
+        if (weixinResourceByMD5 != null) {
+            // 2020年7月28日 返回压缩过的缩略图 如果有就返回 如果没有就返回原图
+            if (StringUtils.isNotBlank(weixinResourceByMD5.getThumbnailUrl1())) {
+                resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getThumbnailUrl1());
+            } else {
+                resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getPath());
+            }
+            resourceSimpleDTO.setFileType(weixinResourceByMD5.getType());
+            resourceSimpleDTO.setSaveFileName(weixinResourceByMD5.getName());
+            resourceSimpleDTO.setOriginalFileName(weixinResourceByMD5.getRealName());
+            resourceSimpleDTO.setFileSize(weixinResourceByMD5.getSize());
+            log.info("直接返回数据：{}", weixinResourceByMD5.toString());
+            return Result.buildResult(Result.Status.OK, resourceSimpleDTO);
+        }
+
 
         // 文件大小
         resourceSimpleDTO.setFileSize(file.getSize());
@@ -845,6 +853,56 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         weixinResource.setResourceConfigId(resource_config_id);
         weixinResource.setStatus(0);
         weixinResource.setSize(resourceSimpleDTO.getFileSize());
+
+
+        String thumbnailPath1 = null;
+        String activeUserWorkThumbnailsPath = imgVideResConfig.getActiveUserWorkThumbnailsPath();
+        String activeVoteWorkThumbnailsPath = imgVideResConfig.getActiveVoteWorkThumbnailsPath();
+        String activeUserWorkPath = imgVideResConfig.getActiveUserWorkPath();
+        String activeVoteWorkPath = imgVideResConfig.getActiveVoteWorkPath();
+
+        if (fileUrl.contains(activeUserWorkPath)) {
+            thumbnailPath1 = fileUrl.replaceAll(activeUserWorkPath, activeUserWorkThumbnailsPath);
+        } else if (fileUrl.contains(activeVoteWorkPath)) {
+            thumbnailPath1 = fileUrl.replaceAll(activeVoteWorkPath, activeVoteWorkThumbnailsPath);
+        }
+
+        String thumbnailPath1Temp = path + thumbnailPath1;
+        String fileUrlTemp = path + fileUrl;
+
+        String thumbnailPath1FileUrl = thumbnailPath1Temp.substring(0, thumbnailPath1Temp.lastIndexOf("/"));
+        log.info("临时文件地址：{}", thumbnailPath1FileUrl);
+
+        File thumbnailPath1File = new File(thumbnailPath1FileUrl);
+        if (!thumbnailPath1File.exists()) {
+            //创建目录
+            thumbnailPath1File.mkdirs();
+        }
+
+        log.info("yuantu:" + fileUrlTemp);
+        log.info("thumbnailPath1Temp:" + thumbnailPath1Temp);
+        /*只压缩大小裁剪*/
+        try {
+            Thumbnails.of(fileUrlTemp).scale(1f).outputQuality(0.25f).toFile(thumbnailPath1Temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("将原图转换图片压缩图失败");
+        }
+        weixinResource.setThumbnailPath1(thumbnailPath1);
+
+        /**
+         * 如果缩略图生成成功则返回缩略图
+         */
+        if (StringUtils.isNotBlank(thumbnailPath1)) {
+            resourceSimpleDTO.setFileUrl(thumbnailPath1);
+        }
+
+        weixinResource.setThumbnailPath2("");
+        weixinResource.setThumbnailPath3("");
+        weixinResource.setThumbnailUrl1("");
+        weixinResource.setThumbnailUrl2("");
+        weixinResource.setThumbnailUrl3("");
+
         WeixinResourceConfig weixinResourceConfigById = weixinResourceConfigService.getWeixinResourceConfigById(resource_config_id);
         if (weixinResourceConfigById != null) {
             weixinResource.setTitle(weixinResourceConfigById.getKeyWord());

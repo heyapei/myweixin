@@ -18,5 +18,12 @@
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+
+    <result column="thumbnail_path" jdbcType="VARCHAR" property="thumbnailPath1" />
+    <result column="thumbnail_path2" jdbcType="VARCHAR" property="thumbnailPath2" />
+    <result column="thumbnail_path3" jdbcType="VARCHAR" property="thumbnailPath3" />
+    <result column="thumbnail_url1" jdbcType="VARCHAR" property="thumbnailUrl1" />
+    <result column="thumbnail_url2" jdbcType="VARCHAR" property="thumbnailUrl2" />
+    <result column="thumbnail_url3" jdbcType="VARCHAR" property="thumbnailUrl3" />
   </resultMap>
 </mapper>

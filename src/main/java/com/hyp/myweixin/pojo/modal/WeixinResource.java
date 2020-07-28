@@ -3,13 +3,45 @@ package com.hyp.myweixin.pojo.modal;
 import lombok.Data;
 import org.apache.ibatis.annotations.Mapper;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import javax.persistence.*;
 
 @Table(name = "weixin_resource")
 @Mapper
 @Data
 public class WeixinResource {
+
+
+    /**
+     * 数据初始化
+     *
+     * @return
+     */
+    public static WeixinResource init() {
+        WeixinResource weixinResource = new WeixinResource();
+        weixinResource.setResourceConfigId(0);
+        weixinResource.setType("");
+        weixinResource.setPath("");
+        weixinResource.setName("");
+        weixinResource.setRealName("");
+        weixinResource.setStatus(0);
+        weixinResource.setSize(0L);
+        weixinResource.setMd5("");
+        weixinResource.setTitle("");
+        weixinResource.setDescription("");
+        weixinResource.setCreateTime(new Date());
+        weixinResource.setCreateUserId(0);
+        weixinResource.setThumbnailPath1("");
+        weixinResource.setThumbnailPath2("");
+        weixinResource.setThumbnailPath3("");
+        weixinResource.setThumbnailUrl1("");
+        weixinResource.setThumbnailUrl2("");
+        weixinResource.setThumbnailUrl3("");
+        return weixinResource;
+    }
+
     /**
      * 主键
      */
@@ -23,7 +55,7 @@ public class WeixinResource {
     private Integer resourceConfigId;
 
     /**
-     * 文件后缀名 如png mp4 
+     * 文件后缀名 如png mp4
      */
     private String type;
 
@@ -116,4 +148,37 @@ public class WeixinResource {
         }
 
     }
+
+    /**
+     * 压缩图片1地址
+     */
+    @Column(name = "thumbnail_path")
+    private String thumbnailPath1;
+    /**
+     * 压缩图片2地址
+     */
+    @Column(name = "thumbnail_path2")
+    private String thumbnailPath2;
+    /**
+     * 压缩图片3地址
+     */
+    @Column(name = "thumbnail_path3")
+    private String thumbnailPath3;
+    /**
+     * 缩略图1
+     */
+    @Column(name = "thumbnail_url1")
+    private String thumbnailUrl1;
+    /**
+     * 缩略图2
+     */
+    @Column(name = "thumbnail_url2")
+    private String thumbnailUrl2;
+    /**
+     * 缩略图3
+     */
+    @Column(name = "thumbnail_url3")
+    private String thumbnailUrl3;
+
+
 }
