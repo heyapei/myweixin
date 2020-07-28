@@ -867,28 +867,44 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             thumbnailPath1 = fileUrl.replaceAll(activeVoteWorkPath, activeVoteWorkThumbnailsPath);
         }
 
+
         String thumbnailPath1Temp = path + thumbnailPath1;
         String fileUrlTemp = path + fileUrl;
-
         String thumbnailPath1FileUrl = thumbnailPath1Temp.substring(0, thumbnailPath1Temp.lastIndexOf("/"));
-        log.info("临时文件地址：{}", thumbnailPath1FileUrl);
-
+        //log.info("临时文件地址：{}", thumbnailPath1FileUrl);
         File thumbnailPath1File = new File(thumbnailPath1FileUrl);
         if (!thumbnailPath1File.exists()) {
             //创建目录
             thumbnailPath1File.mkdirs();
         }
-
-        log.info("yuantu:" + fileUrlTemp);
-        log.info("thumbnailPath1Temp:" + thumbnailPath1Temp);
-        /*只压缩大小裁剪*/
+        //log.info("yuantu:" + fileUrlTemp);
+        //log.info("thumbnailPath1Temp:" + thumbnailPath1Temp);
+        /*只压缩大小不裁剪*/
         try {
-            Thumbnails.of(fileUrlTemp).scale(1f).outputQuality(0.25f).toFile(thumbnailPath1Temp);
+            Thumbnails.of(fileUrlTemp).scale(1f).outputQuality(0.5f).toFile(thumbnailPath1Temp);
         } catch (IOException e) {
             e.printStackTrace();
             log.error("将原图转换图片压缩图失败");
         }
         weixinResource.setThumbnailPath1(thumbnailPath1);
+
+
+        /*文件压缩完成后删除源文件 实在是有点大了
+         * 按照分配20G的硬盘容量 每张图片3M那么也只能容纳6862张图片
+         * 当前仅仅是测试就已经有了300多张图片了
+         * 完全不够用
+         * */
+        try {
+            File fileDelete = new File(fileUrlTemp);
+            if (fileDelete.delete()) {
+                weixinResource.setPath("原文件已删除");
+            } else {
+                log.error("原文件删除失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("源文件删除失败，失败原因：{}",e.toString());
+        }
 
         /**
          * 如果缩略图生成成功则返回缩略图

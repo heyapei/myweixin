@@ -4,6 +4,62 @@
 ### 小程序使用http调用本地后端服务器返回的内容，小程序对于json好像很适应的样子
 
 ```$xslt
+2020年7月28日
+文件上传压缩
+1. 获取项目路径
+String path = null;
+        try {
+            path = ResourceUtils.getURL("classpath:").getPath();
+            //log.info("系统路径：{}", path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new MyDefinitionException("获取项目路径失败");
+        }
+
+2.得到源文件的未知 并且获取到新文件的位置
+2.1 新文件的位置
+String thumbnailPath1Temp = path + thumbnailPath1;
+2.2 源文件的位置
+        String fileUrlTemp = path + fileUrl;
+2.3 为新文件的位置创建一个目录 文件存放的位置
+        String thumbnailPath1FileUrl = thumbnailPath1Temp.substring(0, thumbnailPath1Temp.lastIndexOf("/"));
+        //log.info("临时文件地址：{}", thumbnailPath1FileUrl);
+        File thumbnailPath1File = new File(thumbnailPath1FileUrl);
+        if (!thumbnailPath1File.exists()) {
+            //创建目录
+            thumbnailPath1File.mkdirs();
+        }
+        //log.info("yuantu:" + fileUrlTemp);
+        //log.info("thumbnailPath1Temp:" + thumbnailPath1Temp);
+
+2.4 压缩文件
+        /*只压缩大小不裁剪*/
+        try {
+            Thumbnails.of(fileUrlTemp).scale(1f).outputQuality(0.5f).toFile(thumbnailPath1Temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("将原图转换图片压缩图失败");
+        }
+3 源文件压缩完成后直接删除源文件 因为源文件比较大 太占内存了
+        /*文件压缩完成后删除源文件 实在是有点大了
+         * 按照分配20G的硬盘容量 每张图片3M那么也只能容纳6862张图片
+         * 当前仅仅是测试就已经有了300多张图片了
+         * 完全不够用
+         * */
+        try {
+            File fileDelete = new File(fileUrlTemp);
+            if (fileDelete.delete()) {
+                weixinResource.setPath("原文件已删除");
+            } else {
+                log.error("原文件删除失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+```
+
+
+```$xslt
 2020年7月26日
 
 这个第三包中包含了文件上传需要的httpmime 如果把这个注释了 就需要自己引用一下httpmime包
