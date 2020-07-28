@@ -138,7 +138,7 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
         try {
             testFile = new File(multipartFile.getOriginalFilename());
             InputStream inputStream = myThumbnailImgOptionUtil.compressImage(multipartFile,
-                    MyThumbnailImgType.IMAGE_TYPE_JPG,
+                    MyThumbnailImgType.IMAGE_TYPE_PNG,
                     IMG_SEC_CHECK_WIDTH, IMG_SEC_CHECK_HEIGHT, IMG_SEC_CHECK_QUALITY);
             myThumbnailImgOptionUtil.inputStreamToFile(inputStream, testFile);
         } catch (MyDefinitionException e) {
