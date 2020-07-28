@@ -37,3 +37,4 @@ build/
 
 generatorConfig.xml
 /src/main/resources/wechat.properties
+/src/main/resources/amap-key.properties
