@@ -689,12 +689,22 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
         Example example = new Example(WeixinVoteWork.class);
         Example.Criteria criteria = example.createCriteria();
+
+        if (weixinVoteWork != null) {
+
+        }
+
         example.orderBy("voteWorkShowOrder").desc();
         example.orderBy("voteWorkCountNum").desc();
+
+
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询
         if (weixinVoteWork != null) {
             criteria.andEqualTo("activeVoteBaseId", weixinVoteWork.getId());
+            if (weixinVoteWork.getVoteWorkStatus() != null && weixinVoteWork.getVoteWorkStatus() > -1) {
+                criteria.andEqualTo("voteWorkStatus", weixinVoteWork.getVoteWorkStatus());
+            }
         }
         List<WeixinVoteWork> weixinVoteWorks = weixinVoteWorkMapper.selectByExample(example);
         // 如果这里需要返回VO，那么这里一定先把查询值放进去，让分页信息存储成功。然后再setList加入VO信息
@@ -739,6 +749,17 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
         if (userById != null) {
             voteDetailCompleteVO.setVoteWorkUserAvatar(userById.getAvatarUrl());
         }
+
+        try {
+            WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(weixinVoteWork.getActiveVoteBaseId());
+            if (weixinVoteBaseByWorkId != null) {
+                voteDetailCompleteVO.setActiveName(weixinVoteBaseByWorkId.getActiveName());
+            }
+        } catch (Exception e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+
         return voteDetailCompleteVO;
     }
 

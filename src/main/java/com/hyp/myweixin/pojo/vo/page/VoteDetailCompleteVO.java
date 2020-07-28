@@ -13,6 +13,10 @@ import java.util.List;
 public class VoteDetailCompleteVO {
 
     private Integer id;
+    /**
+     * 活动名称
+     */
+    private String activeName;
     private String voteWorkUserName;
     private String voteWorkUserPhone;
     private String voteWorkDesc;

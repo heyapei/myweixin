@@ -247,6 +247,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         weixinVoteWork.setVoteWorkCountNum(0);
         weixinVoteWork.setVoteWorkCreateTime(null);
         weixinVoteWork.setVoteWorkCountViewNum(null);
+        weixinVoteWork.setVoteWorkStatus(WeixinVoteWork.VoteWorkStatusEnum.ONLINE.getCode());
         PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
         ActiveWorkRankVO workRankVO = new ActiveWorkRankVO();
         workRankVO.setVoteWorkPageInfo(voteWorkAllWorkByPage);

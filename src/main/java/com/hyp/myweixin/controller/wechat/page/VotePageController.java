@@ -141,6 +141,7 @@ public class VotePageController {
 
         WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
         weixinVoteWork.setId(activeId);
+        weixinVoteWork.setVoteWorkStatus(WeixinVoteWork.VoteWorkStatusEnum.ONLINE.getCode());
 
         PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkHotWorkByPage(weixinVoteWork, pageInfo);
         return Result.buildResult(Result.Status.OK, voteWorkAllWorkByPage);
