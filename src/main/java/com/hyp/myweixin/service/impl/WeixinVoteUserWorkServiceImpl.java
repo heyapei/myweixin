@@ -330,6 +330,24 @@ public class WeixinVoteUserWorkServiceImpl implements WeixinVoteUserWorkService 
         if (weixinVoteBase == null) {
             return "未发现活动数据";
         }
+
+        if (weixinVoteBase.getStatus() != null) {
+            if (!weixinVoteBase.getStatus().equals(WeixinVoteBase.ActiveStatusEnum.ONLINE.getCode())) {
+                if (weixinVoteBase.getStatus().equals(WeixinVoteBase.ActiveStatusEnum.OFFLINE.getCode())) {
+                    return "活动已下线";
+                } else if (weixinVoteBase.getStatus().equals(WeixinVoteBase.ActiveStatusEnum.UN_COMPLETE.getCode())) {
+                    return "活动未完成";
+                } else if (weixinVoteBase.getStatus().equals(WeixinVoteBase.ActiveStatusEnum.END.getCode())) {
+                    return "活动已结束";
+                } else if (weixinVoteBase.getStatus().equals(WeixinVoteBase.ActiveStatusEnum.PAUSE.getCode())) {
+                    return "活动已暂停";
+                } else if (weixinVoteBase.getStatus().equals(WeixinVoteBase.ActiveStatusEnum.UN_VERIFY.getCode())) {
+                    return "活动待审核";
+                }
+            }
+        }
+
+
         Date nowDate = new Date();
         Date activeStartTime = weixinVoteBase.getActiveStartTime();
         //log.info("活动开始时间："+activeStartTime);

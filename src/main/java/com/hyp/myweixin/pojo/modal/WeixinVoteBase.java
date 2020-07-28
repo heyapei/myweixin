@@ -125,7 +125,7 @@ public class WeixinVoteBase {
         PAUSE(5, "暂停"),
         END(3, "已结束"),
         UN_COMPLETE(4, "未完成"),
-        offline(2, "下线");
+        OFFLINE(2, "下线");
 
         /**
          * 类型码
