@@ -87,7 +87,7 @@ public class MyThumbnailImgOptionUtilImpl implements MyThumbnailImgOptionUtil {
                     .outputQuality(qualityTemp)//图片压缩质量
                     .asBufferedImage();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "jpg", os);
+            ImageIO.write(bufferedImage, MyThumbnailImgType.IMAGE_TYPE_PNG.getImgType(), os);
             InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
             //System.out.println(inputStream);
             return inputStream;

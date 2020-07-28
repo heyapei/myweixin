@@ -750,17 +750,6 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             throw new MyDefinitionException("上传文件为空");
         }
 
-        /*如果当前不在数据库中 则请求图片验证接口*/
-        Boolean aBoolean = false;
-        try {
-            aBoolean = weixinSmallContentDetectionApiService.checkImgSecCheckApi(file, null);
-        } catch (MyDefinitionException e) {
-            throw new MyDefinitionException(e.getMessage());
-        }
-
-        if (!aBoolean) {
-            throw new MyDefinitionException("图片违规重新选择");
-        }
 
         String path = null;
         try {
@@ -792,8 +781,36 @@ public class VoteActiveServiceImpl implements VoteActiveService {
         // 如果存在则直接返回数据
         if (weixinResourceByMD5 != null) {
             // 2020年7月28日 返回压缩过的缩略图 如果有就返回 如果没有就返回原图
-            if (StringUtils.isNotBlank(weixinResourceByMD5.getThumbnailUrl1())) {
-                resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getThumbnailUrl1());
+            if (StringUtils.isNotBlank(weixinResourceByMD5.getThumbnailPath1())) {
+                resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getThumbnailPath1());
+            } else {
+                resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getPath());
+            }
+            resourceSimpleDTO.setFileType(weixinResourceByMD5.getType());
+            resourceSimpleDTO.setSaveFileName(weixinResourceByMD5.getName());
+            resourceSimpleDTO.setOriginalFileName(weixinResourceByMD5.getRealName());
+            resourceSimpleDTO.setFileSize(weixinResourceByMD5.getSize());
+            log.info("直接返回数据：{}", weixinResourceByMD5.toString());
+            return Result.buildResult(Result.Status.OK, resourceSimpleDTO);
+        }
+
+        /*如果当前不在数据库中 则请求图片验证接口*/
+        Boolean aBoolean = false;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkImgSecCheckApi(file, null);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (!aBoolean) {
+            throw new MyDefinitionException("图片违规重新选择");
+        }
+
+        weixinResourceByMD5 = weixinResourceService.getWeixinResourceByMD5AndConfigId(fileMd5, resource_config_id);
+        // 如果存在则直接返回数据
+        if (weixinResourceByMD5 != null) {
+            // 2020年7月28日 返回压缩过的缩略图 如果有就返回 如果没有就返回原图
+            if (StringUtils.isNotBlank(weixinResourceByMD5.getThumbnailPath1())) {
+                resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getThumbnailPath1());
             } else {
                 resourceSimpleDTO.setFileUrl(weixinResourceByMD5.getPath());
             }
@@ -903,7 +920,7 @@ public class VoteActiveServiceImpl implements VoteActiveService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("源文件删除失败，失败原因：{}",e.toString());
+            log.error("源文件删除失败，失败原因：{}", e.toString());
         }
 
         /**
