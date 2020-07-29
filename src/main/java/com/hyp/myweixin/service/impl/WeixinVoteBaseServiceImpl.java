@@ -95,7 +95,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         WeixinVoteOrganisers weixinVoteOrganisers = weixinVoteOrganisersService.getWeixinVoteConfByVoteWorkId(voteWorkId);
         if (weixinVoteOrganisers != null) {
             voteDetailTwoByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
-            voteDetailTwoByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
+            voteDetailTwoByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";", ""));
             voteDetailTwoByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
         }
 
