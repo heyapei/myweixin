@@ -405,18 +405,23 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         activeEditThirdVO.setActiveConfSignUp(weixinVoteConf.getActiveConfSignUp());
 
         /*增加日期返回值规范好的值*/
-        activeEditThirdVO.setActiveStartTimeDate(MyDateUtil.DateToString(weixinVoteBase.getActiveStartTime(), "yyyy-MM-dd"));
-        activeEditThirdVO.setActiveStartTimeDateTime(MyDateUtil.DateToString(weixinVoteBase.getActiveStartTime(), "HH:mm"));
+        if (weixinVoteBase.getActiveStartTime() != null) {
+            activeEditThirdVO.setActiveStartTimeDate(MyDateUtil.DateToString(weixinVoteBase.getActiveStartTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveStartTimeDateTime(MyDateUtil.DateToString(weixinVoteBase.getActiveStartTime(), "HH:mm"));
+        }
 
-        activeEditThirdVO.setActiveEndTimeDate(MyDateUtil.DateToString(weixinVoteBase.getActiveEndTime(), "yyyy-MM-dd"));
-        activeEditThirdVO.setActiveEndTimeDateTime(MyDateUtil.DateToString(weixinVoteBase.getActiveEndTime(), "HH:mm"));
-
-        activeEditThirdVO.setActiveUploadStartTimeDate(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadStartTime(), "yyyy-MM-dd"));
-        activeEditThirdVO.setActiveUploadStartTimeDateTime(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadStartTime(), "HH:mm"));
-
-        activeEditThirdVO.setActiveUploadEndTimeDate(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadEndTime(), "yyyy-MM-dd"));
-        activeEditThirdVO.setActiveUploadEndTimeDateTime(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadEndTime(), "HH:mm"));
-
+        if (weixinVoteBase.getActiveEndTime() != null) {
+            activeEditThirdVO.setActiveEndTimeDate(MyDateUtil.DateToString(weixinVoteBase.getActiveEndTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveEndTimeDateTime(MyDateUtil.DateToString(weixinVoteBase.getActiveEndTime(), "HH:mm"));
+        }
+        if (weixinVoteConf.getActiveUploadStartTime() != null) {
+            activeEditThirdVO.setActiveUploadStartTimeDate(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadStartTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveUploadStartTimeDateTime(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadStartTime(), "HH:mm"));
+        }
+        if (weixinVoteConf.getActiveUploadEndTime() != null) {
+            activeEditThirdVO.setActiveUploadEndTimeDate(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadEndTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveUploadEndTimeDateTime(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadEndTime(), "HH:mm"));
+        }
 
         return activeEditThirdVO;
     }
