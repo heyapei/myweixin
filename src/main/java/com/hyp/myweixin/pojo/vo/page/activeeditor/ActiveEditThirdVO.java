@@ -46,7 +46,6 @@ public class ActiveEditThirdVO {
     /**
      * 允许报名结束时间
      */
-
     private Date activeUploadEndTime;
     /**
      * 是否需要微信号（0 默认不需要 1 需要）
@@ -56,6 +55,25 @@ public class ActiveEditThirdVO {
      * 是否需要手机号（0 默认不需要 1 需要）
      */
     private Integer activeConfNeedPhone;
+
+
+    /**
+     * 以下都是一些格式化好的时间数据 具体按照前缀来看是为谁的
+     * Date是yyyy-MM-dd
+     * Time是hh:MM
+     */
+    private String activeStartTimeDate;
+    private String activeStartTimeDateTime;
+
+    private String activeEndTimeDate;
+    private String activeEndTimeDateTime;
+
+
+    private String activeUploadStartTimeDate;
+    private String activeUploadStartTimeDateTime;
+
+    private String activeUploadEndTimeDate;
+    private String activeUploadEndTimeDateTime;
 
 
 }
