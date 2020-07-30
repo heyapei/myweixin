@@ -34,6 +34,16 @@ public class ActiveEditThirdVO {
      * 值1,值2 值1：1按照每天多少票 2按照总共多少票 值2：票数量
      */
     private String activeConfVoteType;
+
+    /**
+     * 规则
+     */
+    private Integer activeConfVoteTypeRule;
+    /**
+     * 票数
+     */
+    private Integer activeConfVoteTypeNum;
+
     /**
      * 是否开启在线报名
      * 是否开启用户自己上传作品 0 开启 1 不开启 默认不开启

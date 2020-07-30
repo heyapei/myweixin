@@ -53,6 +53,32 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
 
+    private static final String SEMICOLON_SEPARATOR = ";";
+
+    /**
+     * 按照活动ID（主键）删除
+     *
+     * @param pkId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteByPkId(Integer pkId) throws MyDefinitionException {
+
+        if (pkId == null) {
+            throw new MyDefinitionException("必须指定要删除的活动");
+        }
+
+        Integer affectRow = 0;
+        try {
+            affectRow = weixinVoteBaseMapper.deleteByPrimaryKey(pkId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("按照活动ID（主键）删除删除过程错误，错误原因：{}",e.toString());
+            throw new MyDefinitionException("按照活动ID（主键）删除删除过程错误");
+        }
+        return affectRow;
+    }
 
     /**
      * 通过活动信息页面点入活动详情页 通过ID查询

@@ -17,6 +17,22 @@ import com.hyp.myweixin.pojo.vo.page.activeeditor.ActiveEditThirdVO;
  */
 public interface WeixinVoteBaseEditService {
 
+
+    /**
+     * 删除指定活动
+     * 要求必须是管理员
+     * <p>
+     * 如果需要修改的活动状态就是当前的活动状态则不进行任何更新操作
+     * 如果不是 则进行更新操作
+     *
+     * @param userId   用户ID
+     * @param activeId 活动ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    Integer deleteActiveByActiveId(Integer userId, Integer activeId) throws MyDefinitionException;
+
+
     /**
      * 更新活动状态
      * 要求必须是管理员

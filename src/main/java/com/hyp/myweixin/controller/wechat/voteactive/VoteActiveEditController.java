@@ -50,6 +50,42 @@ public class VoteActiveEditController {
 
 
     /**
+     * 根据活动ID删除活动，软删除操作
+     * 要求:
+     * 1. 判断是否为管理员
+     *
+     * @return
+     */
+    @ApiOperation("根据活动ID删除活动，软删除操作")
+    @PostMapping("deleteActive/activeId")
+    public Result deleteActiveByActiveId(
+            @ApiParam(name = "用户ID", value = "userId", required = true)
+            @RequestParam(required = true)
+                    Integer userId,
+            @RequestParam(required = true)
+            @ApiParam(name = "活动ID", value = "activeId", required = true)
+                    Integer activeId
+    ) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            throw new MyDefinitionException(401, "密钥验证错误");
+        }
+
+        try {
+            Integer integer = weixinVoteBaseEditService.deleteActiveByActiveId(userId, activeId);
+            if (integer <= 0) {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "更新活动状态值失败");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.SERVER_ERROR, e.getMessage());
+        }
+
+        return Result.buildResult(Result.Status.OK, "删除活动成功");
+    }
+
+
+    /**
      * 更新活动状态
      * 要求:
      * 1. 判断是否为管理员

@@ -18,8 +18,14 @@ import java.util.List;
 public interface WeixinVoteBaseService {
 
 
-
-
+    /**
+     * 按照活动ID（主键）删除
+     *
+     * @param pkId
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteByPkId(Integer pkId) throws MyDefinitionException;
 
 
     /**
