@@ -737,6 +737,8 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 weixinVoteBase.setActiveImg(activeImg);
             }
             weixinVoteBase.setActiveName(activeText);
+            weixinVoteBase.setUpdateTime(new Date());
+            return weixinVoteBaseService.updateActiveNameAndImg(weixinVoteBase);
         }
 
         /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
@@ -750,6 +752,9 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 weixinVoteBase.setActiveDescImg(imgUrlS.toString());
             }
             weixinVoteBase.setActiveDesc(activeText);
+
+            weixinVoteBase.setUpdateTime(new Date());
+            return weixinVoteBaseService.updateActiveDescAndImg(weixinVoteBase);
         }
 
         /*如果类型是activeReward 则保存 奖励文字 和 奖励图片*/
@@ -763,10 +768,12 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 weixinVoteBase.setActiveRewardImg(imgUrlS.toString());
             }
             weixinVoteBase.setActiveReward(activeText);
+            weixinVoteBase.setUpdateTime(new Date());
+            return weixinVoteBaseService.updateActiveRewardAndImg(weixinVoteBase);
         }
         /*创建时间每次都会更新的*/
-        weixinVoteBase.setUpdateTime(new Date());
-        return weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
+        //weixinVoteBase.setUpdateTime(new Date());
+        return -1;
     }
 
     /**

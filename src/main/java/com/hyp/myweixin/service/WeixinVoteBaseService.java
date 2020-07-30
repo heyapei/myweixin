@@ -19,6 +19,36 @@ public interface WeixinVoteBaseService {
 
 
     /**
+     * 更新活动描述和图片
+     *
+     * @param weixinVoteBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer updateActiveRewardAndImg(WeixinVoteBase weixinVoteBase) throws MyDefinitionException;
+
+
+    /**
+     * 更新活动描述和图片
+     *
+     * @param weixinVoteBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer updateActiveDescAndImg(WeixinVoteBase weixinVoteBase) throws MyDefinitionException;
+
+
+    /**
+     * 更新活动标题和图片
+     *
+     * @param weixinVoteBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer updateActiveNameAndImg(WeixinVoteBase weixinVoteBase) throws MyDefinitionException;
+
+
+    /**
      * 按照活动ID（主键）删除
      *
      * @param pkId

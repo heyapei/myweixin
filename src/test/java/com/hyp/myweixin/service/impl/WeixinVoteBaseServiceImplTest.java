@@ -6,20 +6,18 @@ import com.hyp.myweixin.mapper.WeixinVoteBaseMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
 import com.hyp.myweixin.pojo.vo.page.ActiveWorkRankVO;
-import com.hyp.myweixin.pojo.vo.page.IndexWorksVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +37,32 @@ public class WeixinVoteBaseServiceImplTest {
     private WeixinVoteWorkService weixinVoteWorkService;
 
     @Test
+    public void updateActiveRewardAndImg() {
+        WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
+        weixinVoteBase.setId(97);
+        weixinVoteBase.setActiveImg("tupian");
+        weixinVoteBase.setActiveName("tupian");
+        weixinVoteBase.setActiveDesc("woshi");
+        weixinVoteBase.setActiveDescImg("woshi");
+        weixinVoteBase.setActiveReward("nihao");
+        weixinVoteBase.setActiveRewardImg("nihao");
+        weixinVoteBase.setActiveStartTime(new Date());
+        weixinVoteBase.setActiveEndTime(new Date());
+        weixinVoteBase.setActivePublic(0);
+        weixinVoteBase.setActiveShowOrder(0);
+        weixinVoteBase.setStatus(0);
+        weixinVoteBase.setCreateTime(new Date());
+        weixinVoteBase.setUpdateTime(new Date());
+        weixinVoteBase.setCreateSysUserId(0);
+        weixinVoteBase.setViewCountNum(0);
+        weixinVoteBase.setVoteCountNum(0);
+
+        weixinVoteBaseService.updateActiveNameAndImg(weixinVoteBase);
+        weixinVoteBaseService.updateActiveRewardAndImg(weixinVoteBase);
+        weixinVoteBaseService.updateActiveDescAndImg(weixinVoteBase);
+    }
+
+    @Test
     public void testGetActiveWorkRank() {
 
         PageInfo pageInfo = new PageInfo();
@@ -47,12 +71,13 @@ public class WeixinVoteBaseServiceImplTest {
         WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
         weixinVoteWork.setId(1);
         weixinVoteWork.setVoteWorkShowOrder(-1);
-        log.info("查询数据：{}",weixinVoteWork.toString());
+        log.info("查询数据：{}", weixinVoteWork.toString());
 
         ActiveWorkRankVO activeWorkRank = weixinVoteBaseService.getActiveWorkRank(1, pageInfo);
         System.out.println("查询出来的数据" + activeWorkRank.toString());
 
     }
+
     @Test
     public void getVoteWorkByWorkId() {
 

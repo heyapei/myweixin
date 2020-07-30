@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,5 +62,34 @@ public class WeixinResourceServiceTest {
         System.out.println("手机型号" + mobileType);
 
 
+    }
+
+    @Test
+    public void addWeixinResource() {
+        WeixinResource weixinResource = new WeixinResource();
+        weixinResource.setResourceConfigId(0);
+        weixinResource.setType("0");
+        weixinResource.setPath("/upload/lunbo/1.png");
+        //weixinResource.setPath("/upload/lunbo/2.png");
+        // weixinResource.setPath("/upload/lunbo/3.png");
+        // weixinResource.setPath("/upload/lunbo/4.png");
+        weixinResource.setName("");
+        weixinResource.setRealName("");
+        weixinResource.setStatus(0);
+        weixinResource.setSize(0L);
+        weixinResource.setMd5("");
+        weixinResource.setTitle("");
+        weixinResource.setDescription("");
+        weixinResource.setCreateTime(new Date());
+        weixinResource.setCreateUserId(0);
+        weixinResource.setThumbnailPath1("");
+        weixinResource.setThumbnailPath2("");
+        weixinResource.setThumbnailPath3("");
+        weixinResource.setThumbnailUrl1("");
+        weixinResource.setThumbnailUrl2("");
+        weixinResource.setThumbnailUrl3("");
+
+
+        weixinResourceService.addWeixinResource(weixinResource);
     }
 }
