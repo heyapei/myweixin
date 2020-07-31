@@ -63,9 +63,9 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     @Value("${weixin.small.check.img_sec_check.url}")
     private String IMG_SEC_CHECK_URL;
 
-    private static final Integer IMG_SEC_CHECK_WIDTH = 750;
-    private static final Integer IMG_SEC_CHECK_HEIGHT = 1334;
-    private static final Float IMG_SEC_CHECK_QUALITY = 0.8f;
+    private static final Integer IMG_SEC_CHECK_WIDTH = 600;
+    private static final Integer IMG_SEC_CHECK_HEIGHT = 1000;
+    private static final Float IMG_SEC_CHECK_QUALITY = 0.25f;
 
 
     /**

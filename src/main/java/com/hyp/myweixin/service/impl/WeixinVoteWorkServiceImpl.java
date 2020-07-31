@@ -328,42 +328,71 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
             } else {
                 if (weixinVoteConfByVoteWorkId.getActiveConfSignUp().
                         equals(WeixinVoteConf.ActiveConfSignUpEnum.CAN_SIGN_UP.getCode())) {
-                    /*如果允许个人用户上传则先判断是否已经上传过了*/
-                    List<WeixinVoteWork> weiXinVoteWorkListByUserId = null;
-                    try {
-                        weiXinVoteWorkListByUserId = getWeiXinVoteWorkListByUserId(saveVoteUserQuery.getUserId(), saveVoteUserQuery.getActiveId());
-                    } catch (MyDefinitionException e) {
-                        return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
-                    }
-                    /*如果是创建人则不进行是否有活动的判断*/
-                    if (weiXinVoteWorkListByUserId != null) {
-                        if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
-                            if (weiXinVoteWorkListByUserId.size() >= 1 &&
-                                    !weiXinVoteWorkListByUserId.get(0).getVoteWorkStatus().equals(WeixinVoteWork.VoteWorkStatusEnum.OFFLINE.getCode())) {
-                                return Result.buildResult(Result.Status.UNAUTHORIZED, "已有作品在该活动中");
+
+
+                    if (!administratorsOptionService.isSuperAdministrators(saveVoteUserQuery.getUserId())) {
+                        /*如果是创建人则不进行是否有活动的判断*/
+                        if (voteWorkByWorkId != null) {
+                            if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
+
+                                /*如果允许个人用户上传则先判断是否已经上传过了*/
+                                List<WeixinVoteWork> weiXinVoteWorkListByUserId = null;
+                                try {
+                                    weiXinVoteWorkListByUserId = getWeiXinVoteWorkListByUserId(saveVoteUserQuery.getUserId(), saveVoteUserQuery.getActiveId());
+                                } catch (MyDefinitionException e) {
+                                    return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+                                }
+
+
+                                if (weiXinVoteWorkListByUserId != null && weiXinVoteWorkListByUserId.size() >= 1 &&
+                                        !weiXinVoteWorkListByUserId.get(0).getVoteWorkStatus().equals(WeixinVoteWork.VoteWorkStatusEnum.OFFLINE.getCode())) {
+                                    return Result.buildResult(Result.Status.UNAUTHORIZED, "已有作品在该活动中");
+                                }
                             }
                         }
                     }
+
 
                     /*如果允许个人用户上传则再判断是否在允许上传时间范围内*/
                     Date nowDate = new Date();
                     Date activeUploadStartTime = weixinVoteConfByVoteWorkId.getActiveUploadStartTime();
                     Date activeUploadEndTime = weixinVoteConfByVoteWorkId.getActiveUploadEndTime();
-                    boolean voteTimeLegal = activeUploadStartTime.before(nowDate);
-                    if (!voteTimeLegal) {
-                        return Result.buildResult(Result.Status.UNAUTHORIZED, "作品上传时间未开始");
+
+
+                    /*管理员 没有时间范围上的任何限制*/
+                    if (!administratorsOptionService.isSuperAdministrators(saveVoteUserQuery.getUserId())) {
+                        /*如果是创建人则不进行是否有活动的判断*/
+                        if (voteWorkByWorkId != null) {
+                            if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
+                                boolean voteTimeLegal = activeUploadStartTime.before(nowDate);
+                                if (!voteTimeLegal) {
+                                    return Result.buildResult(Result.Status.UNAUTHORIZED, "作品上传时间未开始");
+                                }
+                                voteTimeLegal = activeUploadEndTime.before(nowDate);
+                                if (voteTimeLegal) {
+                                    return Result.buildResult(Result.Status.UNAUTHORIZED, "作品上传时间已结束");
+                                }
+                            }
+                        }
                     }
-                    voteTimeLegal = activeUploadEndTime.before(nowDate);
-                    if (voteTimeLegal) {
-                        return Result.buildResult(Result.Status.UNAUTHORIZED, "作品上传时间已结束");
-                    }
+
 
                 } else if (weixinVoteConfByVoteWorkId.getActiveConfSignUp().
                         equals(WeixinVoteConf.ActiveConfSignUpEnum.CANT_SIGN_UP.getCode())) {
-                    /*不要允许用户上传数据*/
-                    if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
-                        return Result.buildResult(Result.Status.UNAUTHORIZED, "当前活动不允许用户上传作品");
+
+
+                    if (!administratorsOptionService.isSuperAdministrators(saveVoteUserQuery.getUserId())) {
+                        /*如果是管理员 就直接通过*/
+                        if (voteWorkByWorkId != null) {
+                            if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
+                                /*不要允许用户上传数据*/
+                                if (!voteWorkByWorkId.getCreateSysUserId().equals(saveVoteUserQuery.getUserId())) {
+                                    return Result.buildResult(Result.Status.UNAUTHORIZED, "当前活动不允许用户上传作品");
+                                }
+                            }
+                        }
                     }
+
                 }
             }
 
