@@ -13,6 +13,18 @@ public interface VoteActiveDetailService {
 
 
     /**
+     * 创建活动
+     * 要求用户为超级管理员/管理员
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 新活动ID
+     * @throws MyDefinitionException
+     */
+    Integer copyActiveByActiveAndUserId(Integer activeId, Integer userId) throws MyDefinitionException;
+
+
+    /**
      * 通过活动id获取活动编辑页的第一页内容
      *
      * @param workId 活动ID
