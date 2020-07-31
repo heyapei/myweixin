@@ -113,7 +113,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.16</version>
+            <version>5.1.41</version>
         </dependency>
 
 
@@ -304,11 +304,11 @@
          https://github.com/Arronlong/httpclientutil
          暂时不适用 其实还是有点用的
          -->
-       <!-- <dependency>
-            <groupId>com.arronlong</groupId>
-            <artifactId>httpclientutil</artifactId>
-            <version>1.0.4</version>
-        </dependency>-->
+        <!-- <dependency>
+             <groupId>com.arronlong</groupId>
+             <artifactId>httpclientutil</artifactId>
+             <version>1.0.4</version>
+         </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
         <dependency>
@@ -367,3 +367,4 @@
     </build>
 
 </project>
+

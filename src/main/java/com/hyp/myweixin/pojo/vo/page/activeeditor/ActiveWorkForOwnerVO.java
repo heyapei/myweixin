@@ -40,6 +40,11 @@ public class ActiveWorkForOwnerVO {
     private Date activeEndTime;
 
     /**
+     * 当前时间
+     */
+    private Date activeNowTime;
+
+    /**
      * 是否公开到首页
      */
     private String activeIsPublic;
@@ -48,6 +53,16 @@ public class ActiveWorkForOwnerVO {
      * 活动当前状态
      */
     private String activeStatus;
+
+    /**
+     * 是否公开到首页 状态码
+     */
+    private Integer activeIsPublicStatusCode;
+
+    /**
+     * 活动当前状态 状态码
+     */
+    private Integer activeStatusCode;
 
     /**
      * 活动创建时间

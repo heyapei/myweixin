@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,6 +48,7 @@ public class UserActiveServiceImpl implements UserActiveService {
     @Autowired
     private AdministratorsOptionService administratorsOptionService;
 
+    private static final String SEMICOLON_SEPARATOR = ";";
 
     /**
      * 获取用户活动的大致信息
@@ -158,6 +160,10 @@ public class UserActiveServiceImpl implements UserActiveService {
                 activeWorkForOwnerVO.setActiveStatus(activeStatusDesc.getMsg());
                 WeixinVoteBase.ActivePublicEnum activePublicEnum = MyEnumUtil.getByIntegerTypeCode(WeixinVoteBase.ActivePublicEnum.class, "getCode", weixinVoteBase.getActivePublic());
                 activeWorkForOwnerVO.setActiveIsPublic(activePublicEnum.getMsg());
+
+                activeWorkForOwnerVO.setActiveIsPublicStatusCode(weixinVoteBase.getStatus());
+                activeWorkForOwnerVO.setActiveStatusCode(weixinVoteBase.getStatus());
+
             } catch (MyDefinitionException e) {
                 activeWorkForOwnerVO.setActiveStatus("未能查询");
                 activeWorkForOwnerVO.setActiveIsPublic("未能查询");
@@ -166,7 +172,14 @@ public class UserActiveServiceImpl implements UserActiveService {
             Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(weixinVoteBase.getId());
             activeWorkForOwnerVO.setVoteWorkNum(countWorkByVoteBaseId);
             activeWorkForOwnerVO.setActiveId(weixinVoteBase.getId());
+
+            activeWorkForOwnerVO.setActiveImg(activeWorkForOwnerVO.getActiveImg().replaceAll(SEMICOLON_SEPARATOR, ""));
+
+            activeWorkForOwnerVO.setActiveNowTime(new Date());
+
             activeWorkForOwnerVOList.add(activeWorkForOwnerVO);
+
+
         }
         pageInfoWeixinVoteBase.setList(activeWorkForOwnerVOList);
         return pageInfoWeixinVoteBase;
