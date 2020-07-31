@@ -1,11 +1,15 @@
 package com.hyp.myweixin.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.vo.page.PageEditWorkDetailVO;
 import com.hyp.myweixin.pojo.vo.page.VoteDetailByWorkIdVO;
 import com.hyp.myweixin.service.VoteActiveDetailService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteUserWorkService;
+import com.hyp.myweixin.service.WeixinVoteWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,9 @@ public class VoteActiveDetailServiceImpl implements VoteActiveDetailService {
     private WeixinVoteBaseService weixinVoteBaseService;
     @Autowired
     private WeixinVoteUserWorkService weixinVoteUserWorkService;
+
+    @Autowired
+    private WeixinVoteWorkService weixinVoteWorkService;
 
 
     /**
@@ -61,6 +68,22 @@ public class VoteActiveDetailServiceImpl implements VoteActiveDetailService {
             pageEditWorkDetailVO.setActiveName(voteWorkByWorkId.getActiveName());
             pageEditWorkDetailVO.setActiveViewCount(voteWorkByWorkId.getActiveViewCount());
             pageEditWorkDetailVO.setActiveJoinCount(voteWorkByWorkId.getActiveJoinCount());
+
+            long total = 0;
+            try {
+                ActiveUserWorkQuery activeUserWorkQuery = new ActiveUserWorkQuery();
+                activeUserWorkQuery.setActiveId(workId);
+                activeUserWorkQuery.setWorkStatus(WeixinVoteWork.VoteWorkStatusEnum.UN_REVIEW.getCode());
+                activeUserWorkQuery.setUserId(voteWorkByWorkId.getSystemUserId());
+                activeUserWorkQuery.setPageNum(1);
+                activeUserWorkQuery.setPageSize(1);
+
+                PageInfo<WeixinVoteWork> userWorkListByTypePage = weixinVoteWorkService.getUserWorkListByTypePage(activeUserWorkQuery);
+                total = userWorkListByTypePage.getTotal();
+            } catch (MyDefinitionException e) {
+
+            }
+            pageEditWorkDetailVO.setActiveUnREVIEWNum((int) total);
         }
         return pageEditWorkDetailVO;
     }

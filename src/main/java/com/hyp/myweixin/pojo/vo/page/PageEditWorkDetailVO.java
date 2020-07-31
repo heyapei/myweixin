@@ -29,6 +29,12 @@ public class PageEditWorkDetailVO {
      * 活动当前id
      */
     private Integer activeId;
+
+    /**
+     * 待审核作品总数
+     */
+    private Integer activeUnREVIEWNum;
+
     /**
      * 当前活动作品数量
      */
