@@ -39,6 +39,9 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
 
+    @Autowired
+    private WeixinVoteWorkService weixinVoteWorkService;
+
     private static final String SEMICOLON_SEPARATOR = ";";
 
     @Autowired
@@ -49,6 +52,74 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
 
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
+
+
+    /**
+     * 删除指定活动
+     * 要求必须是管理员
+     * <p>
+     *
+     * @param userId   用户ID
+     * @param activeId 活动ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteActiveByActiveId(Integer userId, Integer activeId) throws MyDefinitionException {
+
+        if (activeId == null || userId == null) {
+            throw new MyDefinitionException("当前接口要求用户登录且活动指向明确");
+        }
+
+
+        WeixinVoteBase weixinVoteBase = null;
+        try {
+            weixinVoteBase = weixinVoteBaseService.getWeixinVoteBaseByWorkId(activeId);
+        } catch (Exception e) {
+            throw new MyDefinitionException("查询操作错误，" + e.getMessage());
+        }
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("想要查询的活动不存在");
+        } else {
+            /*判断是否为超级管理员 如果是就不做任何判断*/
+            if (!administratorsOptionService.isSuperAdministrators(userId)) {
+                if (!weixinVoteBase.getCreateSysUserId().equals(userId)) {
+                    throw new MyDefinitionException("您不是该活动的管理员");
+                }
+            }
+        }
+
+        /*软删除操作*/
+        /*weixinVoteBase.setStatus(WeixinVoteBase.ActiveStatusEnum.DELETE.getCode());
+        int i = 0;
+        try {
+            i = weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
+        } catch (Exception e) {
+            throw new MyDefinitionException(e.getMessage());
+        }*/
+
+        int affectRow = 0;
+        /*硬删除操作*/
+        try {
+            Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(activeId);
+            if (countWorkByVoteBaseId != null && countWorkByVoteBaseId > 0) {
+                throw new MyDefinitionException("当前活动已有作品上传无法删除，将该活动结束时间更改为当前时间即可");
+            } else {
+                try {
+                    affectRow = weixinVoteBaseService.deleteByPkId(activeId);
+                } catch (MyDefinitionException e) {
+                }
+                try {
+                    weixinVoteConfService.deleteByActiveId(activeId);
+                } catch (MyDefinitionException e) {
+                }
+            }
+        } catch (Exception e) {
+            throw new MyDefinitionException("查询活动下有多少作品错误");
+        }
+
+        return affectRow;
+    }
 
     /**
      * 更新活动状态
@@ -401,8 +472,35 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
         activeEditThirdVO.setActiveConfNeedPhone(weixinVoteConf.getActiveConfNeedPhone());
         activeEditThirdVO.setActiveConfNeedWeixin(weixinVoteConf.getActiveConfNeedWeixin());
         activeEditThirdVO.setActiveConfRepeatVote(weixinVoteConf.getActiveConfRepeatVote());
-        activeEditThirdVO.setActiveConfVoteType(weixinVoteConf.getActiveConfVoteType());
+        String activeConfVoteType = weixinVoteConf.getActiveConfVoteType();
+        activeEditThirdVO.setActiveConfVoteType(activeConfVoteType);
+        if (activeConfVoteType.contains(SEMICOLON_SEPARATOR)) {
+            String[] split = activeConfVoteType.split(SEMICOLON_SEPARATOR);
+            activeEditThirdVO.setActiveConfVoteTypeRule(Integer.parseInt(split[0]));
+            activeEditThirdVO.setActiveConfVoteTypeNum(Integer.parseInt(split[1]));
+        }
+
         activeEditThirdVO.setActiveConfSignUp(weixinVoteConf.getActiveConfSignUp());
+
+        /*增加日期返回值规范好的值*/
+        if (weixinVoteBase.getActiveStartTime() != null) {
+            activeEditThirdVO.setActiveStartTimeDate(MyDateUtil.DateToString(weixinVoteBase.getActiveStartTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveStartTimeDateTime(MyDateUtil.DateToString(weixinVoteBase.getActiveStartTime(), "HH:mm"));
+        }
+
+        if (weixinVoteBase.getActiveEndTime() != null) {
+            activeEditThirdVO.setActiveEndTimeDate(MyDateUtil.DateToString(weixinVoteBase.getActiveEndTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveEndTimeDateTime(MyDateUtil.DateToString(weixinVoteBase.getActiveEndTime(), "HH:mm"));
+        }
+        if (weixinVoteConf.getActiveUploadStartTime() != null) {
+            activeEditThirdVO.setActiveUploadStartTimeDate(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadStartTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveUploadStartTimeDateTime(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadStartTime(), "HH:mm"));
+        }
+        if (weixinVoteConf.getActiveUploadEndTime() != null) {
+            activeEditThirdVO.setActiveUploadEndTimeDate(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadEndTime(), "yyyy-MM-dd"));
+            activeEditThirdVO.setActiveUploadEndTimeDateTime(MyDateUtil.DateToString(weixinVoteConf.getActiveUploadEndTime(), "HH:mm"));
+        }
+
         return activeEditThirdVO;
     }
 
@@ -639,6 +737,8 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 weixinVoteBase.setActiveImg(activeImg);
             }
             weixinVoteBase.setActiveName(activeText);
+            weixinVoteBase.setUpdateTime(new Date());
+            return weixinVoteBaseService.updateActiveNameAndImg(weixinVoteBase);
         }
 
         /*如果类型是activeDesc 则保存 介绍文字 和 介绍图片*/
@@ -652,6 +752,9 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 weixinVoteBase.setActiveDescImg(imgUrlS.toString());
             }
             weixinVoteBase.setActiveDesc(activeText);
+
+            weixinVoteBase.setUpdateTime(new Date());
+            return weixinVoteBaseService.updateActiveDescAndImg(weixinVoteBase);
         }
 
         /*如果类型是activeReward 则保存 奖励文字 和 奖励图片*/
@@ -665,10 +768,12 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 weixinVoteBase.setActiveRewardImg(imgUrlS.toString());
             }
             weixinVoteBase.setActiveReward(activeText);
+            weixinVoteBase.setUpdateTime(new Date());
+            return weixinVoteBaseService.updateActiveRewardAndImg(weixinVoteBase);
         }
         /*创建时间每次都会更新的*/
-        weixinVoteBase.setUpdateTime(new Date());
-        return weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
+        //weixinVoteBase.setUpdateTime(new Date());
+        return -1;
     }
 
     /**

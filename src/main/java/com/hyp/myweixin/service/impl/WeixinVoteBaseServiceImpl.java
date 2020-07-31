@@ -53,6 +53,103 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
     @Autowired
     private WeixinVoteConfService weixinVoteConfService;
 
+    private static final String SEMICOLON_SEPARATOR = ";";
+
+
+    /**
+     * 更新活动描述和图片
+     *
+     * @param weixinVoteBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateActiveRewardAndImg(WeixinVoteBase weixinVoteBase) throws MyDefinitionException {
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("需要更新的数据不为空");
+        }
+        Integer integer = null;
+        try {
+            integer = weixinVoteBaseMapper.updateActiveRewardAndImg(weixinVoteBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("更新活动描述和图片过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("更新活动描述和图片过程错误");
+        }
+        return integer;
+    }
+
+    /**
+     * 更新活动描述和图片
+     *
+     * @param weixinVoteBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateActiveDescAndImg(WeixinVoteBase weixinVoteBase) throws MyDefinitionException {
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("需要更新的数据不为空");
+        }
+        Integer integer = null;
+        try {
+            integer = weixinVoteBaseMapper.updateActiveDescAndImg(weixinVoteBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("更新活动描述和图片过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("更新活动描述和图片过程错误");
+        }
+        return integer;
+
+    }
+
+    /**
+     * 更新活动标题和图片
+     *
+     * @param weixinVoteBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateActiveNameAndImg(WeixinVoteBase weixinVoteBase) throws MyDefinitionException {
+        if (weixinVoteBase == null) {
+            throw new MyDefinitionException("需要更新的数据不为空");
+        }
+        Integer integer = null;
+        try {
+            integer = weixinVoteBaseMapper.updateActiveNameAndImg(weixinVoteBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("更新活动标题和图片过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("更新活动标题和图片过程错误");
+        }
+        return integer;
+    }
+
+    /**
+     * 按照活动ID（主键）删除
+     *
+     * @param pkId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteByPkId(Integer pkId) throws MyDefinitionException {
+
+        if (pkId == null) {
+            throw new MyDefinitionException("必须指定要删除的活动");
+        }
+
+        Integer affectRow = 0;
+        try {
+            affectRow = weixinVoteBaseMapper.deleteByPrimaryKey(pkId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("按照活动ID（主键）删除删除过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("按照活动ID（主键）删除删除过程错误");
+        }
+        return affectRow;
+    }
 
     /**
      * 通过活动信息页面点入活动详情页 通过ID查询
@@ -95,7 +192,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         WeixinVoteOrganisers weixinVoteOrganisers = weixinVoteOrganisersService.getWeixinVoteConfByVoteWorkId(voteWorkId);
         if (weixinVoteOrganisers != null) {
             voteDetailTwoByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
-            voteDetailTwoByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg());
+            voteDetailTwoByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";", ""));
             voteDetailTwoByWorkIdVO.setOrganisersPhone(weixinVoteOrganisers.getPhone());
         }
 

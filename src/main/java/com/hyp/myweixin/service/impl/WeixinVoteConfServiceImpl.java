@@ -134,4 +134,33 @@ public class WeixinVoteConfServiceImpl implements WeixinVoteConfService {
         }
         return i;
     }
+
+
+    /**
+     * 根据活动ID删除配置信息
+     *
+     * @param activeId 活动ID
+     * @throws MyDefinitionException
+     * @return影响的行数
+     */
+    @Override
+    public Integer deleteByActiveId(Integer activeId) throws MyDefinitionException {
+        if (activeId == null) {
+            throw new MyDefinitionException("必须指定活动ID");
+        }
+
+        Example example = new Example(WeixinVoteConf.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeVoteBaseId", activeId);
+
+        Integer affectRow = 0;
+        try {
+            affectRow = weixinVoteConfMapper.deleteByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("根据活动ID删除配置信息操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("根据活动ID删除配置信息操作过程错误");
+        }
+        return affectRow;
+    }
 }

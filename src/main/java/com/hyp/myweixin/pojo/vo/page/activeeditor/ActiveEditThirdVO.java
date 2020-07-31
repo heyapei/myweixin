@@ -34,6 +34,16 @@ public class ActiveEditThirdVO {
      * 值1,值2 值1：1按照每天多少票 2按照总共多少票 值2：票数量
      */
     private String activeConfVoteType;
+
+    /**
+     * 规则
+     */
+    private Integer activeConfVoteTypeRule;
+    /**
+     * 票数
+     */
+    private Integer activeConfVoteTypeNum;
+
     /**
      * 是否开启在线报名
      * 是否开启用户自己上传作品 0 开启 1 不开启 默认不开启
@@ -46,7 +56,6 @@ public class ActiveEditThirdVO {
     /**
      * 允许报名结束时间
      */
-
     private Date activeUploadEndTime;
     /**
      * 是否需要微信号（0 默认不需要 1 需要）
@@ -56,6 +65,25 @@ public class ActiveEditThirdVO {
      * 是否需要手机号（0 默认不需要 1 需要）
      */
     private Integer activeConfNeedPhone;
+
+
+    /**
+     * 以下都是一些格式化好的时间数据 具体按照前缀来看是为谁的
+     * Date是yyyy-MM-dd
+     * Time是hh:MM
+     */
+    private String activeStartTimeDate;
+    private String activeStartTimeDateTime;
+
+    private String activeEndTimeDate;
+    private String activeEndTimeDateTime;
+
+
+    private String activeUploadStartTimeDate;
+    private String activeUploadStartTimeDateTime;
+
+    private String activeUploadEndTimeDate;
+    private String activeUploadEndTimeDateTime;
 
 
 }

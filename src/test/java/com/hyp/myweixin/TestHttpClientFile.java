@@ -1,6 +1,7 @@
 package com.hyp.myweixin;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyHttpClientUtil;
 import com.hyp.myweixin.utils.thumbnailator.MyThumbnailImgOptionUtil;
@@ -79,6 +80,35 @@ public class TestHttpClientFile {
 
         String s = myHttpClientUtil.uploadFileByHttpPost(url, postFiles, null, null);
         log.info("chaxunjieguo:{}", s.toString());*/
+    }
+
+    @Test
+    public void getAccessToken() {
+
+        //myRedisUtil.del(ACCESS_TOKEN_REDIS_KEY);
+        JSONObject accessToken = weixinSmallContentDetectionApiService.getAccessToken();
+        String string = accessToken.getString("access_token");
+        //log.info(string);
+        log.info("查询结果：{}",string);
+        Map<String, String> parameterMap = new HashMap<>(2);
+        parameterMap.put("begin_date", "20200729");
+        parameterMap.put("end_date","20200729");
+        String resultAccessToken = null;
+        try {
+            resultAccessToken = myHttpClientUtil.postMap("https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token="+string, parameterMap, null);
+        } catch (Exception e) {
+            log.error("获取微信token请求失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("获取微信token请求失败");
+        }
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = JSONObject.parseObject(resultAccessToken);
+        } catch (Exception e) {
+            log.error("获取微信token转换数据失败，错误原因：{}", e.toString());
+            throw new MyDefinitionException("获取微信token转换数据失败");
+        }
+        log.info("查询结果：{}",resultAccessToken);
+
     }
 
 
