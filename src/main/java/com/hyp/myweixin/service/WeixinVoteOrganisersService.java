@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteOrganisers;
 
 /**
@@ -55,4 +56,14 @@ public interface WeixinVoteOrganisersService {
      * @return 影响的行数
      */
     Integer saveSelectiveWeixinVoteOrganisers(WeixinVoteOrganisers weixinVoteOrganisers);
+
+
+    /**
+     * 根据活动ID删除主办方信息
+     *
+     * @param activeId 活动ID
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteByActiveId(Integer activeId) throws MyDefinitionException;
 }

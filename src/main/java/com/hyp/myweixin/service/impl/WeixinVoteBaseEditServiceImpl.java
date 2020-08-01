@@ -100,23 +100,34 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
 
         int affectRow = 0;
         /*硬删除操作*/
+
+        Integer countWorkByVoteBaseId = null;
         try {
-            Integer countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(activeId);
-            if (countWorkByVoteBaseId != null && countWorkByVoteBaseId > 0) {
-                throw new MyDefinitionException("当前活动已有作品上传无法删除，将该活动结束时间更改为当前时间即可");
-            } else {
-                try {
-                    affectRow = weixinVoteBaseService.deleteByPkId(activeId);
-                } catch (MyDefinitionException e) {
-                }
-                try {
-                    weixinVoteConfService.deleteByActiveId(activeId);
-                } catch (MyDefinitionException e) {
-                }
-            }
+            countWorkByVoteBaseId = weixinVoteWorkService.getCountWorkByVoteBaseId(activeId);
         } catch (Exception e) {
-            throw new MyDefinitionException("查询活动下有多少作品错误");
+            throw new MyDefinitionException("查询活动下有多少作品错误，" + e.getMessage());
         }
+        if (countWorkByVoteBaseId != null && countWorkByVoteBaseId > 0) {
+            throw new MyDefinitionException("当前活动已有作品上传无法删除，将该活动结束时间更改为当前时间即可");
+        } else {
+            try {
+                affectRow = weixinVoteBaseService.deleteByPkId(activeId);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("删除活动错误");
+            }
+            try {
+                weixinVoteConfService.deleteByActiveId(activeId);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("删除活动配置信息错误");
+            }
+
+            try {
+                weixinVoteOrganisersService.deleteByActiveId(activeId);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("删除活动主办方信息错误");
+            }
+        }
+
 
         return affectRow;
     }

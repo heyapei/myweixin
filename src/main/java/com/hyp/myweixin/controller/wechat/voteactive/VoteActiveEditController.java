@@ -75,7 +75,7 @@ public class VoteActiveEditController {
         try {
             Integer integer = weixinVoteBaseEditService.deleteActiveByActiveId(userId, activeId);
             if (integer <= 0) {
-                return Result.buildResult(Result.Status.SERVER_ERROR, "更新活动状态值失败");
+                return Result.buildResult(Result.Status.SERVER_ERROR, "删除活动失败");
             }
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.SERVER_ERROR, e.getMessage());

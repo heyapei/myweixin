@@ -71,6 +71,9 @@ public class WeixinVoteOrganisersServiceImpl implements WeixinVoteOrganisersServ
      */
     @Override
     public WeixinVoteOrganisers getWeixinVoteConfByVoteWorkId(Integer baseWorkId) {
+        if (baseWorkId == null) {
+            throw new MyDefinitionException("必须指定活动ID");
+        }
         Example example = new Example(WeixinVoteOrganisers.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("voteBaseId", baseWorkId);
@@ -124,6 +127,36 @@ public class WeixinVoteOrganisersServiceImpl implements WeixinVoteOrganisersServ
             e.printStackTrace();
             log.error("保存活动主办方信息错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("保存活动主办方信息错误");
+        }
+        return i;
+    }
+
+
+    /**
+     * 根据活动ID删除主办方信息
+     *
+     * @param activeId 活动ID
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteByActiveId(Integer activeId) throws MyDefinitionException {
+
+        if (activeId == null) {
+            throw new MyDefinitionException("必须指定活动ID");
+        }
+
+        Example example = new Example(WeixinVoteOrganisers.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("voteBaseId", activeId);
+
+        int i = 0;
+        try {
+            i = weixinVoteOrganisersMapper.deleteByExample(example);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("根据活动ID删除主办方信息操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("根据活动ID删除主办方信息操作过程错误");
         }
         return i;
     }
