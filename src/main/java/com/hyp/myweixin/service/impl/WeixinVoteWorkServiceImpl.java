@@ -8,6 +8,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.modal.WeixinVoteConf;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.userwork.UpdateUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
@@ -60,6 +61,160 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
+    /**
+     * 更新用户作品
+     * 1. 要求是管理员
+     *
+     * @param updateUserWorkQuery 前端上传回来的用户作品数据
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateWeixinVoteWorkAdmin(UpdateUserWorkQuery updateUserWorkQuery) throws MyDefinitionException {
+
+        if (updateUserWorkQuery == null) {
+            throw new MyDefinitionException("更新信息参数不能为空");
+        }
+
+        Boolean aBoolean = null;
+        if (StringUtils.isNotBlank(updateUserWorkQuery.getUserPhone())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        updateUserWorkQuery.getUserPhone(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("手机号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("手机号内容存在违规内容，请重新输入");
+            }
+        }
+        if (StringUtils.isNotBlank(updateUserWorkQuery.getUserWeixin())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        updateUserWorkQuery.getUserWeixin(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("微信号内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("微信号内容存在违规内容，请重新输入");
+            }
+        }
+        if (StringUtils.isNotBlank(updateUserWorkQuery.getVoteWorkName())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        updateUserWorkQuery.getVoteWorkName(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("活动名内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("活动名内容存在违规内容，请重新输入");
+            }
+
+        }
+        if (StringUtils.isNotBlank(updateUserWorkQuery.getVoteWorkDesc())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        updateUserWorkQuery.getVoteWorkDesc(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("活动描述内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("活动描述内容存在违规内容，请重新输入");
+            }
+        }
+
+
+        if (StringUtils.isNotBlank(updateUserWorkQuery.getVoteWorkUserName())) {
+            try {
+                aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(
+                        updateUserWorkQuery.getVoteWorkUserName(),
+                        null);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException("活动用户名内容违规检查未通过:" + e.getMessage());
+            }
+            if (aBoolean == null || aBoolean == false) {
+                throw new MyDefinitionException("活动用户名内容存在违规内容，请重新输入");
+            }
+        }
+
+
+        WeixinVoteWork weixinVoteWork = getVoteWorkByUserWorkId(updateUserWorkQuery.getUserWorkId());
+        if (weixinVoteWork == null) {
+            throw new MyDefinitionException("未能找到指定的");
+        }
+
+
+        if (!administratorsOptionService.isSuperAdministrators(updateUserWorkQuery.getUserId())) {
+            WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(weixinVoteWork.getActiveVoteBaseId());
+            if (weixinVoteBaseByWorkId != null) {
+                if (!updateUserWorkQuery.getUserId().equals(weixinVoteBaseByWorkId.getCreateSysUserId())) {
+                    throw new MyDefinitionException("不是当前管理员不允许修改");
+                }
+            }
+        }
+
+
+
+        /*新作品实例化*/
+        weixinVoteWork.setVoteWorkImg(updateUserWorkQuery.getVoteWorkImgS());
+        weixinVoteWork.setVoteWorkUserPhone(updateUserWorkQuery.getUserPhone());
+        weixinVoteWork.setVoteWorkUserWeixin(updateUserWorkQuery.getUserWeixin());
+        weixinVoteWork.setVoteWorkName(updateUserWorkQuery.getVoteWorkName());
+        weixinVoteWork.setVoteWorkDesc(updateUserWorkQuery.getVoteWorkDesc());
+
+        try {
+            return updateSelectiveByPkId(weixinVoteWork);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+    }
+
+    /**
+     * 通过主键删除作品
+     * 1. 要求是管理员权限
+     *
+     * @param userWorkId 活动ID
+     * @param userId     用户ID
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteUserWorkByWorkIdAdmin(Integer userWorkId, Integer userId) throws MyDefinitionException {
+        if (userWorkId == null || userId == null) {
+            throw new MyDefinitionException("作品ID必须指定且用户必须为登录状态");
+        }
+
+        WeixinVoteWork weixinVoteWork = getVoteWorkByUserWorkId(userWorkId);
+        if (weixinVoteWork == null) {
+            throw new MyDefinitionException("未能找到指定的作品数据");
+        }
+
+        WeixinVoteBase weixinVoteBaseByWorkId = weixinVoteBaseService.getWeixinVoteBaseByWorkId(weixinVoteWork.getActiveVoteBaseId());
+        if (weixinVoteBaseByWorkId == null) {
+            throw new MyDefinitionException("未能成功溯源作品活动");
+        }
+
+        /*判断是否为超级管理员 如果是就不做任何判断*/
+        if (!administratorsOptionService.isSuperAdministrators(userId)) {
+            if (!weixinVoteBaseByWorkId.getCreateSysUserId().equals(userId)) {
+                throw new MyDefinitionException("您不是当前活动的管理员");
+            }
+        }
+
+        Integer pkId = null;
+        try {
+            pkId = deleteByPkId(userWorkId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        return pkId;
+    }
 
     /**
      * 获取userId下所有的作品数据
@@ -897,5 +1052,50 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
             throw new MyDefinitionException("保存用户作品错误操作过程错误");
         }
         return pk;
+    }
+
+    /**
+     * 通过主键删除作品
+     *
+     * @param pkId 主键
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteByPkId(Integer pkId) throws MyDefinitionException {
+        if (pkId == null) {
+            throw new MyDefinitionException("必须指定作品");
+        }
+        try {
+            int i = weixinVoteWorkMapper.deleteByPrimaryKey(pkId);
+            return i;
+        } catch (Exception e) {
+            log.error("通过主键删除作品操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("删除操作过程错误");
+        }
+    }
+
+    /**
+     * 按照主键更新选择性数据
+     *
+     * @param weixinVoteWork 数据
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateSelectiveByPkId(WeixinVoteWork weixinVoteWork) throws MyDefinitionException {
+
+        if (weixinVoteWork == null) {
+            throw new MyDefinitionException("更新的参数不能为空");
+        }
+
+        try {
+            int i = weixinVoteWorkMapper.updateByPrimaryKeySelective(weixinVoteWork);
+            return i;
+        } catch (Exception e) {
+            log.error("按照主键更新选择性数据操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("更新操作过程错误");
+        }
+
     }
 }

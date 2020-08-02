@@ -18,6 +18,7 @@ import com.hyp.myweixin.service.WeixinVoteOrganisersService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -509,6 +510,9 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
             voteDetailByWorkIdVO.setActiveJoinCount(countWorkByVoteBaseId);
             voteDetailByWorkIdVO.setActiveVoteCount(weixinVoteBase.getVoteCountNum());
             voteDetailByWorkIdVO.setActiveViewCount(weixinVoteBase.getViewCountNum());
+            if (StringUtils.isNotBlank(weixinVoteOrganisers.getName())) {
+                voteDetailByWorkIdVO.setHasOrganisers(1);
+            }
             voteDetailByWorkIdVO.setOrganisersName(weixinVoteOrganisers.getName());
             voteDetailByWorkIdVO.setOrganisersLogoImg(weixinVoteOrganisers.getLogoImg().replaceAll(";", ""));
             voteDetailByWorkIdVO.setOrganisersWeixinQrCode(weixinVoteOrganisers.getWeixinQrCode().replaceAll(";", ""));

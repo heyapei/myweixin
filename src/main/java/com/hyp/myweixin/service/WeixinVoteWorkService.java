@@ -2,7 +2,9 @@ package com.hyp.myweixin.service;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.modal.WeixinVoteUserWork;
 import com.hyp.myweixin.pojo.modal.WeixinVoteWork;
+import com.hyp.myweixin.pojo.query.userwork.UpdateUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.ActiveUserWorkQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.SaveVoteUserQuery;
 import com.hyp.myweixin.pojo.query.voteuserwork.UpdateUserWorkStatusQuery;
@@ -19,6 +21,29 @@ import java.util.List;
  * @Description: TODO
  */
 public interface WeixinVoteWorkService {
+
+
+    /**
+     * 更新用户作品
+     * 1. 要求是管理员
+     *
+     * @param updateUserWorkQuery 前端上传回来的用户作品数据
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer updateWeixinVoteWorkAdmin(UpdateUserWorkQuery updateUserWorkQuery) throws MyDefinitionException;
+
+
+    /**
+     * 通过主键删除作品
+     * 1. 要求是管理员权限
+     *
+     * @param userWorkId 活动ID
+     * @param userId     用户ID
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteUserWorkByWorkIdAdmin(Integer userWorkId, Integer userId) throws MyDefinitionException;
 
 
     /**
@@ -212,5 +237,23 @@ public interface WeixinVoteWorkService {
      */
     Integer saveWeixinVoteWorkReturnPK(WeixinVoteWork weixinVoteWork) throws MyDefinitionException;
 
+    /**
+     * 通过主键删除作品
+     *
+     * @param pkId 主键
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteByPkId(Integer pkId) throws MyDefinitionException;
+
+
+    /**
+     * 按照主键更新选择性数据
+     *
+     * @param weixinVoteWork 数据
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer updateSelectiveByPkId(WeixinVoteWork weixinVoteWork) throws MyDefinitionException;
 
 }
