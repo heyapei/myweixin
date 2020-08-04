@@ -32,6 +32,12 @@ public class WeixinSmallContentDetectionApiServiceTest {
 
 
     @Test
+    public void testgetQrCode() {
+        String qrCode = weixinSmallContentDetectionApiService.getQrCode(null);
+        log.info("查询结果：{}", qrCode);
+    }
+
+    @Test
     public void testmsgSecCheckApi() {
         JSONObject jsonObject = weixinSmallContentDetectionApiService.getMsgSecCheckApiMsg("", null);
         log.info("查询结果：{}", jsonObject);

@@ -12,11 +12,21 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface WeixinSmallContentDetectionApiService {
 
+
+    /**
+     * 获取二维码信息
+     *
+     * @return
+     * @throws MyDefinitionException
+     */
+    String getQrCode(String accessToken) throws MyDefinitionException;
+
+
     /**
      * 违规图片检测
      *
-     * @param multipartFile        图片
-     * @param accessToken 微信token 填写null系统会自动请求
+     * @param multipartFile 图片
+     * @param accessToken   微信token 填写null系统会自动请求
      * @return boolean值
      * @throws MyDefinitionException
      */
@@ -25,8 +35,8 @@ public interface WeixinSmallContentDetectionApiService {
     /**
      * 违规图片检测
      *
-     * @param multipartFile        图片
-     * @param accessToken 微信token 填写null系统会自动请求
+     * @param multipartFile 图片
+     * @param accessToken   微信token 填写null系统会自动请求
      * @return
      * @throws MyDefinitionException
      */

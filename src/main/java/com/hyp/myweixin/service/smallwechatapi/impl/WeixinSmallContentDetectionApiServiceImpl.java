@@ -16,8 +16,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +63,21 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
      */
     @Value("${weixin.small.check.img_sec_check.url}")
     private String IMG_SEC_CHECK_URL;
+    /**
+     * 二维码接口 C
+     */
+    @Value("${weixin.acode.create.qr_code.url}")
+    private String CREATE_QR_CODE_URL;
+    /**
+     * 二维码接口 A
+     */
+    @Value("${weixin.acode.get.url}")
+    private String QR_CODE_GET_URL;
+    /**
+     * 二维码接口 B
+     */
+    @Value("${weixin.acode.get.unlimited.url}")
+    private String QR_CODE_GET_UNLIMITED_URL;
 
     private static final Integer IMG_SEC_CHECK_WIDTH = 600;
     private static final Integer IMG_SEC_CHECK_HEIGHT = 1000;
@@ -84,6 +100,58 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     @Autowired
     private MyThumbnailImgOptionUtil myThumbnailImgOptionUtil;
 
+
+    /**
+     * 获取二维码B信息
+     *
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public String getQrCode(String accessToken) throws MyDefinitionException {
+
+        if (StringUtils.isBlank(accessToken)) {
+            JSONObject accessToken1 = null;
+            try {
+                accessToken1 = getAccessToken();
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+            accessToken = accessToken1.getString(JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN);
+        }
+
+        //see(accessToken);
+
+        String url = QR_CODE_GET_UNLIMITED_URL + accessToken;
+        log.info("请求地址：{}", url);
+        Map<String, Object> jsonMap = new HashMap<>(6);
+        //必填
+        jsonMap.put("scene", "b=1");
+        /*以下都为非必填项 page不填默认首页*/
+        jsonMap.put("page", "pages/chuangjian/chuangjian");
+       /* jsonMap.put("width", "430");
+        jsonMap.put("auto_color", "false");
+        jsonMap.put("line_color", "{\"r\":0,\"g\":0,\"b\":0}");
+        jsonMap.put("is_hyaline", "false");*/
+        Map<String, String> headMap = new HashMap<>(1);
+        headMap.put("Content-Type", "application/json");
+
+        String weixinQrCodeB = null;
+        try {
+            weixinQrCodeB = myHttpClientUtil.postJson(url, jsonMap, headMap);
+        } catch (MyDefinitionException e) {
+            e.printStackTrace();
+            log.error("获取二维码B请求失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("获取二维码B请求失败");
+        }
+        if (StringUtils.isBlank(weixinQrCodeB)) {
+            throw new MyDefinitionException("获取二维码B未能获取任何返回值");
+        }
+
+        log.info("获取二维码B的结果:{}", weixinQrCodeB);
+
+        return weixinQrCodeB;
+    }
 
     /**
      * 违规图片检测
