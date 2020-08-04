@@ -381,7 +381,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
                 criteria.andEqualTo("createSysUserId", weixinVoteBase.getCreateSysUserId());
             }
 
-            //log.info("查询参数：{}",weixinVoteBase.toString());
+            log.info("查询参数：{}",weixinVoteBase.toString());
 
             if (StringUtils.isNotBlank(weixinVoteBase.getActiveName())) {
                 criteria.andLike("activeName", "%" + weixinVoteBase.getActiveName() + "%");

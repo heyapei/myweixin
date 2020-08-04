@@ -66,7 +66,8 @@ public class IndexPageController {
         WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
         weixinVoteBase.setActivePublic(WeixinVoteBase.ActivePublicEnum.NOT_SHOW_PUBLIC.getCode());
         weixinVoteBase.setStatus(WeixinVoteBase.ActiveStatusEnum.ONLINE.getCode());
-        weixinVoteBase.setActiveDesc(activeName);
+        /*按照名称模糊查询*/
+        weixinVoteBase.setActiveName(activeName);
         //log.info("当前查询条件：{}", weixinVoteBase.toString());
         PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(weixinVoteBase, pageInfo);
 
