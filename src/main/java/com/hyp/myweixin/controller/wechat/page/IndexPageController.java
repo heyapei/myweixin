@@ -11,6 +11,7 @@ import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.WeixinResourceService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,9 @@ public class IndexPageController {
     @PostMapping("/vote/works")
     public Result getVoteWorkByPage(HttpServletRequest request,
                                     @RequestParam(defaultValue = "1") int pageNo,
-                                    @RequestParam(defaultValue = "5") int pageSize) {
+                                    @RequestParam(defaultValue = "5") int pageSize,
+                                    @ApiParam(name = "按照活动名称模糊查询")
+                                    @RequestParam(defaultValue = "") String activeName) {
 
         boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
@@ -63,7 +66,8 @@ public class IndexPageController {
         WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
         weixinVoteBase.setActivePublic(WeixinVoteBase.ActivePublicEnum.NOT_SHOW_PUBLIC.getCode());
         weixinVoteBase.setStatus(WeixinVoteBase.ActiveStatusEnum.ONLINE.getCode());
-        log.info("当前查询条件：{}", weixinVoteBase.toString());
+        weixinVoteBase.setActiveDesc(activeName);
+        //log.info("当前查询条件：{}", weixinVoteBase.toString());
         PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(weixinVoteBase, pageInfo);
 
 

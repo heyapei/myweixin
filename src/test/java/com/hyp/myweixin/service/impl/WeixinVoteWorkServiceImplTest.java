@@ -73,7 +73,9 @@ public class WeixinVoteWorkServiceImplTest {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(1);
         pageInfo.setPageSize(5);
-        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(null, pageInfo);
+        WeixinVoteWork weixinVoteWork = new WeixinVoteWork();
+        weixinVoteWork.setVoteWorkDesc("2");
+        PageInfo voteWorkAllWorkByPage = weixinVoteWorkService.getVoteWorkAllWorkByPage(weixinVoteWork, pageInfo);
         log.info("数据查询{}", voteWorkAllWorkByPage.toString());
 
     }

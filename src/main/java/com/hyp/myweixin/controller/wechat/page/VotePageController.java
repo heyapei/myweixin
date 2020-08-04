@@ -16,6 +16,7 @@ import com.hyp.myweixin.service.WeixinVoteWorkCommentService;
 import com.hyp.myweixin.service.WeixinVoteWorkService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,9 @@ public class VotePageController {
     public Result getVoteWorkAllWork(HttpServletRequest request,
                                      int activeId,
                                      @RequestParam(defaultValue = "1") int pageNo,
-                                     @RequestParam(defaultValue = "5") int pageSize) {
+                                     @RequestParam(defaultValue = "5") int pageSize,
+                                     @ApiParam(name = "按照作品编号或者作品名称查找，编号全匹配，名称模糊查询")
+                                     @RequestParam(defaultValue = "") String queryParam) {
 
         boolean b = myRequestValidateUtil.validateSignMd5Date(request, secretKeyPropertiesValue.getMd5Key(), 10);
         if (!b) {
@@ -114,6 +117,8 @@ public class VotePageController {
         weixinVoteWork.setVoteWorkShowOrder(0);
         weixinVoteWork.setVoteWorkOr(-1);
         weixinVoteWork.setVoteWorkCountNum(WeixinVoteWork.VoteWorkStatusEnum.ONLINE.getCode());
+        /*使用描述暂时存储查询用数据*/
+        weixinVoteWork.setVoteWorkDesc(queryParam);
         /**
          * 作品的状态 0默认等待审核 1上线 2下线
          */

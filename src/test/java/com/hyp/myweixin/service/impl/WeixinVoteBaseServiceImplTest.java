@@ -101,7 +101,9 @@ public class WeixinVoteBaseServiceImplTest {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setPageNum(2);
         pageInfo.setPageSize(2);
-        PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(null, pageInfo);
+        WeixinVoteBase weixinVoteBase = new WeixinVoteBase();
+        weixinVoteBase.setActiveName("123");
+        PageInfo voteWorkByPage = weixinVoteBaseService.getVoteWorkByPage(weixinVoteBase, pageInfo);
         log.info("分页查询出来的数据：" + voteWorkByPage.toString());
 
         /*List<WeixinVoteBase> list = voteWorkByPage.getList();

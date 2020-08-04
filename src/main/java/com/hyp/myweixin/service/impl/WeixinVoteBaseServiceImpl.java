@@ -367,6 +367,7 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
         /*条件查询*/
         Example example = new Example(WeixinVoteBase.class);
         Example.Criteria criteria = example.createCriteria();
+        //Example.Criteria criteria2 = example.or();
         //TODO　weixinVoteBase用于条件查询
         if (weixinVoteBase != null) {
             if (weixinVoteBase.getActivePublic() != null) {
@@ -378,6 +379,12 @@ public class WeixinVoteBaseServiceImpl implements WeixinVoteBaseService {
 
             if (weixinVoteBase.getCreateSysUserId() != null && weixinVoteBase.getCreateSysUserId() > 0) {
                 criteria.andEqualTo("createSysUserId", weixinVoteBase.getCreateSysUserId());
+            }
+
+            //log.info("查询参数：{}",weixinVoteBase.toString());
+
+            if (StringUtils.isNotBlank(weixinVoteBase.getActiveName())) {
+                criteria.andLike("activeName", "%" + weixinVoteBase.getActiveName() + "%");
             }
         }
 

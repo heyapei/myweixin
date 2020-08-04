@@ -794,6 +794,8 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
 
         Example example = new Example(WeixinVoteWork.class);
         Example.Criteria criteria = example.createCriteria();
+        Example.Criteria criteria2 = example.or();
+        Example.Criteria criteria3 = example.or();
         PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         //TODO　weixinVoteWork用于条件查询
         if (weixinVoteWork != null) {
@@ -804,6 +806,21 @@ public class WeixinVoteWorkServiceImpl implements WeixinVoteWorkService {
             if (weixinVoteWork.getVoteWorkStatus() != null && weixinVoteWork.getVoteWorkStatus() > -1) {
                 criteria.andEqualTo("voteWorkStatus", weixinVoteWork.getVoteWorkStatus());
             }
+
+            //log.info("查询参数{}",weixinVoteWork.toString());
+            if (StringUtils.isNotBlank(weixinVoteWork.getVoteWorkDesc())) {
+
+                //log.info("查询参数2   {}",weixinVoteWork.toString());
+                try {
+                    int i = Integer.parseInt(weixinVoteWork.getVoteWorkDesc());
+                    criteria.andEqualTo("voteWorkOr", i);
+                } catch (NumberFormatException e) {
+                   // do nothing
+                }
+                criteria2.andLike("voteWorkName", "%" + weixinVoteWork.getVoteWorkDesc()+ "%");
+                criteria3.andLike("voteWorkUserName", "%" + weixinVoteWork.getVoteWorkDesc()+ "%");
+            }
+
 
             /*排序*/
             if (weixinVoteWork.getVoteWorkShowOrder() != null) {
