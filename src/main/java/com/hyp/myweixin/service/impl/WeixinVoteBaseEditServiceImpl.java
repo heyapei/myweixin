@@ -242,6 +242,16 @@ public class WeixinVoteBaseEditServiceImpl implements WeixinVoteBaseEditService 
                 myErrorList.add("保存活动相关配置错误");
             }
         }
+
+        /*活动修改到这里默认上线活动*/
+        if (myErrorList.noErrors()) {
+            weixinVoteBase.setStatus(WeixinVoteBase.ActiveStatusEnum.ONLINE.getCode());
+            int i = weixinVoteBaseService.updateVoteBaseVote(weixinVoteBase);
+            if (i <= 0) {
+                myErrorList.add("活动上线失败，请重试");
+            }
+        }
+
         if (myErrorList.hasErrors()) {
             throw new MyDefinitionException(myErrorList.toPlainString());
         }
