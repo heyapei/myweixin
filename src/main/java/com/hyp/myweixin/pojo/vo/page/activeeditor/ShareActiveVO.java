@@ -2,6 +2,8 @@ package com.hyp.myweixin.pojo.vo.page.activeeditor;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Author 何亚培
  * @Version V1.0
@@ -30,6 +32,23 @@ public class ShareActiveVO {
      * 活动主页图
      */
     private String activeImg;
+
+    /**
+     * 活动描述
+     */
+    private String activeDesc;
+
+    /**
+     * 活动结束时间
+     */
+    private Date activeEndTime;
+
+    /**
+     * 活动结束时间 格式化 yyyy-MM-dd HH:mm
+     */
+    private String  activeEndTimeFormat;
+
+
 
 
 }

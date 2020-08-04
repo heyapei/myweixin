@@ -7,6 +7,8 @@ import com.hyp.myweixin.pojo.vo.page.activeeditor.ShareActiveVO;
 import com.hyp.myweixin.service.ShareUserWorkOrActiveService;
 import com.hyp.myweixin.service.WeixinVoteBaseService;
 import com.hyp.myweixin.service.WeixinVoteConfService;
+import com.hyp.myweixin.utils.dateutil.MyDateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,9 @@ public class ShareUserWorkOrActiveServiceImpl implements ShareUserWorkOrActiveSe
         shareActiveVO.setActiveName(weixinVoteBaseByWorkId.getActiveName());
         shareActiveVO.setActiveImg(weixinVoteBaseByWorkId.getActiveImg().replaceAll(SEMICOLON_SEPARATOR, ""));
         shareActiveVO.setActiveShareImg(weixinVoteConfByVoteWorkId.getActiveConfShareImg().replaceAll(SEMICOLON_SEPARATOR, ""));
+        shareActiveVO.setActiveDesc(weixinVoteBaseByWorkId.getActiveDesc());
+        shareActiveVO.setActiveEndTime(weixinVoteBaseByWorkId.getActiveEndTime());
+        shareActiveVO.setActiveEndTimeFormat(MyDateUtil.DateToString(weixinVoteBaseByWorkId.getActiveEndTime(), MyDateStyle.YYYY_MM_DD_HH_MM));
 
 
         return shareActiveVO;
