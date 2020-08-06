@@ -48,6 +48,11 @@ public class ShareActiveVO {
      */
     private String  activeEndTimeFormat;
 
+    /**
+     * 微信分享图
+     */
+    private String weixinShareQrCode;
+
 
 
 

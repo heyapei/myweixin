@@ -3,6 +3,7 @@ package com.hyp.myweixin.controller.wechat.voteactive;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.vo.page.activeeditor.ShareActiveVO;
+import com.hyp.myweixin.pojo.vo.page.activeeditor.ShareUserWorkVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.ShareUserWorkOrActiveService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -40,6 +41,33 @@ public class ShareUserWorkOrActiveController {
 
 
     /**
+     * 通过作品ID获取作品的分享图
+     *
+     * @param userWorkId 作品ID
+     * @return
+     */
+    @ApiOperation("通过作品ID获取作品的分享图")
+    @PostMapping("getUserWorkShare/userWorkId")
+    public Result<ShareUserWorkVO> getShareUserWorkVOByUserWorkId(
+            @ApiParam(name = "作品ID", value = "userWorkId", required = true)
+            @RequestParam(required = true) Integer userWorkId) {
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        ShareUserWorkVO shareUserWorkVO = null;
+        try {
+            shareUserWorkVO = shareUserWorkOrActiveService.getShareUserWorkVOByUserWorkId(userWorkId);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return Result.buildResult(Result.Status.OK, shareUserWorkVO);
+    }
+
+
+    /**
      * 通过活动ID获取活动的分享图
      *
      * @param activeId 活动ID
@@ -47,7 +75,7 @@ public class ShareUserWorkOrActiveController {
      */
     @ApiOperation("通过活动ID获取活动的分享图")
     @PostMapping("getActiveShare/activeId")
-    public Result<ShareActiveVO> getActiveWorkOverviewForOwnerVOByUserId(
+    public Result<ShareActiveVO> getShareActiveVOByActiveId(
             @ApiParam(name = "活动ID", value = "activeId", required = true)
             @RequestParam(required = true) Integer activeId) {
         /*鉴权*/
@@ -55,7 +83,6 @@ public class ShareUserWorkOrActiveController {
         if (!b) {
             return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
         }
-
         ShareActiveVO shareActiveVOByActiveId = null;
         try {
             shareActiveVOByActiveId = shareUserWorkOrActiveService.getShareActiveVOByActiveId(activeId);
