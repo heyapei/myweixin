@@ -29,6 +29,13 @@ public class ActiveCreateSecondQuery {
 
 
     /**
+     * 活动类型
+     */
+    @ApiModelProperty(value = "活动类型", name = "activeType", required = true)
+    @NotNull(message = "必须指定活动类型")
+    private Integer activeType;
+
+    /**
      * 活动地点
      */
     @ApiModelProperty(value = "活动地点", name = "activeAddress", required = true)

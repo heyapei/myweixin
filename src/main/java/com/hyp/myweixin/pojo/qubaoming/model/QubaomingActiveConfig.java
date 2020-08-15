@@ -19,6 +19,12 @@ public class QubaomingActiveConfig {
     private Integer activeId;
 
     /**
+     * 活动类型 0 线下活动 1线上活动
+     */
+    @Column(name = "active_type")
+    private Integer activeType;
+
+    /**
      * 活动地点
      */
     @Column(name = "active_address")

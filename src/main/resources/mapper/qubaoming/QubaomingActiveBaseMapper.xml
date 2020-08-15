@@ -10,7 +10,6 @@
         <result column="active_img" property="activeImg" jdbcType="VARCHAR"/>
         <result column="active_desc" property="activeDesc" jdbcType="VARCHAR"/>
         <result column="active_desc_img" property="activeDescImg" jdbcType="VARCHAR"/>
-        <result column="active_type" property="activeType" jdbcType="INTEGER"/>
         <result column="active_detail" property="activeDetail" jdbcType="VARCHAR"/>
         <result column="active_detail_img" property="activeDetailImg" jdbcType="VARCHAR"/>
         <result column="active_status" property="activeStatus" jdbcType="INTEGER"/>

@@ -59,7 +59,6 @@ public class QubaomingActiveBase {
         qubaomingActiveBase.setActiveImg("");
         qubaomingActiveBase.setActiveDesc("");
         qubaomingActiveBase.setActiveDescImg("");
-        qubaomingActiveBase.setActiveType(0);
         qubaomingActiveBase.setActiveDetail("");
         qubaomingActiveBase.setActiveDetailImg("");
         qubaomingActiveBase.setActiveStatus(0);
@@ -108,11 +107,7 @@ public class QubaomingActiveBase {
     @Column(name = "active_desc_img")
     private String activeDescImg;
 
-    /**
-     * 活动类型 0 线下活动 1线上活动
-     */
-    @Column(name = "active_type")
-    private Integer activeType;
+
 
     /**
      * 活动详情

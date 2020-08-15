@@ -7,6 +7,7 @@
     -->
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="active_base_id" property="activeId" jdbcType="INTEGER" />
+    <result column="active_type" property="activeType" jdbcType="INTEGER"/>
     <result column="active_address" property="activeAddress" jdbcType="VARCHAR" />
     <result column="active_start_time" property="activeStartTime" jdbcType="BIGINT" />
     <result column="active_end_time" property="activeEndTime" jdbcType="BIGINT" />
