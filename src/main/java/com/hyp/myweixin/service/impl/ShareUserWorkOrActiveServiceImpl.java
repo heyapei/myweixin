@@ -70,13 +70,48 @@ public class ShareUserWorkOrActiveServiceImpl implements ShareUserWorkOrActiveSe
         shareUserWorkVO.setUserWorkId(userWorkId);
         shareUserWorkVO.setUserWorkName(weixinVoteWorkByUserWorkId.getVoteWorkUserName());
         shareUserWorkVO.setUserWorkDesc(weixinVoteWorkByUserWorkId.getVoteWorkDesc());
-        shareUserWorkVO.setActiveEndTimeFormat(MyDateUtil.DateToString(weixinVoteBaseByWorkId.getActiveEndTime(),MyDateStyle.YYYY_MM_DD_HH_MM));
+        shareUserWorkVO.setActiveEndTimeFormat(MyDateUtil.DateToString(weixinVoteBaseByWorkId.getActiveEndTime(), MyDateStyle.YYYY_MM_DD_HH_MM));
 
         String[] voteWorkImgS = weixinVoteWorkByUserWorkId.getVoteWorkImgS();
         if (voteWorkImgS != null && voteWorkImgS.length > 0) {
+
             shareUserWorkVO.setUserWorkFirstImg(voteWorkImgS[0]);
+
+            /*图片等比例截取*/
+            /*String path = null;
+            try {
+                path = ResourceUtils.getURL("classpath:").getPath();
+            } catch (FileNotFoundException e) {
+                log.error("获取项目路径失败{}",e.toString());
+                shareUserWorkVO.setUserWorkFirstImg("/upload/share/2020862125baseuserwork.png");
+            }
+            String voteWorkImg = voteWorkImgS[0];
+            String[] split = voteWorkImg.split("/");
+            int size = split.length;
+            String fileName = split[size - 1];
+            *//*原图*//*
+            String comVoteWorkImgPath = path + voteWorkImg;
+            File originalPic = new File(comVoteWorkImgPath);
+            *//*截取的图*//*
+            String tempPath = "/upload/share/" + fileName;
+            String comTempPath = path + tempPath;
+            File tempFile = new File(comTempPath);
+            if (tempFile.exists()) {
+                shareUserWorkVO.setUserWorkFirstImg(tempPath);
+            } else {
+                try {
+                    Thumbnails.of(originalPic)
+                            .sourceRegion(Positions.TOP_LEFT, 300, 200)
+                            .size(300, 200)
+                            .toFile(comTempPath);
+                    shareUserWorkVO.setUserWorkFirstImg(tempPath);
+                } catch (IOException e) {
+                    log.error("作品分享图压缩失败{}",e.toString());
+                    shareUserWorkVO.setUserWorkFirstImg("/upload/share/2020862125baseuserwork.png");
+                }
+            }*/
         } else {
-            shareUserWorkVO.setUserWorkFirstImg("");
+            shareUserWorkVO.setUserWorkFirstImg("/upload/share/2020862125baseuserwork.png");
         }
         shareUserWorkVO.setWeixinShareQrCode("/upload/share/share20200801210720.jpg");
 
