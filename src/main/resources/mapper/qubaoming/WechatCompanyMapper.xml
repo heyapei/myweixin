@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyp.myweixin.mapper.qubaoming.WechatCompanyMapper" >
+  <resultMap id="BaseResultMap" type="com.hyp.myweixin.pojo.qubaoming.model.WechatCompany" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="logo_img" property="logoImg" jdbcType="VARCHAR" />
+    <result column="organisers_desc" property="organisersDesc" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="job_major" property="jobMajor" jdbcType="VARCHAR" />
+    <result column="build_time" property="buildTime" jdbcType="BIGINT" />
+    <result column="corporate" property="corporate" jdbcType="VARCHAR" />
+    <result column="weixin_qr_code" property="weixinQrCode" jdbcType="VARCHAR" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="ext3" property="ext3" jdbcType="VARCHAR" />
+    <result column="ext4" property="ext4" jdbcType="VARCHAR" />
+    <result column="ext5" property="ext5" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+    <result column="company_share_num" property="companyShareNum" jdbcType="INTEGER" />
+    <result column="company_view_num" property="companyViewNum" jdbcType="INTEGER" />
+    <result column="company_collection_num" property="companyCollectionNum" jdbcType="INTEGER" />
+    <result column="company_used_num" property="companyUsedNum" jdbcType="INTEGER" />
+    <result column="company_show_order" property="companyShowOrder" jdbcType="INTEGER" />
+  </resultMap>
+</mapper>

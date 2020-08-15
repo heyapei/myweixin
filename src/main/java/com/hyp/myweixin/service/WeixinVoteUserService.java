@@ -1,7 +1,7 @@
 package com.hyp.myweixin.service;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
-import io.swagger.models.auth.In;
 
 /**
  * @Author 何亚培
@@ -10,6 +10,16 @@ import io.swagger.models.auth.In;
  * @Description: TODO
  */
 public interface WeixinVoteUserService {
+
+
+    /**
+     * 判断当前用户是否拥有完整权限 是否被禁用了 如果没有问题则不会被catch住
+     *
+     * @param id 用户ID
+     * @throws MyDefinitionException
+     */
+    void validateUserRight(Integer id) throws MyDefinitionException;
+
 
     /**
      * 测试事务
@@ -48,11 +58,11 @@ public interface WeixinVoteUserService {
 
     /**
      * 根据用户openId更新用户信息
+     *
      * @param weixinVoteUser
      * @return
      */
     Integer updateWeixinUserByOpenId(WeixinVoteUser weixinVoteUser);
-
 
 
 }

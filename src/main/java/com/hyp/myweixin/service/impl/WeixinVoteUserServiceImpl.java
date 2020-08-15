@@ -27,6 +27,22 @@ public class WeixinVoteUserServiceImpl implements WeixinVoteUserService {
     private WeixinVoteUserMapper weixinVoteUserMapper;
 
     /**
+     * 判断当前用户是否拥有完整权限 是否被禁用了
+     *
+     * @param id
+     * @throws MyDefinitionException
+     */
+    @Override
+    public void validateUserRight(Integer id) throws MyDefinitionException {
+        WeixinVoteUser userById = getUserById(id);
+        if (userById == null) {
+            throw new MyDefinitionException("没有找到当前用户信息，请重新进行授权操作");
+        }else if (userById.getEnable().equals(WeixinVoteUser.ENABLEENUM.UN_ENABLE.getCode())) {
+            throw new MyDefinitionException("当前用户已被禁用");
+        }
+    }
+
+    /**
      * 测试结果为正确的 可以有效地进行事务上的回滚
      */
     @Override

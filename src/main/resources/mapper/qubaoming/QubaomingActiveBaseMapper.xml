@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyp.myweixin.mapper.qubaoming.QubaomingActiveBaseMapper">
+    <resultMap id="BaseResultMap" type="com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="active_name" property="activeName" jdbcType="VARCHAR"/>
+        <result column="active_img" property="activeImg" jdbcType="VARCHAR"/>
+        <result column="active_desc" property="activeDesc" jdbcType="VARCHAR"/>
+        <result column="active_desc_img" property="activeDescImg" jdbcType="VARCHAR"/>
+        <result column="active_type" property="activeType" jdbcType="INTEGER"/>
+        <result column="active_detail" property="activeDetail" jdbcType="VARCHAR"/>
+        <result column="active_detail_img" property="activeDetailImg" jdbcType="VARCHAR"/>
+        <result column="active_status" property="activeStatus" jdbcType="INTEGER"/>
+        <result column="active_share_num" property="activeShareNum" jdbcType="INTEGER"/>
+        <result column="active_view_num" property="activeViewNum" jdbcType="INTEGER"/>
+        <result column="active_join_num" property="activeJoinNum" jdbcType="INTEGER"/>
+        <result column="active_collection_num" property="activeCollectionNum" jdbcType="INTEGER"/>
+        <result column="active_show_order" property="activeShowOrder" jdbcType="INTEGER"/>
+        <result column="active_company_id" property="activeCompanyId" jdbcType="INTEGER"/>
+        <result column="active_user_id" property="activeUserId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="ext1" property="ext1" jdbcType="VARCHAR"/>
+        <result column="ext2" property="ext2" jdbcType="VARCHAR"/>
+        <result column="ext3" property="ext3" jdbcType="VARCHAR"/>
+        <result column="ext4" property="ext4" jdbcType="VARCHAR"/>
+        <result column="ext5" property="ext5" jdbcType="VARCHAR"/>
+    </resultMap>
+    <update id="updateActiveDescAndImg" parameterType="com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase">
+            update qubaoming_active_base set
+            active_desc = #{activeDesc},
+            active_desc_img = #{activeDescImg},
+            update_time = #{updateTime}
+            where id = #{id}
+
+    </update>
+    <update id="updateActiveNameAndImg" parameterType="com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase">
+update qubaoming_active_base set
+            active_name = #{activeName},
+            active_img =  #{activeImg},
+            update_time = #{updateTime}
+            where id = #{id}
+  </update>
+</mapper>

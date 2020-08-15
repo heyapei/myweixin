@@ -2,15 +2,16 @@ package com.hyp.myweixin.utils;
 
 
 import com.github.pagehelper.Page;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,6 +20,96 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Carl
  */
 public class MyEntityUtil {
+
+
+    /**
+     * 赋默认值
+     */
+    public static Object entitySetDefaultValue(Object object) {
+        final String defaultStr = "";
+        final Date defaultDate = new Date();
+        final BigDecimal defaultDecimal = new BigDecimal(0);
+        final Timestamp defaultTimestamp = new Timestamp(System.currentTimeMillis());
+        try {
+            Class clazz = object.getClass();
+            Field[] fields = clazz.getDeclaredFields();
+
+            for (int i = 0; i < fields.length; i++) {
+                Field field = fields[i];
+                String fieldName = field.getName();
+                Class fieldClass = field.getType();
+                //设置访问权限
+                field.setAccessible(true);
+                if (isFieldValueNull(fieldName, object)) {
+                    if (fieldClass == Integer.class) {
+                        field.set(object, defaultDecimal.intValue());
+                    } else if (fieldClass == Long.class) {
+                        field.set(object, defaultDecimal.longValue());
+                    } else if (fieldClass == Float.class) {
+                        field.set(object, defaultDecimal.doubleValue());
+                    } else if (fieldClass == BigDecimal.class) {
+                        field.set(object, defaultDecimal);
+                    } else if (fieldClass == Date.class) {
+                        field.set(object, defaultDate);
+                    } else if (fieldClass == String.class) {
+                        field.set(object, defaultStr);
+                    } else if (fieldClass == Date.class) {
+                        field.set(object, defaultTimestamp);
+                    }
+                    //MySQL，需要对对主键做特殊处理
+                } else if (isStringFieldValueNull(fieldName, object, fieldClass)) {
+                    field.set(object, null);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+        return object;
+    }
+
+    /**
+     * 判断字段是否为空
+     */
+    private static boolean isFieldValueNull(String fieldName, Object object) throws ClassNotFoundException {
+        boolean isNUll = false;
+        try {
+            String firstLetter = fieldName.substring(0, 1).toUpperCase();
+            String getter = "get" + firstLetter + fieldName.substring(1);
+            Method method = object.getClass().getMethod(getter, new Class[]{});
+            Object value = method.invoke(object, new Object[]{});
+            if (value == null) {
+                isNUll = true;
+            }
+            return isNUll;
+        } catch (Exception e) {
+            return isNUll;
+        }
+    }
+
+    /**
+     * 判断主键是否为空值
+     */
+    private static boolean isStringFieldValueNull(String fieldName, Object object, Class fieldClass) throws ClassNotFoundException {
+        boolean isNUll = false;
+        try {
+            String firstLetter = fieldName.substring(0, 1).toUpperCase();
+            String getter = "get" + firstLetter + fieldName.substring(1);
+            Method method = object.getClass().getMethod(getter, new Class[]{});
+            Object value = method.invoke(object, new Object[]{});
+            if (value == null) {
+                isNUll = true;
+            } else {
+                if (fieldClass == String.class && StringUtils.isBlank((String) value)) {
+                    isNUll = true;
+                }
+            }
+            return isNUll;
+        } catch (Exception e) {
+            return isNUll;
+        }
+    }
+
 
     /**
      * 实体列表转Vm
