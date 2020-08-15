@@ -1,18 +1,14 @@
 package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
-import com.hyp.myweixin.service.WeixinVoteUserService;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveBaseService;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveConfigService;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveCreateService;
-import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
+import com.hyp.myweixin.service.qubaoming.*;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +32,12 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
     private WechatCompanyService wechatCompanyService;
 
     @Autowired
-    private WeixinVoteUserService weixinVoteUserService;
+    private QubaomingWeixinUserService qubaomingWeixinUserService;
     @Autowired
     private QubaomingActiveConfigService qubaomingActiveConfigService;
+
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
 
     /**
@@ -106,7 +105,7 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
             throw new MyDefinitionException("参数不能为空");
         }
         try {
-            weixinVoteUserService.validateUserRight(activeCreateFirstQuery.getUserId());
+            qubaomingWeixinUserService.validateUserRight(activeCreateFirstQuery.getUserId());
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
         }
@@ -119,6 +118,24 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
         if (qubaomingActiveBase == null) {
             throw new MyDefinitionException("没有发现指定的活动");
         }
+
+        String accessTokenByAppName = null;
+        try {
+            accessTokenByAppName = weixinSmallContentDetectionApiService.getAccessTokenByAppName("qubaoming");
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        /*文本验证接口*/
+        Boolean aBoolean = false;
+        try {
+            aBoolean = weixinSmallContentDetectionApiService.checkMsgSecCheckApi(activeCreateFirstQuery.getText(), accessTokenByAppName);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (!aBoolean) {
+            throw new MyDefinitionException("当前文字违规重新填写");
+        }
+
 
         qubaomingActiveBase.setUpdateTime(System.currentTimeMillis());
         if (activeCreateFirstQuery.getType().equalsIgnoreCase("title")) {
@@ -153,12 +170,12 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
             throw new MyDefinitionException("参数不能为空");
         }
 
-        WeixinVoteUser userById = weixinVoteUserService.getUserById(activeUserId);
-        if (userById == null) {
-            throw new MyDefinitionException("没有找到当前用户信息，请重新进行授权操作");
-        } else if (userById.getEnable().equals(WeixinVoteUser.ENABLEENUM.UN_ENABLE.getCode())) {
-            throw new MyDefinitionException("当前用户已被禁用");
+        try {
+            qubaomingWeixinUserService.validateUserRight(activeUserId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
         }
+
 
         Integer userUnCompleteActiveId = null;
         try {

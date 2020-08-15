@@ -187,7 +187,7 @@ public class UserController {
         if (!b) {
             throw new MyDefinitionException(401, "密钥验证错误");
         }
-        String appid = propertiesValue.getAppid();
+        String appid = propertiesValue.getQuTouPiaoAppId();
         log.info("微信：ci" + appid + "32");
 
         return "AAAAA";

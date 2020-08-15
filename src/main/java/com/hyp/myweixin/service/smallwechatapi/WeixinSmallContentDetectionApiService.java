@@ -75,4 +75,38 @@ public interface WeixinSmallContentDetectionApiService {
      */
     JSONObject getAccessToken() throws MyDefinitionException;
 
+
+    /**
+     * 获取趣投票的accessToken
+     * 获取小程序全局唯一后台接口调用凭据（access_token）
+     * 调用绝大多数后台接口时都需使用 access_token，开发者需要进行妥善保存
+     * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+     *
+     * @return
+     * @throws MyDefinitionException
+     */
+    JSONObject getQuTouPiaoAccessToken() throws MyDefinitionException;
+
+
+    /**
+     * 获取趣报名的accessToken
+     * 获取小程序全局唯一后台接口调用凭据（access_token）
+     * 调用绝大多数后台接口时都需使用 access_token，开发者需要进行妥善保存
+     * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+     *
+     * @return
+     * @throws MyDefinitionException
+     */
+    JSONObject getQuBaoMingAccessToken() throws MyDefinitionException;
+
+
+    /**
+     * 通过appName获取对应的accessToken
+     *
+     * @param appName 小程序名称
+     * @return
+     * @throws MyDefinitionException
+     */
+    String getAccessTokenByAppName(String appName) throws MyDefinitionException;
+
 }

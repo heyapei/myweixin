@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyp.myweixin.mapper.qubaoming.QubaomingWeixinUserMapper" >
+  <resultMap id="BaseResultMap" type="com.hyp.myweixin.pojo.qubaoming.model.QubaomingWeixinUser" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="weixin_user_info_supply_id" property="weixinUserInfoSupplyId" jdbcType="INTEGER" />
+    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+    <result column="avatar_url" property="avatarUrl" jdbcType="VARCHAR" />
+    <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="ext1" property="ext1" jdbcType="VARCHAR" />
+    <result column="ext2" property="ext2" jdbcType="VARCHAR" />
+    <result column="ext3" property="ext3" jdbcType="VARCHAR" />
+    <result column="ext4" property="ext4" jdbcType="VARCHAR" />
+    <result column="ext5" property="ext5" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

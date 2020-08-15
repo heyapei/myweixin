@@ -5,6 +5,7 @@ import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyCreateQuery;
 import com.hyp.myweixin.service.WeixinVoteUserService;
+import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyCreateService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -26,7 +27,7 @@ public class WechatCompanyCreateServiceImpl implements WechatCompanyCreateServic
     private WechatCompanyService wechatCompanyService;
 
     @Autowired
-    private WeixinVoteUserService weixinVoteUserService;
+    private QubaomingWeixinUserService qubaomingWeixinUserService;
 
 
     /**
@@ -43,12 +44,12 @@ public class WechatCompanyCreateServiceImpl implements WechatCompanyCreateServic
             throw new MyDefinitionException("参数不能为空");
         }
 
-        WeixinVoteUser userById = weixinVoteUserService.getUserById(companyCreateQuery.getUserId());
-        if (userById == null) {
-            throw new MyDefinitionException("没有找到当前用户信息，请重新进行授权操作");
-        } else if (userById.getEnable().equals(WeixinVoteUser.ENABLEENUM.UN_ENABLE.getCode())) {
-            throw new MyDefinitionException("当前用户已被禁用");
+        try {
+            qubaomingWeixinUserService.validateUserRight(companyCreateQuery.getUserId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
         }
+
         WechatCompany wechatCompany;
         try {
             wechatCompany = MyEntityUtil.entity2VM(companyCreateQuery, WechatCompany.class);

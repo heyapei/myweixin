@@ -14,9 +14,20 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:wechat.properties")
 public class WeChatPropertiesValue {
 
-    @Value("${appid}")
-    private String appid;
+    @Value("${qutoupiao.appid}")
+    private String quTouPiaoAppId;
 
-    @Value("${appsecret}")
-    private String appSecret;
+    @Value("${qutoupiao.appsecret}")
+    private String quTouPiaoAppSecret;
+
+
+    @Value("${qubaoming.appid}")
+    private String quBaoMingAppId;
+
+    @Value("${qubaoming.appsecret}")
+    private String quBaoMingAppSecret;
+
+
+
+
 }

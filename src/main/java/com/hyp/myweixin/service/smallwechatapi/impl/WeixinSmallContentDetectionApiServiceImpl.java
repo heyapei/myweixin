@@ -16,9 +16,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +34,20 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
 
 
     /**
+     * 趣投票的AppName
+     */
+    @Value("${qutoupiao.app.name}")
+    private String QUTOUPIAO_APP_NAME;
+
+
+    /**
+     * 趣报名的AppName
+     */
+    @Value("${qubaoming.app.name}")
+    private String QUBAOMING_APP_NAME;
+
+
+    /**
      * 获取token用url
      */
     @Value("${weixin.small.access.token.url}")
@@ -45,6 +58,20 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
      */
     @Value("${weixin.small.access.token.redis.key}")
     private String ACCESS_TOKEN_REDIS_KEY;
+
+    /**
+     * 将获取回来的QUTOUPIAO token存入redis，
+     */
+    @Value("${weixin.small.qutoupiao.access.token.redis.key}")
+    private String QUTOUPIAO_ACCESS_TOKEN_REDIS_KEY;
+
+    /**
+     * 将获取回来的QUBAOMING token存入redis，
+     */
+    @Value("${weixin.small.qubaoming.access.token.redis.key}")
+    private String QUBAOMING_ACCESS_TOKEN_REDIS_KEY;
+
+
     /**
      * 过期时间设置为6000s
      */
@@ -343,8 +370,8 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
 
         Map<String, Object> parameterMap = new HashMap<>(3);
         parameterMap.put("grant_type", "client_credential");
-        parameterMap.put("appid", weChatPropertiesValue.getAppid());
-        parameterMap.put("secret", weChatPropertiesValue.getAppSecret());
+        parameterMap.put("appid", weChatPropertiesValue.getQuTouPiaoAppId());
+        parameterMap.put("secret", weChatPropertiesValue.getQuTouPiaoAppSecret());
         String resultAccessToken = null;
         try {
             resultAccessToken = myHttpClientUtil.getParameter(GET_ACCESS_TOKEN_URL, parameterMap, null);
@@ -371,5 +398,152 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
             }
         }
         return jsonObject;
+    }
+
+
+    /**
+     * 获取趣投票的accessToken
+     * 获取小程序全局唯一后台接口调用凭据（access_token）
+     * 调用绝大多数后台接口时都需使用 access_token，开发者需要进行妥善保存
+     * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+     *
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public JSONObject getQuTouPiaoAccessToken() throws MyDefinitionException {
+
+        Object o = myRedisUtil.get(QUTOUPIAO_ACCESS_TOKEN_REDIS_KEY);
+        if (o != null) {
+            JSONObject jsonObject = null;
+            String redisValue = String.valueOf(o);
+            try {
+                jsonObject = JSONObject.parseObject(redisValue);
+            } catch (Exception e) {
+                log.error("从redis获取微信趣投票token转换数据失败，错误原因：{}", e.toString());
+                throw new MyDefinitionException("从redis获取微信趣投票token转换数据失败");
+            }
+            return jsonObject;
+        }
+
+        Map<String, Object> parameterMap = new HashMap<>(3);
+        parameterMap.put("grant_type", "client_credential");
+        parameterMap.put("appid", weChatPropertiesValue.getQuTouPiaoAppId());
+        parameterMap.put("secret", weChatPropertiesValue.getQuTouPiaoAppSecret());
+        String resultAccessToken = null;
+        try {
+            resultAccessToken = myHttpClientUtil.getParameter(GET_ACCESS_TOKEN_URL, parameterMap, null);
+        } catch (Exception e) {
+            log.error("获取微信趣投票token请求失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("获取微信趣投票token请求失败");
+        }
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = JSONObject.parseObject(resultAccessToken);
+        } catch (Exception e) {
+            log.error("获取微信趣投票token转换数据失败，错误原因：{}", e.toString());
+            throw new MyDefinitionException("获取微信趣投票token转换数据失败");
+        }
+
+        if (jsonObject == null) {
+            throw new MyDefinitionException("获取微信趣投票token失败");
+        } else {
+            if (jsonObject.containsKey("access_token")) {
+                myRedisUtil.set(QUTOUPIAO_ACCESS_TOKEN_REDIS_KEY, jsonObject, ACCESS_TOKEN_REDIS_EXPIRE);
+            } else {
+                throw new MyDefinitionException("从微信系统中拉取的数据中并没有包含趣投票token数据，而是" + resultAccessToken + "" +
+                        "，该数据不符合要求");
+            }
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 获取趣报名的accessToken
+     * 获取小程序全局唯一后台接口调用凭据（access_token）
+     * 调用绝大多数后台接口时都需使用 access_token，开发者需要进行妥善保存
+     * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+     *
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public JSONObject getQuBaoMingAccessToken() throws MyDefinitionException {
+        Object o = myRedisUtil.get(QUBAOMING_ACCESS_TOKEN_REDIS_KEY);
+        if (o != null) {
+            JSONObject jsonObject = null;
+            String redisValue = String.valueOf(o);
+            try {
+                jsonObject = JSONObject.parseObject(redisValue);
+            } catch (Exception e) {
+                log.error("从redis获取微信趣报名token转换数据失败，错误原因：{}", e.toString());
+                throw new MyDefinitionException("从redis获取微信趣报名token转换数据失败");
+            }
+            return jsonObject;
+        }
+
+        Map<String, Object> parameterMap = new HashMap<>(3);
+        parameterMap.put("grant_type", "client_credential");
+        parameterMap.put("appid", weChatPropertiesValue.getQuBaoMingAppId());
+        parameterMap.put("secret", weChatPropertiesValue.getQuBaoMingAppSecret());
+        String resultAccessToken = null;
+        try {
+            resultAccessToken = myHttpClientUtil.getParameter(GET_ACCESS_TOKEN_URL, parameterMap, null);
+        } catch (Exception e) {
+            log.error("获取微信趣报名token请求失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("获取微信趣报名token请求失败");
+        }
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = JSONObject.parseObject(resultAccessToken);
+        } catch (Exception e) {
+            log.error("获取微信趣报名token转换数据失败，错误原因：{}", e.toString());
+            throw new MyDefinitionException("获取微信趣报名token转换数据失败");
+        }
+
+        if (jsonObject == null) {
+            throw new MyDefinitionException("获取微信趣报名token失败");
+        } else {
+            if (jsonObject.containsKey("access_token")) {
+                myRedisUtil.set(QUBAOMING_ACCESS_TOKEN_REDIS_KEY, jsonObject, ACCESS_TOKEN_REDIS_EXPIRE);
+            } else {
+                throw new MyDefinitionException("从微信系统中拉取的趣报名数据中并没有包含token数据，而是" + resultAccessToken + "" +
+                        "，该数据不符合要求");
+            }
+        }
+        return jsonObject;
+    }
+
+
+    /**
+     * 通过appName获取对应的accessToken
+     *
+     * @param appName 小程序名称
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public String getAccessTokenByAppName(String appName) throws MyDefinitionException {
+
+        String accessToken = null;
+        if (StringUtils.isNotBlank(appName)) {
+            JSONObject accessToken1 = null;
+            try {
+
+                if (appName.equalsIgnoreCase(QUBAOMING_APP_NAME)) {
+                    accessToken1 = getQuBaoMingAccessToken();
+                } else if (appName.equalsIgnoreCase(QUTOUPIAO_APP_NAME)) {
+                    accessToken1 = getQuTouPiaoAccessToken();
+                } else {
+                    throw new MyDefinitionException("并没有定义该appName值" + appName);
+                }
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+            accessToken = accessToken1.getString(JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN);
+        } else {
+            throw new MyDefinitionException("必须指定程序名称");
+        }
+        return accessToken;
     }
 }

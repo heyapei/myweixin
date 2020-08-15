@@ -32,4 +32,22 @@ public class ImgVideResConfig {
     private String activeUserWorkThumbnailsPath;
 
 
+
+
+    @Value("${active.img.qubaoming.base.path}")
+    private String quBaoMingActiveImgBasePath;
+
+    @Value("${active.img.qubaoming.vote.work.path}")
+    private String quBaoMingActiveVoteWorkPath;
+
+    @Value("${active.img.qubaoming.user.work.path}")
+    private String quBaoMingActiveUserWorkPath;
+
+    @Value("${active.img.qubaoming.vote.work.thumbnails.path}")
+    private String quBaoMingActiveVoteWorkThumbnailsPath;
+
+    @Value("${active.img.qubaoming.user.work.thumbnails.path}")
+    private String quBaoMingActiveUserWorkThumbnailsPath;
+
+
 }

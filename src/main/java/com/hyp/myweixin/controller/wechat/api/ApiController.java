@@ -51,8 +51,8 @@ public class ApiController {
         if (StringUtils.isBlank(code)) {
             throw new MyDefinitionException("换取openId的参数不可以为空");
         }
-        String appId = weChatPropertiesValue.getAppid();
-        String secret = weChatPropertiesValue.getAppSecret();
+        String appId = weChatPropertiesValue.getQuTouPiaoAppId();
+        String secret = weChatPropertiesValue.getQuTouPiaoAppSecret();
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appId + "&secret=" + secret + "&js_code=" + code + "&grant_type=authorization_code";
         String parameter = myHttpClientUtil.getParameter(url, null, null);
         log.info("使用code换取openId，请求的结果：" + parameter);
