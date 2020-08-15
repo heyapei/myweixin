@@ -26,4 +26,13 @@ public interface QubaomingActiveBaseMapper extends MyMapper<QubaomingActiveBase>
      */
     Integer updateActiveNameAndImg(QubaomingActiveBase qubaomingActiveBase);
 
+
+    /**
+     * 更新活动详情和图片
+     *
+     * @param qubaomingActiveBase 实体类
+     * @return 影响行数
+     */
+    Integer updateActiveDetailAndImg(QubaomingActiveBase qubaomingActiveBase);
+
 }

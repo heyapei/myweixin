@@ -72,6 +72,10 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
             qubaomingActiveBase.setActiveDesc(activeCreateFirstQuery.getText());
             qubaomingActiveBase.setActiveDescImg(activeCreateFirstQuery.getImg());
             return qubaomingActiveBaseService.updateActiveDescAndImg(qubaomingActiveBase);
+        } else if (activeCreateFirstQuery.getType().equalsIgnoreCase("detail")) {
+            qubaomingActiveBase.setActiveDetail(activeCreateFirstQuery.getText());
+            qubaomingActiveBase.setActiveDetailImg(activeCreateFirstQuery.getImg());
+            return qubaomingActiveBaseService.updateActiveDetailAndImg(qubaomingActiveBase);
         } else {
             throw new MyDefinitionException("当前指定的数据类型不在设计范围类，请联系管理员");
         }

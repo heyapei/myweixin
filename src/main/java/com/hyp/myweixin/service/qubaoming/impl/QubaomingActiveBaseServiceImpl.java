@@ -25,6 +25,26 @@ public class QubaomingActiveBaseServiceImpl implements QubaomingActiveBaseServic
 
 
     /**
+     * 更新活动详情和图片
+     *
+     * @param qubaomingActiveBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer updateActiveDetailAndImg(QubaomingActiveBase qubaomingActiveBase) throws MyDefinitionException {
+        Integer integer = null;
+        try {
+            integer = qubaomingActiveBaseMapper.updateActiveDetailAndImg(qubaomingActiveBase);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("更新趣报名活动详情和图片操作过程错误，错误原因：{}",e.toString());
+            throw new MyDefinitionException("更新趣报名活动详情和图片操作过程错误");
+        }
+        return integer;
+    }
+
+    /**
      * 更新活动描述和图片
      *
      * @param qubaomingActiveBase 实体类

@@ -44,6 +44,12 @@ public class ActiveCreateController {
     private QubaomingActiveCreateService qubaomingActiveCreateService;
 
 
+
+
+
+
+
+
     @ApiOperation(value = "第一页信息创建", tags = {"趣报名活动创建"})
     @PostMapping("firstPage/activeId")
     public Result<ValidateUnCompleteByActiveUserIdVO> createActiveFirst(

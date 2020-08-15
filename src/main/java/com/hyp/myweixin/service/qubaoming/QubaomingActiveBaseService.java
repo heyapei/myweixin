@@ -13,6 +13,16 @@ import java.util.List;
  */
 public interface QubaomingActiveBaseService {
 
+    /**
+     * 更新活动详情和图片
+     *
+     * @param qubaomingActiveBase 实体类
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer updateActiveDetailAndImg(QubaomingActiveBase qubaomingActiveBase) throws MyDefinitionException;
+
+
 
     /**
      * 更新活动描述和图片
