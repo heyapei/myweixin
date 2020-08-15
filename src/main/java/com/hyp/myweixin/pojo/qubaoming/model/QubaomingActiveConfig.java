@@ -2,7 +2,10 @@ package com.hyp.myweixin.pojo.qubaoming.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 @Data
 @Table(name = "qubaoming_active_config")
 public class QubaomingActiveConfig {
@@ -13,7 +16,7 @@ public class QubaomingActiveConfig {
      * 活动ID
      */
     @Column(name = "active_base_id")
-    private Integer activeBaseId;
+    private Integer activeId;
 
     /**
      * 活动地点
@@ -56,6 +59,44 @@ public class QubaomingActiveConfig {
      */
     @Column(name = "active_require_option")
     private String activeRequireOption;
+
+    public enum ActiveRequireOptionEnum {
+        NAME(1, "姓名"),
+        AGE(2, "年龄"),
+        PHONE(3, "电话"),
+        GENDER(4, "性别");
+
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        @Override
+        public String toString() {
+            return "ActiveRequireOptionEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        ActiveRequireOptionEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+    }
+
 
     /**
      * 备用字段

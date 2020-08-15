@@ -3,6 +3,7 @@ package com.hyp.myweixin.controller.qubaoming.active;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCreateService;
@@ -44,13 +45,37 @@ public class ActiveCreateController {
     private QubaomingActiveCreateService qubaomingActiveCreateService;
 
 
+    @ApiOperation(value = "保存第二页中活动配置相关内容", tags = {"趣报名活动创建"})
+    @PostMapping("secondPage/activeId")
+    public Result<Object> createActiveFirst(
+            @Validated ActiveCreateSecondQuery activeCreateSecondQuery, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+            Integer activeSecond = qubaomingActiveCreateService.createActiveSecond(activeCreateSecondQuery);
+
+            if (activeSecond != null && activeSecond > 0) {
+                return Result.buildResult(Result.Status.OK, activeSecond);
+            } else {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "未能成功创建配置信息");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+    }
 
 
-
-
-
-
-    @ApiOperation(value = "第一页信息创建", tags = {"趣报名活动创建"})
+    @ApiOperation(value = "第一页信息和第二页详情描述和图片的创建", tags = {"趣报名活动创建"})
     @PostMapping("firstPage/activeId")
     public Result<ValidateUnCompleteByActiveUserIdVO> createActiveFirst(
             @Validated ActiveCreateFirstQuery activeCreateFirstQuery, BindingResult bindingResult) {
@@ -67,7 +92,7 @@ public class ActiveCreateController {
 
         try {
             Integer activeFirst = qubaomingActiveCreateService.createActiveFirst(activeCreateFirstQuery);
-            if (activeFirst > 0) {
+            if (activeFirst != null && activeFirst > 0) {
                 return Result.buildResult(Result.Status.OK);
             } else {
                 return Result.buildResult(Result.Status.SERVER_ERROR, "未能更新成功当前内容" + activeCreateFirstQuery.getType());

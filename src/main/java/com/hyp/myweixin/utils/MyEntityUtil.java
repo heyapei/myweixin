@@ -2,6 +2,8 @@ package com.hyp.myweixin.utils;
 
 
 import com.github.pagehelper.Page;
+import com.hyp.myweixin.exception.MyDefinitionException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
@@ -19,13 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Carl
  */
+@Slf4j
 public class MyEntityUtil {
 
 
     /**
      * 赋默认值
      */
-    public static Object entitySetDefaultValue(Object object) {
+    public static Object entitySetDefaultValue(Object object) throws MyDefinitionException {
         final String defaultStr = "";
         final Date defaultDate = new Date();
         final BigDecimal defaultDecimal = new BigDecimal(0);
@@ -63,7 +66,8 @@ public class MyEntityUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
+            log.error("为对象赋予默认值错误，错误原因：{}",e.toString());
+            throw new MyDefinitionException("对象赋予默认值错误");
         }
         return object;
     }

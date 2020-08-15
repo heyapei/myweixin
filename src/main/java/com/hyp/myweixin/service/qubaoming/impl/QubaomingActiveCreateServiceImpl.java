@@ -3,13 +3,17 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveBaseService;
+import com.hyp.myweixin.service.qubaoming.QubaomingActiveConfigService;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCreateService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
+import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +37,60 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
 
     @Autowired
     private WeixinVoteUserService weixinVoteUserService;
+    @Autowired
+    private QubaomingActiveConfigService qubaomingActiveConfigService;
 
+
+    /**
+     * 创建第二页的信息 该页内容为配置信息
+     *
+     * @param activeCreateSecondQuery
+     * @return 配置表的主键信息
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer createActiveSecond(ActiveCreateSecondQuery activeCreateSecondQuery) throws MyDefinitionException {
+        if (activeCreateSecondQuery == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        QubaomingActiveConfig qubaomingActiveConfig = null;
+        try {
+            qubaomingActiveConfig = MyEntityUtil.entity2VM(activeCreateSecondQuery, QubaomingActiveConfig.class);
+        } catch (Exception e) {
+            log.error("配置数据转换错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("配置数据转换错误");
+        }
+
+        if (qubaomingActiveConfig == null) {
+            log.error("配置数据转换错误，错误原因：{}", "转换失败了数据为空");
+            throw new MyDefinitionException("配置数据转换了但是数据为空");
+        } else {
+            try {
+                qubaomingActiveConfig = (QubaomingActiveConfig) MyEntityUtil.entitySetDefaultValue(qubaomingActiveConfig);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+        }
+
+        try {
+            List<QubaomingActiveConfig> qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeCreateSecondQuery.getActiveId());
+            if (!qubaomingActiveConfigs.isEmpty()) {
+                throw new MyDefinitionException("无法为一个活动创建多个配置信息");
+            }
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+
+        Integer integer = null;
+        try {
+            integer = qubaomingActiveConfigService.insertReturnPk(qubaomingActiveConfig);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        return integer;
+    }
 
     /**
      * 创建第一页的信息

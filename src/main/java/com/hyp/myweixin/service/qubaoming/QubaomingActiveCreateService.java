@@ -1,8 +1,8 @@
 package com.hyp.myweixin.service.qubaoming;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 
 /**
@@ -13,6 +13,15 @@ import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserI
  */
 public interface QubaomingActiveCreateService {
 
+
+    /**
+     * 创建第二页的信息 该页内容为配置信息
+     *
+     * @param activeCreateSecondQuery
+     * @return 配置表的主键信息
+     * @throws MyDefinitionException
+     */
+    Integer createActiveSecond(ActiveCreateSecondQuery activeCreateSecondQuery) throws MyDefinitionException;
 
 
     /**
