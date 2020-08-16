@@ -18,7 +18,7 @@ public class CompanyCreateQuery {
     /**
      * 用户ID
      */
-    @ApiModelProperty(value = "用户ID", name = "userId", required = true)
+    @ApiModelProperty(value = "用户唯一标识", name = "userId", required = true)
     @NotNull(message = "用户必须先登录并授权")
     private Integer userId;
 
@@ -28,6 +28,14 @@ public class CompanyCreateQuery {
     @ApiModelProperty(value = "名称", name = "companyName", required = true)
     @NotNull(message = "公司名称不能为空")
     private String companyName;
+
+
+
+    /**
+     * 公司名称（充当公司简介）
+     */
+    @ApiModelProperty(value = "公司名称0--充当公司简介", name = "company", required = false)
+    private String company;
 
     /**
      * logo图片

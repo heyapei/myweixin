@@ -41,7 +41,7 @@ public class CompanyCreateController {
     private WechatCompanyCreateService wechatCompanyCreateService;
 
 
-    @ApiOperation(value = "创建公司主体信息", tags = {"趣报名公司主体创建"})
+    @ApiOperation(value = "创建公司主体信息", tags = {"趣报名公司主体相关"})
     @PostMapping("addCompany")
     public Result<Object> addCompany(
             @ApiParam(name = "创建用数据", value = "companyCreateQuery", required = true)

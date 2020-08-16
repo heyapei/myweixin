@@ -47,7 +47,7 @@ public class WechatCompany {
     private String address;
 
     /**
-     * 公司名称
+     * 公司名称（充当公司简介）
      */
     private String company;
 
@@ -145,6 +145,40 @@ public class WechatCompany {
      */
     @Column(name = "company_show_order")
     private Integer companyShowOrder;
+
+    public enum CompanyShowOrderEnum {
+        ORDINARY_COMPANY(0, "普通"),
+        DEFAULT_COMPANY(1, "默认");
+        /**
+         * 类型码
+         */
+        private Integer code;
+        /**
+         * 描述
+         */
+        private String msg;
+
+        @Override
+        public String toString() {
+            return "CompanyShowOrderEnum{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    '}';
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        CompanyShowOrderEnum(Integer code, String msg) {
+            this.code = code;
+            this.msg = msg;
+        }
+    }
 
 
 }

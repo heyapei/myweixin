@@ -2,12 +2,8 @@ package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.WechatCompanyMapper;
-import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
-import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyCreateQuery;
-import com.hyp.myweixin.service.WeixinVoteUserService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
-import com.hyp.myweixin.utils.MyEntityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +25,28 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     private WechatCompanyMapper wechatCompanyMapper;
 
 
+    /**
+     * 通过Example查询条件进行查询
+     *
+     * @param example 查询条件
+     * @return 列表数据
+     * @throws MyDefinitionException
+     */
+    @Override
+    public List<WechatCompany> selectListByExample(Example example) throws MyDefinitionException {
+
+        if (example == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        List<WechatCompany> wechatCompanies = null;
+        try {
+            wechatCompanies = wechatCompanyMapper.selectByExample(example);
+        } catch (Exception e) {
+            log.error("通过Example查询条件进行查询主办方信息操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("通过查询条件查询主办方信息操作过程错误");
+        }
+        return wechatCompanies;
+    }
 
     /**
      * 通过用户ID查询用户下的主办方信息

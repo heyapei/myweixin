@@ -3,6 +3,7 @@ package com.hyp.myweixin.service.qubaoming;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyCreateQuery;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -14,6 +15,14 @@ import java.util.List;
  */
 public interface WechatCompanyService {
 
+
+    /**
+     * 通过Example查询条件进行查询
+     * @param example 查询条件
+     * @return 列表数据
+     * @throws MyDefinitionException
+     */
+    List<WechatCompany> selectListByExample(Example example) throws MyDefinitionException;
 
 
 
