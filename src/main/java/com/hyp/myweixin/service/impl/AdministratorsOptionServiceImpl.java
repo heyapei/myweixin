@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @Author 何亚培
@@ -21,6 +22,29 @@ public class AdministratorsOptionServiceImpl implements AdministratorsOptionServ
     @Value("#{'${administrators.super.user.ids}'.split(';')}")
     private Integer[] superUserIds;
 
+    @Value("#{'${qubaoming.administrators.super.user.ids}'.split(';')}")
+    private Integer[] quBaoMingSuperUserIds;
+
+
+    /**
+     * 判断是否为趣报名的超级管理员
+     *
+     * @param userId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public boolean isQuBaoMingSuperAdministrators(Integer userId) throws MyDefinitionException {
+        if (userId == null) {
+            throw new MyDefinitionException("用户ID为空，判断失败");
+        }
+        for (Integer superUserId : quBaoMingSuperUserIds) {
+            if (superUserId.equals(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * 通过userId判断这个userId的用户是不是超级管理员

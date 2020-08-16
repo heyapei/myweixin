@@ -3,6 +3,8 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyCreateQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyUpdateQuery;
+import com.hyp.myweixin.service.AdministratorsOptionService;
 import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyCreateService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
@@ -28,7 +30,57 @@ public class WechatCompanyCreateServiceImpl implements WechatCompanyCreateServic
 
     @Autowired
     private QubaomingWeixinUserService qubaomingWeixinUserService;
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
 
+
+    /**
+     * 更新公司信息
+     *
+     * @param companyUpdateQuery
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer UpdateCompanyByCompanyUpdateQuery(CompanyUpdateQuery companyUpdateQuery) throws MyDefinitionException {
+
+        if (companyUpdateQuery == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        try {
+            qubaomingWeixinUserService.validateUserRight(companyUpdateQuery.getUserId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        WechatCompany wechatCompany = null;
+        try {
+            wechatCompany = wechatCompanyService.selectByPkId(companyUpdateQuery.getWechatCompanyId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        /*判断是否为超级管理员 如果是就不做任何判断*/
+        if (!administratorsOptionService.isQuBaoMingSuperAdministrators(companyUpdateQuery.getUserId())) {
+            if (!wechatCompany.getUserId().equals(companyUpdateQuery.getUserId())) {
+                throw new MyDefinitionException("您无权修改当前内容");
+            }
+        }
+        try {
+            wechatCompany = (WechatCompany) MyEntityUtil.entitySetDefaultValue(MyEntityUtil.entity2VM(companyUpdateQuery, WechatCompany.class));
+        } catch (MyDefinitionException e) {
+            log.error("更新数据转换为能插入数据库操作出现了错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("数据转换操作出现了错误");
+        }
+
+        wechatCompany.setId(companyUpdateQuery.getWechatCompanyId());
+
+        try {
+            return wechatCompanyService.updateSelectiveWechatCompany(wechatCompany);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+    }
 
     /**
      * 创建公司信息

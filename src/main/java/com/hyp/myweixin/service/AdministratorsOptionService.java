@@ -11,12 +11,22 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 public interface AdministratorsOptionService {
 
     /**
+     * 趣投票
      * 通过userId判断这个userId的用户是不是超级管理员
      * @param userId 用户ID
      * @return 是否为超级管理员
      * @throws MyDefinitionException
      */
     boolean isSuperAdministrators(Integer userId) throws MyDefinitionException;
+
+
+    /**
+     * 判断是否为趣报名的超级管理员
+     * @param userId
+     * @return
+     * @throws MyDefinitionException
+     */
+    boolean isQuBaoMingSuperAdministrators(Integer userId) throws MyDefinitionException;
 
 
 }
