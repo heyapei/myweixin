@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import tk.mybatis.spring.annotation.MapperScan;
 
 import java.util.concurrent.Executor;
@@ -14,12 +15,14 @@ import java.util.concurrent.Executor;
  * @author heyapei
  * @EnableAsync 开启异步
  * @ComponentScan扫描 所有需要的包, 包含一些自用的工具类包 所在的路径
+ * 在入口类使用注解@EnableTransactionManagement开启事务：
  */
 @SpringBootApplication
 //扫描 mybatis mapper 包路径
 @MapperScan(basePackages = "com.hyp.myweixin.mapper")
 @ComponentScan(basePackages = {"com.hyp"})
 @EnableAsync
+@EnableTransactionManagement
 public class MyweixinApplication {
 
     public static void main(String[] args) {

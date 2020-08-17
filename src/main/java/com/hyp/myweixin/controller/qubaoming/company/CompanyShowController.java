@@ -3,11 +3,14 @@ package com.hyp.myweixin.controller.qubaoming.company;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyDetailShowByUserIdQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyDetailShowQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyListShowQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.company.ShowUserCollectionPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.company.CompanyShowVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
+import com.hyp.myweixin.service.qubaoming.CompanyUserOptionService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyShowService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
@@ -44,9 +47,34 @@ public class CompanyShowController {
     @Autowired
     private WechatCompanyShowService wechatCompanyShowService;
 
+    @Autowired
+    private CompanyUserOptionService companyUserOptionService;
 
 
+    @ApiOperation(value = "获取用户收藏的公司列表 分页查询", tags = {"趣报名公司主体相关"})
+    @PostMapping("collectionList/userId")
+    public Result<PageInfo<WechatCompany>> showCollectionListByUserId(
+            @ApiParam(name = "用户对公司的收藏列表", value = "showUserCollectionPageQuery", required = true)
+            @Validated ShowUserCollectionPageQuery showUserCollectionPageQuery
+            , BindingResult bindingResult) {
 
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+        PageInfo<WechatCompany> pageInfo = null;
+        try {
+            pageInfo = companyUserOptionService.showCollectionListByUserId(showUserCollectionPageQuery);
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return Result.buildResult(Result.Status.OK, pageInfo);
+    }
 
 
 

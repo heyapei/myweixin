@@ -6,6 +6,7 @@ import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
@@ -39,6 +40,68 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
+    /**
+     * 创建第三页的信息 该页内容为公司信息配置
+     * 该步骤需要更新活动基础表中的 公司ID
+     *
+     * @param activeCreateThirdQuery
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer createActiveThird(ActiveCreateThirdQuery activeCreateThirdQuery) throws MyDefinitionException {
+        if (activeCreateThirdQuery == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        try {
+            qubaomingWeixinUserService.validateUserRight(activeCreateThirdQuery.getUserId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        WechatCompany wechatCompany = null;
+        try {
+            wechatCompany = wechatCompanyService.selectByPkId(activeCreateThirdQuery.getCompanyId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (wechatCompany == null) {
+            throw new MyDefinitionException("未能发现指定的公司主体信息");
+        }
+
+        if (!wechatCompany.getUserId().equals(activeCreateThirdQuery.getUserId())) {
+            throw new MyDefinitionException("您无法使用其他人的公司信息");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeCreateThirdQuery.getActiveId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("未能发现指定的活动信息");
+        }
+
+        if (!qubaomingActiveBase.getActiveUserId().equals(activeCreateThirdQuery.getUserId())) {
+            throw new MyDefinitionException("您无法为他人的活动指定公司主体信息");
+        }
+
+        qubaomingActiveBase.setActiveCompanyId(activeCreateThirdQuery.getCompanyId());
+        qubaomingActiveBase.setActiveStatus(QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
+        Integer integer = null;
+        try {
+            integer = qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        wechatCompany.setCompanyUsedNum(wechatCompany.getCompanyUsedNum() + 1);
+        try {
+            wechatCompanyService.updateSelectiveWechatCompany(wechatCompany);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException("增加公司主体使用量错误");
+        }
+        return integer;
+    }
 
     /**
      * 创建第二页的信息 该页内容为配置信息

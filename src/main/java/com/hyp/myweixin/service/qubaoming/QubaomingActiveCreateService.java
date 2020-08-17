@@ -3,6 +3,7 @@ package com.hyp.myweixin.service.qubaoming;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 
 /**
@@ -12,6 +13,17 @@ import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserI
  * @Description: TODO
  */
 public interface QubaomingActiveCreateService {
+
+
+    /**
+     * 创建第三页的信息 该页内容为公司信息配置
+     * 该步骤需要更新活动基础表中的 公司ID
+     *
+     * @param activeCreateThirdQuery
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer createActiveThird(ActiveCreateThirdQuery activeCreateThirdQuery) throws MyDefinitionException;
 
 
     /**

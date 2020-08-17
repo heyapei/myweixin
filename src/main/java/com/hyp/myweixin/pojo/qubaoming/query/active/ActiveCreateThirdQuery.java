@@ -2,6 +2,7 @@ package com.hyp.myweixin.pojo.qubaoming.query.active;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,11 +10,12 @@ import javax.validation.constraints.Size;
 /**
  * @Author 何亚培
  * @Version V1.0
- * @Date 2020/8/15 17:34
+ * @Date 2020/8/15 18:44
  * @Description: TODO
  */
 @Data
-public class ActiveCreateFirstQuery {
+public class ActiveCreateThirdQuery {
+
 
     /**
      * 用户ID
@@ -26,19 +28,9 @@ public class ActiveCreateFirstQuery {
     @NotNull(message = "必须先获取活动ID")
     private Integer activeId;
 
-
-    @ApiModelProperty(value = "文字描述", name = "text", required = true)
-    @NotNull(message = "文字描述不能为空")
-    private String text;
-
-
-    @ApiModelProperty(value = "图片信息", name = "img", required = false)
-    private String img;
-
-
-    @ApiModelProperty(value = "当前数据类型", name = "type", required = false)
-    @NotNull(message = "数据类型必须指定")
-    private String type;
+    @ApiModelProperty(value = "公司ID", name = "companyId", required = true)
+    @NotNull(message = "必须指定公司ID信息")
+    private Integer companyId;
 
     @ApiModelProperty(value = "时间戳", name = "nowTime", required = true)
     @NotNull(message = "时间戳必填")

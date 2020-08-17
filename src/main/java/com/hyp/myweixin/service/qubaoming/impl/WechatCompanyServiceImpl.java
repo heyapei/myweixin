@@ -26,6 +26,71 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
 
 
     /**
+     * 减少公司主体收藏数
+     *
+     * @param companyId 公司主体ID
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer decreaseCollectionNum(Integer companyId) throws MyDefinitionException {
+        if (companyId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        WechatCompany wechatCompany = null;
+        try {
+            wechatCompany = selectByPkId(companyId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (wechatCompany == null) {
+            throw new MyDefinitionException("没有找到指定的公司主体");
+        }
+        wechatCompany.setCompanyCollectionNum(wechatCompany.getCompanyCollectionNum() - 1);
+        Integer integer = null;
+        try {
+            integer = updateSelectiveWechatCompany(wechatCompany);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        return integer;
+    }
+
+    /**
+     * 新增公司主体收藏数
+     *
+     * @param companyId 公司主体ID
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer increaseCollectionNum(Integer companyId) throws MyDefinitionException {
+        if (companyId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        WechatCompany wechatCompany = null;
+        try {
+            wechatCompany = selectByPkId(companyId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (wechatCompany == null) {
+            throw new MyDefinitionException("没有找到指定的公司主体");
+        }
+        wechatCompany.setCompanyCollectionNum(wechatCompany.getCompanyCollectionNum() + 1);
+        Integer integer = null;
+        try {
+            integer = updateSelectiveWechatCompany(wechatCompany);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        return integer;
+    }
+
+    /**
      * 通过Example查询条件进行查询
      *
      * @param example 查询条件

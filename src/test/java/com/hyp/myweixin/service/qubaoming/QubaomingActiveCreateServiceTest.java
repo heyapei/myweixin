@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service.qubaoming;
 
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -27,5 +28,19 @@ public class QubaomingActiveCreateServiceTest {
         ValidateUnCompleteByActiveUserIdVO validateUnCompleteByActiveUserIdVO =
                 qubaomingActiveCreateService.validateUnCompleteByActiveUserId(1000000);
 
+    }
+
+    @Test
+    public void createActiveThird() {
+
+        ActiveCreateThirdQuery th = new ActiveCreateThirdQuery();
+        th.setUserId(2);
+        th.setActiveId(1);
+        th.setCompanyId(1);
+        th.setNowTime("");
+        th.setSign("");
+
+        Integer activeThird = qubaomingActiveCreateService.createActiveThird(th);
+        log.info("查询结果：{}", activeThird);
     }
 }

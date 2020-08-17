@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @Author 何亚培
@@ -88,5 +89,17 @@ public class ActiveCreateSecondQuery {
      */
     @ApiModelProperty(value = "报名人数最大值 0不限制，其他值为最大限制值", name = "activeJoinNumMax", required = true)
     private Integer activeJoinNumMax;
+
+
+    @ApiModelProperty(value = "时间戳", name = "nowTime", required = true)
+    @NotNull(message = "时间戳必填")
+    @Size(max = 13, min = 13, message = "时间戳必须为13位时间戳")
+    private String nowTime;
+
+
+    @ApiModelProperty(value = "请求密钥", name = "sign", required = true)
+    @NotNull(message = "请求密钥必填")
+    private String sign;
+
 
 }

@@ -4,6 +4,7 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCreateService;
@@ -45,9 +46,39 @@ public class ActiveCreateController {
     private QubaomingActiveCreateService qubaomingActiveCreateService;
 
 
+    @ApiOperation(value = "保存第三页中活动公司相关内容", tags = {"趣报名活动创建"})
+    @PostMapping("thirdPage/activeId")
+    public Result<Object> createActiveThird(
+            @Validated ActiveCreateThirdQuery activeCreateSecondQuery, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+            Integer activeSecond = qubaomingActiveCreateService.createActiveThird(activeCreateSecondQuery);
+
+            if (activeSecond != null && activeSecond > 0) {
+                return Result.buildResult(Result.Status.OK, activeSecond);
+            } else {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "未能成功配置公司主体信息，活动上线失败");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+    }
+
+
     @ApiOperation(value = "保存第二页中活动配置相关内容", tags = {"趣报名活动创建"})
     @PostMapping("secondPage/activeId")
-    public Result<Object> createActiveFirst(
+    public Result<Object> createActiveSecond(
             @Validated ActiveCreateSecondQuery activeCreateSecondQuery, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             ObjectError next = bindingResult.getAllErrors().iterator().next();
