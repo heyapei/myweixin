@@ -45,7 +45,7 @@ public class CompanyCreateController {
     @ApiOperation(value = "更新公司主体信息", tags = {"趣报名公司主体相关"})
     @PostMapping("updateCompany/companyId")
     public Result<Object> updateCompanyByCompanyId(
-            @ApiParam(name = "创建用数据", value = "companyCreateQuery", required = true)
+            @ApiParam(name = "更新用数据", value = "companyUpdateQuery", required = true)
             @Validated CompanyUpdateQuery companyUpdateQuery, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
