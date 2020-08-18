@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
  * @Description: TODO
  */
 @Data
-public class ShowHotActiveByPageQuery {
+public class ShowActiveByPageQuery {
 
 
     @ApiModelProperty(value = "分页查询页码数，默认第一页", name = "pageNum", required = false)

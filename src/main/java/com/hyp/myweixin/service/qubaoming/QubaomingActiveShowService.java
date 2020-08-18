@@ -2,7 +2,7 @@ package com.hyp.myweixin.service.qubaoming;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.query.active.ShowHotActiveByPageQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 
 /**
  * @author 何亚培
@@ -12,15 +12,25 @@ import com.hyp.myweixin.pojo.qubaoming.query.active.ShowHotActiveByPageQuery;
  */
 public interface QubaomingActiveShowService {
 
+    /**
+     * 分页查询热门活动信息
+     *
+     * @param showActiveByPageQuery
+     * @return
+     * @throws MyDefinitionException
+     */
+    PageInfo<Object> getAllActiveByShowActiveByPageQuery(ShowActiveByPageQuery showActiveByPageQuery) throws MyDefinitionException;
+
+
 
     /**
      * 分页查询热门活动信息
      *
-     * @param showHotActiveByPageQuery
+     * @param showActiveByPageQuery
      * @return
      * @throws MyDefinitionException
      */
-    PageInfo<Object> getHotActiveByShowHotActiveByPageQuery(ShowHotActiveByPageQuery showHotActiveByPageQuery) throws MyDefinitionException;
+    PageInfo<Object> getHotActiveByShowActiveByPageQuery(ShowActiveByPageQuery showActiveByPageQuery) throws MyDefinitionException;
 
 
 }

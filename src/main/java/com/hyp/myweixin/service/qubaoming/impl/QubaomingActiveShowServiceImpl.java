@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
-import com.hyp.myweixin.pojo.qubaoming.query.active.ShowHotActiveByPageQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveBaseService;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveShowService;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
@@ -30,17 +30,45 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     @Autowired
     private QubaomingActiveBaseService qubaomingActiveBaseService;
 
-
     /**
      * 分页查询热门活动信息
      *
-     * @param showHotActiveByPageQuery
+     * @param showActiveByPageQuery
      * @return
      * @throws MyDefinitionException
      */
     @Override
-    public PageInfo<Object> getHotActiveByShowHotActiveByPageQuery(ShowHotActiveByPageQuery showHotActiveByPageQuery) throws MyDefinitionException {
-        if (showHotActiveByPageQuery == null) {
+    public PageInfo<Object> getAllActiveByShowActiveByPageQuery(ShowActiveByPageQuery showActiveByPageQuery) throws MyDefinitionException {
+
+        if (showActiveByPageQuery == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        Example example = new Example(QubaomingActiveBase.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.orderBy("activeShowOrder").desc();
+        example.orderBy("createTime").desc();
+        example.orderBy("activeJoinNum").desc();
+        PageHelper.startPage(showActiveByPageQuery.getPageNum(), showActiveByPageQuery.getPageSize());
+        PageInfo pageInfo = null;
+        try {
+            List<QubaomingActiveBase> qubaomingActiveBases = qubaomingActiveBaseService.selectUserActiveByExample(example);
+            pageInfo = new PageInfo(qubaomingActiveBases);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        return pageInfo;
+    }
+
+    /**
+     * 分页查询热门活动信息
+     *
+     * @param showActiveByPageQuery
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public PageInfo<Object> getHotActiveByShowActiveByPageQuery(ShowActiveByPageQuery showActiveByPageQuery) throws MyDefinitionException {
+        if (showActiveByPageQuery == null) {
             throw new MyDefinitionException("参数不能为空");
         }
         Example example = new Example(QubaomingActiveBase.class);
@@ -53,7 +81,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         example.orderBy("activeCollectionNum").desc();
         example.orderBy("activeViewNum").desc();
 
-        PageHelper.startPage(showHotActiveByPageQuery.getPageNum(), showHotActiveByPageQuery.getPageSize());
+        PageHelper.startPage(showActiveByPageQuery.getPageNum(), showActiveByPageQuery.getPageSize());
         PageInfo pageInfo = null;
         try {
             List<QubaomingActiveBase> qubaomingActiveBases = qubaomingActiveBaseService.selectUserActiveByExample(example);
