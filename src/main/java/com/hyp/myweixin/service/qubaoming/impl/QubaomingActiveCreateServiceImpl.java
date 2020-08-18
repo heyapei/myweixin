@@ -11,7 +11,9 @@ import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserI
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
+import com.hyp.myweixin.utils.MySeparatorUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -143,6 +145,22 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
             throw new MyDefinitionException(e.getMessage());
         }
 
+
+        /*去除空数据 只保留有效数据*/
+        String activeRequireOption = qubaomingActiveConfig.getActiveRequireOption();
+        if (StringUtils.isNotBlank(activeRequireOption)) {
+            String[] split = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+            StringBuffer stringBuffer = new StringBuffer();
+            for (String s : split) {
+                if (StringUtils.isBlank(s)) {
+                    continue;
+                }
+
+                stringBuffer.append(s).append(MySeparatorUtil.SEMICOLON_SEPARATOR);
+            }
+            activeRequireOption = stringBuffer.toString();
+            qubaomingActiveConfig.setActiveRequireOption(activeRequireOption);
+        }
 
         Integer integer = null;
         try {
