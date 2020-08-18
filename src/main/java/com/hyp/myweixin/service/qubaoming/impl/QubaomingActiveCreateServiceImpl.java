@@ -137,7 +137,10 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
         try {
             List<QubaomingActiveConfig> qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeCreateSecondQuery.getActiveId());
             if (!qubaomingActiveConfigs.isEmpty()) {
-                throw new MyDefinitionException("无法为一个活动创建多个配置信息");
+                //throw new MyDefinitionException("无法为一个活动创建多个配置信息");
+                QubaomingActiveConfig qubaomingActiveConfig1 = qubaomingActiveConfigs.get(0);
+                qubaomingActiveConfig.setId(qubaomingActiveConfig1.getId());
+                return qubaomingActiveConfigService.updateSelectiveQubaomingActiveConfigBase(qubaomingActiveConfig);
             }
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
