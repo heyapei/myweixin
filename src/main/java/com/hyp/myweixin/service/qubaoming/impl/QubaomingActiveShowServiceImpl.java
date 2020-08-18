@@ -4,15 +4,21 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
+import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveByShowActiveCompleteVO;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveBaseService;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveShowService;
+import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
+import com.hyp.myweixin.utils.MyEntityUtil;
+import com.hyp.myweixin.utils.MySeparatorUtil;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +35,9 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
 
     @Autowired
     private QubaomingActiveBaseService qubaomingActiveBaseService;
+
+    @Autowired
+    private WechatCompanyService wechatCompanyService;
 
     /**
      * 分页查询热门活动信息
@@ -53,6 +62,31 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         try {
             List<QubaomingActiveBase> qubaomingActiveBases = qubaomingActiveBaseService.selectUserActiveByExample(example);
             pageInfo = new PageInfo(qubaomingActiveBases);
+
+            List<ActiveByShowActiveCompleteVO> activeByShowActiveCompleteVOList = new ArrayList<>();
+            List<ActiveByShowActiveCompleteVO> activeByShowActiveCompleteVOS = MyEntityUtil.entity2VMList(qubaomingActiveBases, ActiveByShowActiveCompleteVO.class);
+            for (ActiveByShowActiveCompleteVO activeByShowActiveCompleteVO : activeByShowActiveCompleteVOS) {
+                WechatCompany wechatCompany = null;
+                try {
+                    wechatCompany = wechatCompanyService.selectByPkId(activeByShowActiveCompleteVO.getActiveCompanyId());
+                } catch (MyDefinitionException e) {
+                    //do nothing
+                }
+
+                if (wechatCompany != null) {
+                    wechatCompany.setLogoImg(wechatCompany.getLogoImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, ""));
+                    wechatCompany.setWeixinQrCode(wechatCompany.getWeixinQrCode().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, ""));
+                }
+
+                activeByShowActiveCompleteVO.setWechatCompany(wechatCompany);
+
+                activeByShowActiveCompleteVO.setActiveImgList(activeByShowActiveCompleteVO.getActiveImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+                activeByShowActiveCompleteVO.setActiveDescImgList(activeByShowActiveCompleteVO.getActiveDescImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+                activeByShowActiveCompleteVO.setActiveDetailImgList(activeByShowActiveCompleteVO.getActiveDetailImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+
+                activeByShowActiveCompleteVOList.add(activeByShowActiveCompleteVO);
+            }
+
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
         }
@@ -86,6 +120,35 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         try {
             List<QubaomingActiveBase> qubaomingActiveBases = qubaomingActiveBaseService.selectUserActiveByExample(example);
             pageInfo = new PageInfo(qubaomingActiveBases);
+
+            List<ActiveByShowActiveCompleteVO> activeByShowActiveCompleteVOList = new ArrayList<>();
+
+            List<ActiveByShowActiveCompleteVO> activeByShowActiveCompleteVOS = MyEntityUtil.entity2VMList(qubaomingActiveBases, ActiveByShowActiveCompleteVO.class);
+            for (ActiveByShowActiveCompleteVO activeByShowActiveCompleteVO : activeByShowActiveCompleteVOS) {
+                WechatCompany wechatCompany = null;
+                try {
+                    wechatCompany = wechatCompanyService.selectByPkId(activeByShowActiveCompleteVO.getActiveCompanyId());
+                } catch (MyDefinitionException e) {
+                    //do nothing
+                }
+
+                if (wechatCompany != null) {
+                    wechatCompany.setLogoImg(wechatCompany.getLogoImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, ""));
+                    wechatCompany.setWeixinQrCode(wechatCompany.getWeixinQrCode().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, ""));
+                }
+
+                activeByShowActiveCompleteVO.setWechatCompany(wechatCompany);
+
+                activeByShowActiveCompleteVO.setActiveImgList(activeByShowActiveCompleteVO.getActiveImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+                activeByShowActiveCompleteVO.setActiveDescImgList(activeByShowActiveCompleteVO.getActiveDescImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+                activeByShowActiveCompleteVO.setActiveDetailImgList(activeByShowActiveCompleteVO.getActiveDetailImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+
+                activeByShowActiveCompleteVOList.add(activeByShowActiveCompleteVO);
+            }
+
+
+            pageInfo.setList(activeByShowActiveCompleteVOS);
+
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
         }
