@@ -2,6 +2,7 @@ package com.hyp.myweixin.service.qubaoming;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -65,6 +66,16 @@ public interface QubaomingActiveBaseService {
      */
     List<QubaomingActiveBase> selectUserActiveByStatus(Integer activeUserId, Integer activeStatus) throws MyDefinitionException;
 
+
+
+    /**
+     * 根据查询条件查询结果
+     *
+     * @param example 查询条件
+     * @return 完整的实体类
+     * @throws MyDefinitionException
+     */
+    List<QubaomingActiveBase> selectUserActiveByExample(Example example) throws MyDefinitionException;
 
 
 

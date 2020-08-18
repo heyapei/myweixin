@@ -38,7 +38,7 @@ public class QubaomingActiveBaseServiceImpl implements QubaomingActiveBaseServic
             integer = qubaomingActiveBaseMapper.updateActiveDetailAndImg(qubaomingActiveBase);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("更新趣报名活动详情和图片操作过程错误，错误原因：{}",e.toString());
+            log.error("更新趣报名活动详情和图片操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("更新趣报名活动详情和图片操作过程错误");
         }
         return integer;
@@ -58,7 +58,7 @@ public class QubaomingActiveBaseServiceImpl implements QubaomingActiveBaseServic
             integer = qubaomingActiveBaseMapper.updateActiveDescAndImg(qubaomingActiveBase);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("更新趣报名活动描述和图片操作过程错误，错误原因：{}",e.toString());
+            log.error("更新趣报名活动描述和图片操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("更新趣报名活动描述和图片操作过程错误");
         }
         return integer;
@@ -78,7 +78,7 @@ public class QubaomingActiveBaseServiceImpl implements QubaomingActiveBaseServic
             integer = qubaomingActiveBaseMapper.updateActiveNameAndImg(qubaomingActiveBase);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("更新趣报名活动名称和图片操作过程错误，错误原因：{}",e.toString());
+            log.error("更新趣报名活动名称和图片操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("更新趣报名活动名称和图片操作过程错误");
         }
         return integer;
@@ -163,6 +163,31 @@ public class QubaomingActiveBaseServiceImpl implements QubaomingActiveBaseServic
             throw new MyDefinitionException("创建活动基础信息操作过程错误");
         }
         return pkId;
+    }
+
+    /**
+     * 根据查询条件查询结果
+     *
+     * @param example 查询条件
+     * @return 完整的实体类
+     * @throws MyDefinitionException
+     */
+    @Override
+    public List<QubaomingActiveBase> selectUserActiveByExample(Example example) throws MyDefinitionException {
+
+        if (example == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        List<QubaomingActiveBase> qubaomingActiveBases = null;
+        try {
+            qubaomingActiveBases = qubaomingActiveBaseMapper.selectByExample(example);
+        } catch (Exception e) {
+            log.error("根据查询条件查询结果操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("查询操作过程错误");
+        }
+
+        return qubaomingActiveBases;
     }
 
     /**
