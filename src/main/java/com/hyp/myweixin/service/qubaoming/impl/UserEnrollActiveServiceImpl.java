@@ -42,6 +42,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
      * @return 影响的行数
      * @throws MyDefinitionException
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer UserUnEnrollActive(Integer userId, Integer activeId) throws MyDefinitionException {
 

@@ -61,6 +61,7 @@ public class QubaomingActiveBase {
         qubaomingActiveBase.setActiveDescImg("");
         qubaomingActiveBase.setActiveDetail("");
         qubaomingActiveBase.setActiveDetailImg("");
+        qubaomingActiveBase.setActiveShareImg("");
         qubaomingActiveBase.setActiveStatus(0);
         qubaomingActiveBase.setActiveShareNum(0);
         qubaomingActiveBase.setActiveViewNum(0);
@@ -106,6 +107,12 @@ public class QubaomingActiveBase {
      */
     @Column(name = "active_desc_img")
     private String activeDescImg;
+
+    /**
+     * 活动分享图片
+     */
+    @Column(name = "active_share_img")
+    private String activeShareImg;
 
 
 

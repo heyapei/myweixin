@@ -16,6 +16,17 @@ public interface QubaomingActiveCreateService {
 
 
     /**
+     * 新增活动分享图
+     *
+     * @param activeId 活动ID
+     * @param shareImg 分享图片
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer addActiveShareImg(Integer activeId, String shareImg) throws MyDefinitionException;
+
+
+    /**
      * 创建第三页的信息 该页内容为公司信息配置
      * 该步骤需要更新活动基础表中的 公司ID
      *

@@ -40,6 +40,42 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
+
+    /**
+     * 新增活动分享图
+     *
+     * @param activeId 活动ID
+     * @param shareImg 分享图片
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer addActiveShareImg(Integer activeId, String shareImg) throws MyDefinitionException {
+
+        if (activeId == null || shareImg == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有找到指定的活动数据");
+        }
+        qubaomingActiveBase.setActiveShareImg(shareImg);
+        qubaomingActiveBase.setUpdateTime(System.currentTimeMillis());
+        Integer integer = null;
+        try {
+            integer = qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        return integer;
+    }
+
     /**
      * 创建第三页的信息 该页内容为公司信息配置
      * 该步骤需要更新活动基础表中的 公司ID
