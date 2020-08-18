@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 
 @RestController
-@RequestMapping(" ")
+@RequestMapping("qubaoming/active/show")
 @Slf4j
 public class ActiveShowController {
 
