@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Data
-@Table(name = "company_user_collection")
+@Table(name = "qubaoming_company_user_collection")
 public class CompanyUserCollection {
     @Id
     private Integer id;
