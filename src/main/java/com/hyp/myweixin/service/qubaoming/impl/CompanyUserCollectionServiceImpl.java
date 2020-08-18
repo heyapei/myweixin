@@ -2,7 +2,7 @@ package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.CompanyUserCollectionMapper;
-import com.hyp.myweixin.pojo.qubaoming.model.CompanyUserCollection;
+import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
 import com.hyp.myweixin.service.qubaoming.CompanyUserCollectionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
      * @throws MyDefinitionException
      */
     @Override
-    public Integer insertReturnPk(CompanyUserCollection companyUserCollection) throws MyDefinitionException {
+    public Integer insertReturnPk(QuBaoMingCompanyUserCollection companyUserCollection) throws MyDefinitionException {
         if (companyUserCollection == null) {
             throw new MyDefinitionException("参数不能为空");
         }
@@ -105,7 +105,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
      * @throws MyDefinitionException
      */
     @Override
-    public Integer updateSelectiveCompanyUserCollection(CompanyUserCollection companyUserCollection) throws MyDefinitionException {
+    public Integer updateSelectiveCompanyUserCollection(QuBaoMingCompanyUserCollection companyUserCollection) throws MyDefinitionException {
         if (companyUserCollection == null) {
             throw new MyDefinitionException("参数能为空");
         }
@@ -127,11 +127,11 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
      * @throws MyDefinitionException
      */
     @Override
-    public CompanyUserCollection selectByPkId(Integer pkId) throws MyDefinitionException {
+    public QuBaoMingCompanyUserCollection selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
             throw new MyDefinitionException("参数能为空");
         }
-        CompanyUserCollection companyUserCollection = null;
+        QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {
             companyUserCollection = companyUserCollectionMapper.selectByPrimaryKey(pkId);
         } catch (Exception e) {
@@ -149,13 +149,13 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
      * @throws MyDefinitionException
      */
     @Override
-    public CompanyUserCollection selectOneByExample(Example example) throws MyDefinitionException {
+    public QuBaoMingCompanyUserCollection selectOneByExample(Example example) throws MyDefinitionException {
 
         if (example == null) {
             throw new MyDefinitionException("参数能为空");
         }
 
-        CompanyUserCollection companyUserCollection = null;
+        QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {
             companyUserCollection = companyUserCollectionMapper.selectOneByExample(example);
         } catch (Exception e) {
@@ -175,12 +175,12 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
      * @throws MyDefinitionException
      */
     @Override
-    public List<CompanyUserCollection> selectAllByExample(Example example) throws MyDefinitionException {
+    public List<QuBaoMingCompanyUserCollection> selectAllByExample(Example example) throws MyDefinitionException {
         if (example == null) {
             throw new MyDefinitionException("参数能为空");
         }
 
-        List<CompanyUserCollection> companyUserCollections = null;
+        List<QuBaoMingCompanyUserCollection> companyUserCollections = null;
         try {
             companyUserCollections = companyUserCollectionMapper.selectByExample(example);
         } catch (Exception e) {

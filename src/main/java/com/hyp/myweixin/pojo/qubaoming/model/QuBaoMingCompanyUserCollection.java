@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Data
 @Table(name = "qubaoming_company_user_collection")
-public class CompanyUserCollection {
+public class QuBaoMingCompanyUserCollection {
     @Id
     private Integer id;
 

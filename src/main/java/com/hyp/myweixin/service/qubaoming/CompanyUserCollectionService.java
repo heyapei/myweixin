@@ -1,8 +1,7 @@
 package com.hyp.myweixin.service.qubaoming;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.model.CompanyUserCollection;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
+import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public interface CompanyUserCollectionService {
      * @return 主键
      * @throws MyDefinitionException
      */
-    Integer insertReturnPk(CompanyUserCollection companyUserCollection) throws MyDefinitionException;
+    Integer insertReturnPk(QuBaoMingCompanyUserCollection companyUserCollection) throws MyDefinitionException;
 
     /**
      * 根据主键删除用户对公司主体收藏数据
@@ -52,7 +51,7 @@ public interface CompanyUserCollectionService {
      * @return 影响的行数
      * @throws MyDefinitionException
      */
-    Integer updateSelectiveCompanyUserCollection(CompanyUserCollection companyUserCollection) throws MyDefinitionException;
+    Integer updateSelectiveCompanyUserCollection(QuBaoMingCompanyUserCollection companyUserCollection) throws MyDefinitionException;
 
     /**
      * 通过主键查找用户对公司主体收藏数据 如果没有返回null
@@ -61,7 +60,7 @@ public interface CompanyUserCollectionService {
      * @return 完整的实体类
      * @throws MyDefinitionException
      */
-    CompanyUserCollection selectByPkId(Integer pkId) throws MyDefinitionException;
+    QuBaoMingCompanyUserCollection selectByPkId(Integer pkId) throws MyDefinitionException;
 
 
     /**
@@ -71,7 +70,7 @@ public interface CompanyUserCollectionService {
      * @return 完整的实体类
      * @throws MyDefinitionException
      */
-    CompanyUserCollection selectOneByExample(Example example) throws MyDefinitionException;
+    QuBaoMingCompanyUserCollection selectOneByExample(Example example) throws MyDefinitionException;
 
 
     /**
@@ -81,7 +80,7 @@ public interface CompanyUserCollectionService {
      * @return 完整的实体类
      * @throws MyDefinitionException
      */
-    List<CompanyUserCollection> selectAllByExample(Example example) throws MyDefinitionException;
+    List<QuBaoMingCompanyUserCollection> selectAllByExample(Example example) throws MyDefinitionException;
 
 
 

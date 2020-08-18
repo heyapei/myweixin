@@ -3,7 +3,7 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.model.CompanyUserCollection;
+import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyUserOptionQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.company.ShowUserCollectionPageQuery;
@@ -51,12 +51,12 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
             throw new MyDefinitionException("参数能为空");
         }
 
-        Example example = new Example(CompanyUserCollection.class);
+        Example example = new Example(QuBaoMingCompanyUserCollection.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("userId", showUserCollectionPageQuery.getUserId());
         example.orderBy("createTime").desc();
         PageHelper.startPage(showUserCollectionPageQuery.getPageNum(), showUserCollectionPageQuery.getPageSize());
-        List<CompanyUserCollection> companyUserCollections = null;
+        List<QuBaoMingCompanyUserCollection> companyUserCollections = null;
         try {
             companyUserCollections = companyUserCollectionService.selectAllByExample(example);
         } catch (MyDefinitionException e) {
@@ -64,7 +64,7 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
         }
         PageInfo pageInfoWeixinVoteBase = new PageInfo(companyUserCollections);
         List<WechatCompany> wechatCompanies = new ArrayList<>();
-        for (CompanyUserCollection companyUserCollection : companyUserCollections) {
+        for (QuBaoMingCompanyUserCollection companyUserCollection : companyUserCollections) {
             WechatCompany wechatCompany = null;
             try {
                 wechatCompany = wechatCompanyService.selectByPkId(companyUserCollection.getCompanyId());
@@ -105,21 +105,21 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
             throw new MyDefinitionException("参数能为空");
         }
 
-        CompanyUserCollection companyUserCollection = null;
+        QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {
-            companyUserCollection = MyEntityUtil.entity2VM(companyUserOptionQuery, CompanyUserCollection.class);
-            companyUserCollection = (CompanyUserCollection) MyEntityUtil.entitySetDefaultValue(companyUserCollection);
+            companyUserCollection = MyEntityUtil.entity2VM(companyUserOptionQuery, QuBaoMingCompanyUserCollection.class);
+            companyUserCollection = (QuBaoMingCompanyUserCollection) MyEntityUtil.entitySetDefaultValue(companyUserCollection);
             companyUserCollection.setCreateTime(System.currentTimeMillis());
         } catch (MyDefinitionException e) {
             log.error("收藏数据转换和赋予默认值错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("收藏数据转换和赋予默认值错误");
         }
 
-        Example example = new Example(CompanyUserCollection.class);
+        Example example = new Example(QuBaoMingCompanyUserCollection.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("userId", companyUserOptionQuery.getUserId());
         criteria.andEqualTo("companyId", companyUserOptionQuery.getCompanyId());
-        CompanyUserCollection companyUserCollection1 = companyUserCollectionService.selectOneByExample(example);
+        QuBaoMingCompanyUserCollection companyUserCollection1 = companyUserCollectionService.selectOneByExample(example);
         if (companyUserCollection1 != null) {
             throw new MyDefinitionException("用户已收藏了该公司主体，无需再次收藏");
         }
@@ -160,15 +160,15 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
         if (companyUserOptionQuery == null) {
             throw new MyDefinitionException("参数能为空");
         }
-        CompanyUserCollection companyUserCollection = null;
+        QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {
-            companyUserCollection = MyEntityUtil.entity2VM(companyUserOptionQuery, CompanyUserCollection.class);
-            companyUserCollection = (CompanyUserCollection) MyEntityUtil.entitySetDefaultValue(companyUserCollection);
+            companyUserCollection = MyEntityUtil.entity2VM(companyUserOptionQuery, QuBaoMingCompanyUserCollection.class);
+            companyUserCollection = (QuBaoMingCompanyUserCollection) MyEntityUtil.entitySetDefaultValue(companyUserCollection);
         } catch (MyDefinitionException e) {
             log.error("收藏数据转换和赋予默认值错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("收藏数据转换和赋予默认值错误");
         }
-        Example example = new Example(CompanyUserCollection.class);
+        Example example = new Example(QuBaoMingCompanyUserCollection.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("userId", companyUserOptionQuery.getUserId());
         criteria.andEqualTo("companyId", companyUserOptionQuery.getCompanyId());
