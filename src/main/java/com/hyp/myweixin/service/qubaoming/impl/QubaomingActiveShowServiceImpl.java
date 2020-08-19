@@ -109,7 +109,11 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
                // activeByShowActiveCompleteVO.setHasCollectionActive(false);
 
                 activeByShowActiveCompleteVOList.add(activeByShowActiveCompleteVO);
+
+                //log.info("处理结果：{}",activeByShowActiveCompleteVOList.toString());
             }
+
+            pageInfo.setList(activeByShowActiveCompleteVOS);
 
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
