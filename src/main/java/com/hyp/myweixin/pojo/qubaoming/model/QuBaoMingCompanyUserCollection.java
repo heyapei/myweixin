@@ -6,6 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * @author heyapei
+ */
 @Data
 @Table(name = "qubaoming_company_user_collection")
 public class QuBaoMingCompanyUserCollection {

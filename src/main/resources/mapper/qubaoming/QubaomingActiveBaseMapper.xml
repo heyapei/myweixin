@@ -12,6 +12,7 @@
         <result column="active_desc_img" property="activeDescImg" jdbcType="VARCHAR"/>
         <result column="active_detail" property="activeDetail" jdbcType="VARCHAR"/>
         <result column="active_detail_img" property="activeDetailImg" jdbcType="VARCHAR"/>
+        <result column="active_share_img" property="activeShareImg" jdbcType="VARCHAR"/>
         <result column="active_status" property="activeStatus" jdbcType="INTEGER"/>
         <result column="active_share_num" property="activeShareNum" jdbcType="INTEGER"/>
         <result column="active_view_num" property="activeViewNum" jdbcType="INTEGER"/>
