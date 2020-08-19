@@ -2,6 +2,7 @@ package com.hyp.myweixin.controller.qubaoming.enroll;
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.qubaoming.query.enroll.JudgeActiveSignUpQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.enroll.UserEnrollActiveQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.UserEnrollActiveService;
@@ -39,6 +40,29 @@ public class UserEnrollActiveController {
 
     @Autowired
     private UserEnrollActiveService userEnrollActiveService;
+
+
+    @ApiOperation(value = "通过用户ID和活动ID判断是否允许报名", tags = {"趣报名活动相关"})
+    @PostMapping("judgeActiveSignUp/activeIdAndUserId")
+    public Result<Object> judgeActiveSignUp(
+            @ApiParam(name = "判断活动是否可以报名的参数", value = "judgeActiveSignUpQuery", required = true)
+            @Validated JudgeActiveSignUpQuery judgeActiveSignUpQuery
+            , BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+        try {
+            userEnrollActiveService.ValidateUserSignActive(judgeActiveSignUpQuery.getUserId(), judgeActiveSignUpQuery.getActiveId());
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return Result.buildResult(Result.Status.OK, "允许报名");
+    }
 
 
     @ApiOperation(value = "用户收藏活动", tags = {"趣报名活动相关"})

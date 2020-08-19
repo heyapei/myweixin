@@ -3,7 +3,7 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.CompanyUserCollectionMapper;
 import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
-import com.hyp.myweixin.service.qubaoming.CompanyUserCollectionService;
+import com.hyp.myweixin.service.qubaoming.QuBaoMingCompanyUserCollectionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionService {
+public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompanyUserCollectionService {
 
     @Autowired
     private CompanyUserCollectionMapper companyUserCollectionMapper;

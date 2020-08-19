@@ -2,16 +2,18 @@ package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveUserCollection;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveBaseService;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveUserCollectionService;
-import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
-import com.hyp.myweixin.service.qubaoming.UserEnrollActiveService;
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingUserSignUp;
+import com.hyp.myweixin.service.qubaoming.*;
+import com.hyp.myweixin.utils.MyErrorList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -31,6 +33,109 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
 
     @Autowired
     private QubaomingActiveBaseService qubaomingActiveBaseService;
+
+    @Autowired
+    private QubaomingActiveConfigService qubaomingActiveConfigService;
+
+
+    @Autowired
+    private QubaomingUserSignUpService qubaomingUserSignUpService;
+
+    /**
+     * 验证用户是否可以报名
+     * 1. 是否在时间范围内
+     * 2. 是否已经报名了
+     * 3. 报名名额是否已满
+     * 4. 人员是否拥有权限
+     * 5. 活动是否已上线
+     *
+     * @param userId
+     * @param activeId
+     * @return 处理结果 为null就说明可以 不为null就要处理
+     * @throws MyDefinitionException
+     */
+    @Override
+    public MyErrorList ValidateUserSignActive(Integer userId, Integer activeId)
+            throws MyDefinitionException {
+
+        if (userId == null || activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        /*判断是否已经报名了*/
+        Example example = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId", userId);
+        criteria.andEqualTo("activeId", activeId);
+        try {
+            QubaomingUserSignUp qubaomingUserSignUp = qubaomingUserSignUpService.selectOneQubaomingUserSignUpByExample(example);
+            if (qubaomingUserSignUp != null) {
+                throw new MyDefinitionException("当前已经报名成功，无需重复报名");
+            }
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        try {
+            qubaomingWeixinUserService.validateUserRight(userId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        /*判断活动是否可以报名*/
+        if (qubaomingActiveBase == null || !qubaomingActiveBase.getActiveStatus().equals(QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode())) {
+            throw new MyDefinitionException("当前活动不允许报名");
+        }
+        /*判断活动配置项*/
+        QubaomingActiveConfig qubaomingActiveConfig = null;
+        List<QubaomingActiveConfig> qubaomingActiveConfigs = null;
+        try {
+            qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
+            qubaomingActiveConfig = qubaomingActiveConfigs.get(0);
+        } else {
+            throw new MyDefinitionException("没有找到当前活动的配置项");
+        }
+        long timeMillis = System.currentTimeMillis();
+        Long activeStartTime = qubaomingActiveConfig.getActiveStartTime();
+        Long activeEndTime = qubaomingActiveConfig.getActiveEndTime();
+        Long signUpEndTime = qubaomingActiveConfig.getSignUpEndTime();
+        Long signUpStartTime = qubaomingActiveConfig.getSignUpStartTime();
+
+        if (activeEndTime < timeMillis) {
+            throw new MyDefinitionException("活动已结束");
+        }
+        if (activeStartTime > timeMillis) {
+            throw new MyDefinitionException("活动未开始");
+        }
+        if (signUpEndTime < timeMillis) {
+            throw new MyDefinitionException("报名时间已结束");
+        }
+        if (signUpStartTime > timeMillis) {
+            throw new MyDefinitionException("报名时间未开始");
+        }
+
+        Example example1 = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("activeId", activeId);
+        try {
+            List<QubaomingUserSignUp> qubaomingUserSignUpList = qubaomingUserSignUpService.selectQubaomingUserSignUpByExample(example1);
+            if (qubaomingUserSignUpList != null && qubaomingActiveConfig.getActiveJoinNumMax() > 0 && qubaomingUserSignUpList.size() >= qubaomingActiveConfig.getActiveJoinNumMax()) {
+                throw new MyDefinitionException("当前活动报名名额已满");
+            }
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        return null;
+    }
 
     /**
      * 用户收藏活动

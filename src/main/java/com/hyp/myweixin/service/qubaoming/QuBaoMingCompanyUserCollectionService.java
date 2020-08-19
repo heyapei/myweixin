@@ -12,7 +12,7 @@ import java.util.List;
  * @Date 2020/8/17 21:57
  * @Description: TODO
  */
-public interface CompanyUserCollectionService {
+public interface QuBaoMingCompanyUserCollectionService {
 
 
     /*通用*/

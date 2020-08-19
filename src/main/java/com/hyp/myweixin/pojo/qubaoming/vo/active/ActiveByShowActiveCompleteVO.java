@@ -1,6 +1,8 @@
 package com.hyp.myweixin.pojo.qubaoming.vo.active;
 
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -121,6 +123,13 @@ public class ActiveByShowActiveCompleteVO {
     @ApiModelProperty(value = "公司信息", name = "wechatCompany", required = true)
     private WechatCompany wechatCompany;
 
+
+    /**
+     *
+     */
+    @ApiModelProperty(value = "活动配置项", name = "qubaomingActiveConfig", required = true)
+    private QubaomingActiveConfig qubaomingActiveConfig;
+
     /**
      * 创建人ID
      */
@@ -168,5 +177,19 @@ public class ActiveByShowActiveCompleteVO {
      */
     @ApiModelProperty(value = "备用字段", name = "ext5", required = true)
     private String ext5;
+
+    /**
+     * 是否收藏了该公司
+     */
+    @ApiModelProperty(value = "是否收藏了该公司", name = "hasCollectionCompany", required = true)
+    private Boolean hasCollectionCompany;
+
+
+    /**
+     * 是否收藏了该活动
+     */
+    @ApiModelProperty(value = "是否收藏了该活动", name = "hasCollectionCompany", required = true)
+    private Boolean hasCollectionActive;
+
 
 }

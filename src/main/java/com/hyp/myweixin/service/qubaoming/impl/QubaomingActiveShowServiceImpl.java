@@ -4,12 +4,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveUserCollection;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveByShowActiveCompleteVO;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveBaseService;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveShowService;
-import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
+import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
@@ -39,6 +39,16 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     @Autowired
     private WechatCompanyService wechatCompanyService;
 
+    @Autowired
+    private QubaomingActiveConfigService qubaomingActiveConfigService;
+
+    @Autowired
+    private QubaomingActiveUserCollectionService qubaomingActiveUserCollectionService;
+
+    @Autowired
+    private QuBaoMingCompanyUserCollectionService quBaoMingCompanyUserCollectionService;
+
+
     /**
      * 分页查询热门活动信息
      *
@@ -54,6 +64,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         }
         Example example = new Example(QubaomingActiveBase.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
         example.orderBy("activeShowOrder").desc();
         example.orderBy("createTime").desc();
         example.orderBy("activeJoinNum").desc();
@@ -84,6 +95,19 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
                 activeByShowActiveCompleteVO.setActiveDescImgList(activeByShowActiveCompleteVO.getActiveDescImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
                 activeByShowActiveCompleteVO.setActiveDetailImgList(activeByShowActiveCompleteVO.getActiveDetailImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
 
+                List<QubaomingActiveConfig> qubaomingActiveConfigs = null;
+                try {
+                    qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeByShowActiveCompleteVO.getId());
+                } catch (MyDefinitionException e) {
+                    throw new MyDefinitionException(e.getMessage());
+                }
+                if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
+                    activeByShowActiveCompleteVO.setQubaomingActiveConfig(qubaomingActiveConfigs.get(0));
+                }
+
+                /*等明天一起写吧*/
+               // activeByShowActiveCompleteVO.setHasCollectionActive(false);
+
                 activeByShowActiveCompleteVOList.add(activeByShowActiveCompleteVO);
             }
 
@@ -109,6 +133,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         Example.Criteria criteria = example.createCriteria();
         /*近一个月内创建的项目*/
         criteria.andBetween("createTime", Long.parseLong(MyDateUtil.numberDateFormatToDate(MyDateUtil.addDay(new Date(), -30), 13)), System.currentTimeMillis());
+        criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
         example.orderBy("activeShowOrder").desc();
         example.orderBy("activeJoinNum").desc();
         example.orderBy("activeShareNum").desc();
@@ -142,6 +167,18 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
                 activeByShowActiveCompleteVO.setActiveImgList(activeByShowActiveCompleteVO.getActiveImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
                 activeByShowActiveCompleteVO.setActiveDescImgList(activeByShowActiveCompleteVO.getActiveDescImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
                 activeByShowActiveCompleteVO.setActiveDetailImgList(activeByShowActiveCompleteVO.getActiveDetailImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+
+
+                List<QubaomingActiveConfig> qubaomingActiveConfigs = null;
+                try {
+                    qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeByShowActiveCompleteVO.getId());
+                } catch (MyDefinitionException e) {
+                    throw new MyDefinitionException(e.getMessage());
+                }
+                if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
+                    activeByShowActiveCompleteVO.setQubaomingActiveConfig(qubaomingActiveConfigs.get(0));
+                }
+
 
                 activeByShowActiveCompleteVOList.add(activeByShowActiveCompleteVO);
             }
