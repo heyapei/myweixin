@@ -3,10 +3,7 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveUserCollection;
-import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
+import com.hyp.myweixin.pojo.qubaoming.model.*;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveByShowActiveCompleteVO;
 import com.hyp.myweixin.service.qubaoming.*;
@@ -106,7 +103,30 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
                 }
 
                 /*等明天一起写吧*/
-               // activeByShowActiveCompleteVO.setHasCollectionActive(false);
+                Example example1 = new Example(QubaomingActiveUserCollection.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("userId",showActiveByPageQuery.getUserId());
+                criteria1.andEqualTo("activeId",activeByShowActiveCompleteVO.getId());
+                QubaomingActiveUserCollection qubaomingActiveUserCollection = qubaomingActiveUserCollectionService.selectOneQubaomingActiveUserCollectionByExample(example1);
+                if (qubaomingActiveUserCollection != null) {
+                    activeByShowActiveCompleteVO.setHasCollectionActive(true);
+                } else {
+                    activeByShowActiveCompleteVO.setHasCollectionActive(false);
+                }
+                if (wechatCompany != null) {
+                    Example example2 = new Example(QuBaoMingCompanyUserCollection.class);
+                    Example.Criteria criteria2 = example2.createCriteria();
+                    criteria2.andEqualTo("userId", showActiveByPageQuery.getUserId());
+                    criteria2.andEqualTo("companyId", wechatCompany.getId());
+                    QuBaoMingCompanyUserCollection quBaoMingCompanyUserCollection = quBaoMingCompanyUserCollectionService.selectOneByExample(example2);
+                    if (quBaoMingCompanyUserCollection != null) {
+                        activeByShowActiveCompleteVO.setHasCollectionCompany(true);
+                    } else {
+                        activeByShowActiveCompleteVO.setHasCollectionCompany(false);
+                    }
+                } else {
+                    activeByShowActiveCompleteVO.setHasCollectionCompany(false);
+                }
 
                 activeByShowActiveCompleteVOList.add(activeByShowActiveCompleteVO);
 
@@ -181,6 +201,32 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
                 }
                 if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
                     activeByShowActiveCompleteVO.setQubaomingActiveConfig(qubaomingActiveConfigs.get(0));
+                }
+
+
+                Example example1 = new Example(QubaomingActiveUserCollection.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("userId",showActiveByPageQuery.getUserId());
+                criteria1.andEqualTo("activeId",activeByShowActiveCompleteVO.getId());
+                QubaomingActiveUserCollection qubaomingActiveUserCollection = qubaomingActiveUserCollectionService.selectOneQubaomingActiveUserCollectionByExample(example1);
+                if (qubaomingActiveUserCollection != null) {
+                    activeByShowActiveCompleteVO.setHasCollectionActive(true);
+                } else {
+                    activeByShowActiveCompleteVO.setHasCollectionActive(false);
+                }
+                if (wechatCompany != null) {
+                    Example example2 = new Example(QuBaoMingCompanyUserCollection.class);
+                    Example.Criteria criteria2 = example2.createCriteria();
+                    criteria2.andEqualTo("userId", showActiveByPageQuery.getUserId());
+                    criteria2.andEqualTo("companyId", wechatCompany.getId());
+                    QuBaoMingCompanyUserCollection quBaoMingCompanyUserCollection = quBaoMingCompanyUserCollectionService.selectOneByExample(example2);
+                    if (quBaoMingCompanyUserCollection != null) {
+                        activeByShowActiveCompleteVO.setHasCollectionCompany(true);
+                    } else {
+                        activeByShowActiveCompleteVO.setHasCollectionCompany(false);
+                    }
+                } else {
+                    activeByShowActiveCompleteVO.setHasCollectionCompany(false);
                 }
 
 
