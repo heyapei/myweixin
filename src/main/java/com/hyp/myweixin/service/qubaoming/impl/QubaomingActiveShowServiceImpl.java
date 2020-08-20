@@ -6,6 +6,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.*;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveByShowActiveCompleteVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
@@ -45,6 +46,81 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     @Autowired
     private QuBaoMingCompanyUserCollectionService quBaoMingCompanyUserCollectionService;
 
+
+    @Autowired
+    private QubaomingUserSignUpService qubaomingUserSignUpService;
+
+
+    /**
+     * 通过activeId查询具体的活动详情
+     * userId用于判断报名人数
+     *
+     * @param userId
+     * @param activeId
+     * @return 视图
+     * @throws MyDefinitionException
+     */
+    @Override
+    public ActiveDetailShowVO getActiveShowDetailByActiveId(Integer userId, Integer activeId) throws MyDefinitionException {
+
+        if (userId == null || activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        ActiveDetailShowVO activeDetailShowVO = new ActiveDetailShowVO();
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有找到指定的活动数据");
+        } else {
+            activeDetailShowVO.setQubaomingActiveBase(qubaomingActiveBase);
+            activeDetailShowVO.setActiveImgList(qubaomingActiveBase.getActiveImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+            activeDetailShowVO.setActiveDescImgList(qubaomingActiveBase.getActiveDescImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+            activeDetailShowVO.setActiveDetailImgList(qubaomingActiveBase.getActiveDetailImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+            activeDetailShowVO.setActiveShareImgList(qubaomingActiveBase.getActiveShareImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+        }
+        List<QubaomingActiveConfig> qubaomingActiveConfigs = null;
+        try {
+            qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
+            activeDetailShowVO.setQubaomingActiveConfig(qubaomingActiveConfigs.get(0));
+        } else {
+            throw new MyDefinitionException("没有找到相关活动配置项");
+        }
+        WechatCompany wechatCompany = null;
+        try {
+            wechatCompany = wechatCompanyService.selectByPkId(qubaomingActiveBase.getId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        activeDetailShowVO.setWechatCompany(wechatCompany);
+        if (wechatCompany != null) {
+            activeDetailShowVO.setLogoImgList(wechatCompany.getLogoImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+            activeDetailShowVO.setWeixinQrCodeList(wechatCompany.getWeixinQrCode().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+        }
+
+        Example example = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeId", activeId);
+        criteria.andEqualTo("userId", userId);
+        List<QubaomingUserSignUp> qubaomingUserSignUpList = null;
+        try {
+            qubaomingUserSignUpList = qubaomingUserSignUpService.selectQubaomingUserSignUpByExample(example);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingUserSignUpList != null) {
+            activeDetailShowVO.setSignUpNum(qubaomingUserSignUpList.size());
+        }
+
+        return activeDetailShowVO;
+    }
 
     /**
      * 分页查询热门活动信息
@@ -105,8 +181,8 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
                 /*等明天一起写吧*/
                 Example example1 = new Example(QubaomingActiveUserCollection.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("userId",showActiveByPageQuery.getUserId());
-                criteria1.andEqualTo("activeId",activeByShowActiveCompleteVO.getId());
+                criteria1.andEqualTo("userId", showActiveByPageQuery.getUserId());
+                criteria1.andEqualTo("activeId", activeByShowActiveCompleteVO.getId());
                 QubaomingActiveUserCollection qubaomingActiveUserCollection = qubaomingActiveUserCollectionService.selectOneQubaomingActiveUserCollectionByExample(example1);
                 if (qubaomingActiveUserCollection != null) {
                     activeByShowActiveCompleteVO.setHasCollectionActive(true);
@@ -206,8 +282,8 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
 
                 Example example1 = new Example(QubaomingActiveUserCollection.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("userId",showActiveByPageQuery.getUserId());
-                criteria1.andEqualTo("activeId",activeByShowActiveCompleteVO.getId());
+                criteria1.andEqualTo("userId", showActiveByPageQuery.getUserId());
+                criteria1.andEqualTo("activeId", activeByShowActiveCompleteVO.getId());
                 QubaomingActiveUserCollection qubaomingActiveUserCollection = qubaomingActiveUserCollectionService.selectOneQubaomingActiveUserCollectionByExample(example1);
                 if (qubaomingActiveUserCollection != null) {
                     activeByShowActiveCompleteVO.setHasCollectionActive(true);

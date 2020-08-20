@@ -3,6 +3,7 @@ package com.hyp.myweixin.service.qubaoming;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
 
 /**
  * @author 何亚培
@@ -12,6 +13,18 @@ import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
  */
 public interface QubaomingActiveShowService {
 
+
+    /**
+     * 通过activeId查询具体的活动详情
+     * userId用于判断报名人数
+     *
+     * @param userId
+     * @param activeId
+     * @return 视图
+     * @throws MyDefinitionException
+     */
+    ActiveDetailShowVO getActiveShowDetailByActiveId(Integer userId, Integer activeId) throws MyDefinitionException;
+
     /**
      * 分页查询热门活动信息
      *
@@ -20,7 +33,6 @@ public interface QubaomingActiveShowService {
      * @throws MyDefinitionException
      */
     PageInfo<Object> getAllActiveByShowActiveByPageQuery(ShowActiveByPageQuery showActiveByPageQuery) throws MyDefinitionException;
-
 
 
     /**
