@@ -6,6 +6,23 @@ import javax.persistence.*;
 @Data
 @Table(name = "qubaoming_user_sign_up")
 public class QubaomingUserSignUp {
+
+    public static QubaomingUserSignUp init() {
+        QubaomingUserSignUp qubaomingUserSignUp = new QubaomingUserSignUp();
+        qubaomingUserSignUp.setActiveId(0);
+        qubaomingUserSignUp.setUserId(0);
+        qubaomingUserSignUp.setSignUpInfo("");
+        qubaomingUserSignUp.setCreateTime(System.currentTimeMillis());
+        qubaomingUserSignUp.setUpdateTime(System.currentTimeMillis());
+        qubaomingUserSignUp.setExt1("");
+        qubaomingUserSignUp.setExt2("");
+        qubaomingUserSignUp.setExt3("");
+        qubaomingUserSignUp.setExt4("");
+        qubaomingUserSignUp.setExt5("");
+        return qubaomingUserSignUp;
+    }
+
+
     @Id
     private Integer id;
 

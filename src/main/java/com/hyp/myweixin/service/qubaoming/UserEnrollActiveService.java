@@ -14,6 +14,31 @@ public interface UserEnrollActiveService {
     /*妈的写错了，enroll应该是报名留着的 但是搞成了收藏了 卧槽*/
 
     /**
+     * 用户报名参加活动
+     * 判断用户是否有权限
+     * 判断填报的信息是否符合活动规定
+     * 1. 写入报名数据
+     * 2. 添加参与人数
+     *
+     * @param userId
+     * @param activeId
+     * @param signUpOption 报名的填报信息
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer addSignUpByActiveIdAndUserId(Integer userId, Integer activeId, String signUpOption) throws MyDefinitionException;
+
+
+    /**
+     * 获取指定活动要求的必填项目
+     *
+     * @param activeId
+     * @return 返回的是String类型，前端判断是否包含某个字段用于显示
+     * @throws MyDefinitionException
+     */
+    String getSignUpOption(Integer activeId) throws MyDefinitionException;
+
+    /**
      * 验证用户是否可以报名
      * 1. 是否在时间范围内
      * 2. 是否已经报名了

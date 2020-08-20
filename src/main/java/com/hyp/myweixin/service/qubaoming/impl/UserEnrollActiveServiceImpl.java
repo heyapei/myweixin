@@ -7,6 +7,7 @@ import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveUserCollection;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingUserSignUp;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyErrorList;
+import com.hyp.myweixin.utils.MySeparatorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,102 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
 
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
+
+
+    /**
+     * 用户报名参加活动
+     * 1. 写入报名数据
+     * 2. 添加参与人数
+     *
+     * @param userId
+     * @param activeId
+     * @param signUpOption 报名的填报信息
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Integer addSignUpByActiveIdAndUserId(Integer userId, Integer activeId,String signUpOption) throws MyDefinitionException {
+        if (userId == null || activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        try {
+            qubaomingWeixinUserService.validateUserRight(userId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有找到指定的活动");
+        }
+
+        Example example = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId", userId);
+        criteria.andEqualTo("activeId", activeId);
+        try {
+            QubaomingUserSignUp qubaomingUserSignUp = qubaomingUserSignUpService.selectOneQubaomingUserSignUpByExample(example);
+            if (qubaomingUserSignUp != null) {
+                throw new MyDefinitionException("当前已经报名成功，无需重复报名");
+            }
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+        List<QubaomingActiveConfig> qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeId);
+        if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
+            QubaomingActiveConfig qubaomingActiveConfig = qubaomingActiveConfigs.get(0);
+            String[] split = qubaomingActiveConfig.getActiveRequireOption().split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+            if (split.length != signUpOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR).length) {
+                throw new MyDefinitionException("当前填报的信息不满足活动要求");
+            }
+        } else {
+            throw new MyDefinitionException("当前活动配置项不完整");
+        }
+
+
+
+        QubaomingUserSignUp qubaomingUserSignUp = QubaomingUserSignUp.init();
+        qubaomingUserSignUp.setUserId(userId);
+        qubaomingUserSignUp.setActiveId(activeId);
+        qubaomingUserSignUp.setSignUpInfo(signUpOption);
+        Integer pkId = qubaomingUserSignUpService.insertReturnPk(qubaomingUserSignUp);
+        if (pkId != null && pkId > 0) {
+            qubaomingActiveBase.setActiveJoinNum(qubaomingActiveBase.getActiveJoinNum()+1);
+            try {
+                qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+        }
+        return pkId;
+    }
+
+    /**
+     * 获取指定活动要求的必填项目
+     *
+     * @param activeId
+     * @return 返回的是String类型，前端判断是否包含某个字段用于显示
+     * @throws MyDefinitionException
+     */
+    @Override
+    public String getSignUpOption(Integer activeId) throws MyDefinitionException {
+
+        if (activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        List<QubaomingActiveConfig> qubaomingActiveConfigs = qubaomingActiveConfigService.selectByActiveId(activeId);
+        if (qubaomingActiveConfigs != null && qubaomingActiveConfigs.size() > 0) {
+            return qubaomingActiveConfigs.get(0).getActiveRequireOption();
+        }
+        return null;
+    }
 
     /**
      * 验证用户是否可以报名
