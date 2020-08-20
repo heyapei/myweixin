@@ -41,5 +41,20 @@ public class ActiveDetailShowVO {
     @ApiModelProperty(value = "已报名数量", name = "signUpNum", required = true)
     private Integer signUpNum;
 
+    /**
+     * 是否收藏了该公司
+     */
+    @ApiModelProperty(value = "是否收藏了该公司", name = "hasCollectionCompany", required = true)
+    private Boolean hasCollectionCompany;
+
+    /**
+     * 是否收藏了该活动
+     */
+    @ApiModelProperty(value = "是否收藏了该活动", name = "hasCollectionCompany", required = true)
+    private Boolean hasCollectionActive;
+
+
+    @ApiModelProperty(value = "是否已报名该活动", name = "hasSignUp", required = true)
+    private Boolean hasSignUp;
 
 }

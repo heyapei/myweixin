@@ -105,10 +105,27 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
             activeDetailShowVO.setWeixinQrCodeList(wechatCompany.getWeixinQrCode().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
         }
 
+        Example example5 = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria5= example5.createCriteria();
+        criteria5.andEqualTo("activeId", activeId);
+        criteria5.andEqualTo("userId", userId);
+
+        try {
+            QubaomingUserSignUp qubaomingUserSignUp = qubaomingUserSignUpService.selectOneQubaomingUserSignUpByExample(example5);
+            if (qubaomingUserSignUp == null) {
+                activeDetailShowVO.setHasSignUp(false);
+            } else {
+                activeDetailShowVO.setHasSignUp(true);
+            }
+        } catch (MyDefinitionException e) {
+            activeDetailShowVO.setHasSignUp(false);
+            throw new MyDefinitionException(e.getMessage());
+        }
+
+
         Example example = new Example(QubaomingUserSignUp.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("activeId", activeId);
-        criteria.andEqualTo("userId", userId);
         List<QubaomingUserSignUp> qubaomingUserSignUpList = null;
         try {
             qubaomingUserSignUpList = qubaomingUserSignUpService.selectQubaomingUserSignUpByExample(example);
@@ -118,6 +135,36 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         if (qubaomingUserSignUpList != null) {
             activeDetailShowVO.setSignUpNum(qubaomingUserSignUpList.size());
         }
+
+
+        Example example1 = new Example(QubaomingActiveUserCollection.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("userId", userId);
+        criteria1.andEqualTo("activeId", activeId);
+        QubaomingActiveUserCollection qubaomingActiveUserCollection = qubaomingActiveUserCollectionService.selectOneQubaomingActiveUserCollectionByExample(example1);
+        if (qubaomingActiveUserCollection != null) {
+            activeDetailShowVO.setHasCollectionActive(true);
+        } else {
+            activeDetailShowVO.setHasCollectionActive(false);
+        }
+        if (wechatCompany != null) {
+            Example example2 = new Example(QuBaoMingCompanyUserCollection.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("userId", userId);
+            criteria2.andEqualTo("companyId", wechatCompany.getId());
+            QuBaoMingCompanyUserCollection quBaoMingCompanyUserCollection = quBaoMingCompanyUserCollectionService.selectOneByExample(example2);
+            if (quBaoMingCompanyUserCollection != null) {
+                activeDetailShowVO.setHasCollectionCompany(true);
+            } else {
+                activeDetailShowVO.setHasCollectionCompany(false);
+            }
+        } else {
+            activeDetailShowVO.setHasCollectionCompany(false);
+        }
+
+
+
+
 
         return activeDetailShowVO;
     }
