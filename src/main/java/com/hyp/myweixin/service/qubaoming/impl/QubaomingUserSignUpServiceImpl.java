@@ -134,7 +134,7 @@ public class QubaomingUserSignUpServiceImpl implements QubaomingUserSignUpServic
     @Override
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         int i = 0;
@@ -157,7 +157,7 @@ public class QubaomingUserSignUpServiceImpl implements QubaomingUserSignUpServic
     @Override
     public Integer updateSelectiveQubaomingUserSignUp(QubaomingUserSignUp qubaomingUserSignUp) throws MyDefinitionException {
         if (qubaomingUserSignUp == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -179,7 +179,7 @@ public class QubaomingUserSignUpServiceImpl implements QubaomingUserSignUpServic
     @Override
     public QubaomingUserSignUp selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         QubaomingUserSignUp qubaomingUserSignUp = null;
         try {

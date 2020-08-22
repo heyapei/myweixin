@@ -84,7 +84,7 @@ public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompa
     @Override
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         int i = 0;
@@ -107,7 +107,7 @@ public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompa
     @Override
     public Integer updateSelectiveCompanyUserCollection(QuBaoMingCompanyUserCollection companyUserCollection) throws MyDefinitionException {
         if (companyUserCollection == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -129,7 +129,7 @@ public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompa
     @Override
     public QuBaoMingCompanyUserCollection selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {
@@ -152,7 +152,7 @@ public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompa
     public QuBaoMingCompanyUserCollection selectOneByExample(Example example) throws MyDefinitionException {
 
         if (example == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         QuBaoMingCompanyUserCollection companyUserCollection = null;
@@ -177,7 +177,7 @@ public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompa
     @Override
     public List<QuBaoMingCompanyUserCollection> selectAllByExample(Example example) throws MyDefinitionException {
         if (example == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         List<QuBaoMingCompanyUserCollection> companyUserCollections = null;

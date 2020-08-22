@@ -38,7 +38,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     private WechatCompanyService wechatCompanyService;
 
     @Autowired
-    private QubaomingActiveConfigService qubaomingActiveConfigService;
+    private ActiveConfigService qubaomingActiveConfigService;
 
     @Autowired
     private QubaomingActiveUserCollectionService qubaomingActiveUserCollectionService;
@@ -106,7 +106,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         }
 
         Example example5 = new Example(QubaomingUserSignUp.class);
-        Example.Criteria criteria5= example5.createCriteria();
+        Example.Criteria criteria5 = example5.createCriteria();
         criteria5.andEqualTo("activeId", activeId);
         criteria5.andEqualTo("userId", userId);
 
@@ -162,8 +162,12 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
             activeDetailShowVO.setHasCollectionCompany(false);
         }
 
-
-
+        try {
+            qubaomingActiveBase.setActiveViewNum(qubaomingActiveBase.getActiveViewNum() + 1);
+            qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
+        } catch (MyDefinitionException e) {
+            //do nothing
+        }
 
 
         return activeDetailShowVO;

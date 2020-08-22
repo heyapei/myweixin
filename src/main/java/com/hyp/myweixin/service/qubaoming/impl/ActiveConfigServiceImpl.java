@@ -2,9 +2,8 @@ package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.QubaomingActiveConfigMapper;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
-import com.hyp.myweixin.service.qubaoming.QubaomingActiveConfigService;
+import com.hyp.myweixin.service.qubaoming.ActiveConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,35 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class QubaomingActiveConfigServiceImpl implements QubaomingActiveConfigService {
+public class ActiveConfigServiceImpl implements ActiveConfigService {
 
 
     @Autowired
     private QubaomingActiveConfigMapper qubaomingActiveConfigMapper;
 
+
+    /**
+     * 查询当前活动的一条配置信息 如果没有返回null
+     *
+     * @param activeId 主键
+     * @return 完整的实体类
+     * @throws MyDefinitionException
+     */
+    @Override
+    public QubaomingActiveConfig selectOneByActiveId(Integer activeId) throws MyDefinitionException {
+        Example example = new Example(QubaomingActiveConfig.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeId", activeId);
+        QubaomingActiveConfig qubaomingActiveConfig = null;
+        try {
+            qubaomingActiveConfig = qubaomingActiveConfigMapper.selectOneByExample(example);
+        } catch (Exception e) {
+            log.error("查询当前活动的配置信息操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("查询当前活动的配置信息操作过程错误");
+        }
+
+        return qubaomingActiveConfig;
+    }
 
     /**
      * 查询当前活动的配置信息 如果没有返回null
@@ -43,9 +65,9 @@ public class QubaomingActiveConfigServiceImpl implements QubaomingActiveConfigSe
         criteria.andEqualTo("activeId", activeId);
         List<QubaomingActiveConfig> qubaomingActiveConfigs = null;
         try {
-            qubaomingActiveConfigs    = qubaomingActiveConfigMapper.selectByExample(example);
+            qubaomingActiveConfigs = qubaomingActiveConfigMapper.selectByExample(example);
         } catch (Exception e) {
-            log.error("查询当前活动的配置信息操作过程错误，错误原因：{}",e.toString());
+            log.error("查询当前活动的配置信息操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("查询当前活动的配置信息操作过程错误");
         }
 
@@ -63,7 +85,7 @@ public class QubaomingActiveConfigServiceImpl implements QubaomingActiveConfigSe
     public Integer insertReturnPk(QubaomingActiveConfig qubaomingActiveConfig) throws MyDefinitionException {
 
         if (qubaomingActiveConfig == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         Integer pkId = null;
@@ -90,7 +112,7 @@ public class QubaomingActiveConfigServiceImpl implements QubaomingActiveConfigSe
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
 
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -112,7 +134,7 @@ public class QubaomingActiveConfigServiceImpl implements QubaomingActiveConfigSe
     @Override
     public Integer updateSelectiveQubaomingActiveConfigBase(QubaomingActiveConfig qubaomingActiveConfig) throws MyDefinitionException {
         if (qubaomingActiveConfig == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -134,7 +156,7 @@ public class QubaomingActiveConfigServiceImpl implements QubaomingActiveConfigSe
     @Override
     public QubaomingActiveConfig selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         QubaomingActiveConfig qubaomingActiveConfig = null;
         try {

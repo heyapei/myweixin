@@ -179,7 +179,7 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     @Override
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -201,7 +201,7 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     @Override
     public Integer updateSelectiveWechatCompany(WechatCompany wechatCompany) throws MyDefinitionException {
         if (wechatCompany == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -223,7 +223,7 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     @Override
     public WechatCompany selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         WechatCompany wechatCompany = null;
         try {
