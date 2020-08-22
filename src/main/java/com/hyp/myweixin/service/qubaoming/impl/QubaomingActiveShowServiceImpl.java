@@ -95,7 +95,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         }
         WechatCompany wechatCompany = null;
         try {
-            wechatCompany = wechatCompanyService.selectByPkId(qubaomingActiveBase.getId());
+            wechatCompany = wechatCompanyService.selectByPkId(qubaomingActiveBase.getActiveCompanyId());
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
         }

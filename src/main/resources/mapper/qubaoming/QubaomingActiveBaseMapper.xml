@@ -47,8 +47,8 @@ update qubaoming_active_base set
     <update id="updateActiveDetailAndImg" parameterType="com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase">
 
  update qubaoming_active_base set
-            active_detail = #{activeName},
-            active_detail_img =  #{activeImg},
+            active_detail = #{activeDetail},
+            active_detail_img =  #{activeDetailImg},
             update_time = #{updateTime}
             where id = #{id}
 

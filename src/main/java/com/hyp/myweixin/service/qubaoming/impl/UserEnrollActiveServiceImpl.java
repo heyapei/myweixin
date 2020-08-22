@@ -56,7 +56,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer addSignUpByActiveIdAndUserId(Integer userId, Integer activeId,String signUpOption) throws MyDefinitionException {
+    public Integer addSignUpByActiveIdAndUserId(Integer userId, Integer activeId, String signUpOption) throws MyDefinitionException {
         if (userId == null || activeId == null) {
             throw new MyDefinitionException("参数不能为空");
         }
@@ -101,14 +101,13 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         }
 
 
-
         QubaomingUserSignUp qubaomingUserSignUp = QubaomingUserSignUp.init();
         qubaomingUserSignUp.setUserId(userId);
         qubaomingUserSignUp.setActiveId(activeId);
         qubaomingUserSignUp.setSignUpInfo(signUpOption);
         Integer pkId = qubaomingUserSignUpService.insertReturnPk(qubaomingUserSignUp);
         if (pkId != null && pkId > 0) {
-            qubaomingActiveBase.setActiveJoinNum(qubaomingActiveBase.getActiveJoinNum()+1);
+            qubaomingActiveBase.setActiveJoinNum(qubaomingActiveBase.getActiveJoinNum() + 1);
             try {
                 qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
             } catch (MyDefinitionException e) {
@@ -206,18 +205,19 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         Long activeEndTime = qubaomingActiveConfig.getActiveEndTime();
         Long signUpEndTime = qubaomingActiveConfig.getSignUpEndTime();
         Long signUpStartTime = qubaomingActiveConfig.getSignUpStartTime();
-
+/*
         if (activeEndTime < timeMillis) {
             throw new MyDefinitionException("活动已结束");
         }
         if (activeStartTime > timeMillis) {
             throw new MyDefinitionException("活动未开始");
+        }*/
+
+        if (signUpStartTime > timeMillis) {
+            throw new MyDefinitionException("报名时间未开始");
         }
         if (signUpEndTime < timeMillis) {
             throw new MyDefinitionException("报名时间已结束");
-        }
-        if (signUpStartTime > timeMillis) {
-            throw new MyDefinitionException("报名时间未开始");
         }
 
         Example example1 = new Example(QubaomingUserSignUp.class);
