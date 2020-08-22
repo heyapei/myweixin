@@ -6,6 +6,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveComment;
 import com.hyp.myweixin.pojo.qubaoming.query.comment.ActiveCommentPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.comment.AddActiveCommentQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.comment.ActiveCommentVO;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCommentService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -45,7 +46,7 @@ public class ActiveCommentController {
 
     @ApiOperation(value = "分页查询趣报名评论内容", tags = {"趣报名评论相关"})
     @PostMapping("getCommentByPage/activeId")
-    public Result<PageInfo<QubaomingActiveComment>> getCommentPageByActiveId(
+    public Result<PageInfo<ActiveCommentVO>> getCommentPageByActiveId(
             @ApiParam(name = "分页查询评论参数参数", value = "activeCommentPageQuery", required = true)
             @Validated ActiveCommentPageQuery activeCommentPageQuery,
             BindingResult bindingResult) {
@@ -59,7 +60,7 @@ public class ActiveCommentController {
             return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
         }
         try {
-            PageInfo<QubaomingActiveComment> pageInfoActiveCommentByActiveCommentPageQuery = qubaomingActiveCommentService.
+            PageInfo<ActiveCommentVO> pageInfoActiveCommentByActiveCommentPageQuery = qubaomingActiveCommentService.
                     getPageInfoActiveCommentByActiveCommentPageQuery(activeCommentPageQuery);
             return Result.buildResult(Result.Status.OK, pageInfoActiveCommentByActiveCommentPageQuery);
         } catch (MyDefinitionException e) {

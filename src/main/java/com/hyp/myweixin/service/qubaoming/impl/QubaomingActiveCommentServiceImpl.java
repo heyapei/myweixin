@@ -5,16 +5,18 @@ import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.QubaomingActiveCommentMapper;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveComment;
+import com.hyp.myweixin.pojo.qubaoming.model.QubaomingWeixinUser;
 import com.hyp.myweixin.pojo.qubaoming.query.comment.ActiveCommentPageQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.comment.ActiveCommentVO;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCommentService;
 import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +46,7 @@ public class QubaomingActiveCommentServiceImpl implements QubaomingActiveComment
      */
     @Override
     public PageInfo getPageInfoActiveCommentByActiveCommentPageQuery(ActiveCommentPageQuery activeCommentPageQuery) throws MyDefinitionException {
-        if (activeCommentPageQuery == null ) {
+        if (activeCommentPageQuery == null) {
             throw new MyDefinitionException("参数不能为空");
         }
         PageHelper.startPage(activeCommentPageQuery.getPageNum(), activeCommentPageQuery.getPageSize());
@@ -60,6 +62,28 @@ public class QubaomingActiveCommentServiceImpl implements QubaomingActiveComment
             throw new MyDefinitionException(e.getMessage());
         }
         pageInfo = new PageInfo(qubaomingActiveComments);
+
+
+        List<ActiveCommentVO> qubaomingActiveCommentList = new ArrayList<>();
+        for (QubaomingActiveComment qubaomingActiveComment : qubaomingActiveComments) {
+            ActiveCommentVO activeCommentVO = new ActiveCommentVO();
+
+            activeCommentVO.setCommentContent(qubaomingActiveComment.getCommentContent());
+            activeCommentVO.setCreateTime(qubaomingActiveComment.getCreateTime());
+            QubaomingWeixinUser qubaomingWeixinUser = null;
+            try {
+                qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(qubaomingActiveComment.getUserId());
+            } catch (MyDefinitionException e) {
+                // do nothing
+            }
+            if (qubaomingWeixinUser != null) {
+                activeCommentVO.setAvatar(qubaomingWeixinUser.getAvatarUrl());
+                activeCommentVO.setUserName(qubaomingWeixinUser.getNickName());
+            }
+            qubaomingActiveCommentList.add(activeCommentVO);
+        }
+
+        pageInfo.setList(qubaomingActiveCommentList);
         return pageInfo;
     }
 
