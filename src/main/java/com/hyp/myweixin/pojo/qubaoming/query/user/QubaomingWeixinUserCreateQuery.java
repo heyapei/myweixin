@@ -22,6 +22,7 @@ public class QubaomingWeixinUserCreateQuery {
      */
     @ApiModelProperty(value = "用户微信中的唯一标识", name = "openId", required = true)
     @NotNull(message = "用户微信中的唯一标识必填")
+    @Size(min = 1, message = "评论内容必填")
     private String openId;
 
     /**
