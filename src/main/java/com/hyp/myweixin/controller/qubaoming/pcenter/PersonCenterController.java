@@ -2,6 +2,7 @@ package com.hyp.myweixin.controller.qubaoming.pcenter;
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserCreateActiveQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserEnrollQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.PersonCenterService;
@@ -38,6 +39,30 @@ public class PersonCenterController {
     private HttpServletRequest httpServletRequest;
     @Autowired
     private PersonCenterService personCenterService;
+
+
+    @ApiOperation(value = "用户创建的活动列表", tags = {"趣报名用户中心相关"})
+    @PostMapping("userCreateList/userId")
+    public Result<Object> getUserCreateActiveList(
+            @ApiParam(name = "用户创建的活动查询参数", value = "userCreateActiveQuery", required = true)
+            @Validated UserCreateActiveQuery userCreateActiveQuery, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+        try {
+            return Result.buildResult(Result.Status.OK,
+                    personCenterService.getUserCreateActiveList(userCreateActiveQuery));
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
     @ApiOperation(value = "用户已收藏列表", tags = {"趣报名用户中心相关"})
     @PostMapping("userEnroll/userId")

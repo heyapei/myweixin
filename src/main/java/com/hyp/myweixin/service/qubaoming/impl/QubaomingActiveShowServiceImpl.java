@@ -4,9 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.*;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveShowByCompanyIdQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveByShowActiveCompleteVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShowByCompanyIdVO;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
@@ -50,6 +52,78 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
 
+    @Autowired
+    private QuBaoMingActiveConfigService quBaoMingActiveConfigService;
+
+
+    /**
+     * 通过公司id查询活动列表
+     *
+     * @param activeShowByCompanyIdQuery
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public PageInfo<Object> getActiveListByCompanyId(ActiveShowByCompanyIdQuery activeShowByCompanyIdQuery) throws MyDefinitionException {
+
+        if (activeShowByCompanyIdQuery == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        Example example = new Example(QubaomingActiveBase.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeCompanyId", activeShowByCompanyIdQuery.getWechatCompanyId());
+        example.orderBy("createTime").desc();
+        PageHelper.startPage(activeShowByCompanyIdQuery.getPageNum(), activeShowByCompanyIdQuery.getPageSize());
+        PageInfo pageInfo = null;
+        List<QubaomingActiveBase> qubaomingActiveBaseList = null;
+        try {
+            qubaomingActiveBaseList = qubaomingActiveBaseService.selectUserActiveByExample(example);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBaseList != null) {
+            pageInfo = new PageInfo(qubaomingActiveBaseList);
+            List<ActiveShowByCompanyIdVO> activeShowByCompanyIdVOS = null;
+            try {
+                activeShowByCompanyIdVOS = qubaomingActiveUserCollectionListToActiveShowByCompanyIdVOList(qubaomingActiveBaseList);
+            } catch (MyDefinitionException e) {
+                throw new MyDefinitionException(e.getMessage());
+            }
+            pageInfo.setList(activeShowByCompanyIdVOS);
+        }
+        return pageInfo;
+    }
+
+    /**
+     * 数据转换
+     *
+     * @param qubaomingActiveUserCollectionList
+     * @return
+     */
+    private List<ActiveShowByCompanyIdVO> qubaomingActiveUserCollectionListToActiveShowByCompanyIdVOList(List<QubaomingActiveBase> qubaomingActiveUserCollectionList) throws MyDefinitionException {
+        List<ActiveShowByCompanyIdVO> qubaomingActiveBaseList = new ArrayList<>();
+        for (QubaomingActiveBase qubaomingActiveBase : qubaomingActiveUserCollectionList) {
+            ActiveShowByCompanyIdVO activeShowByCompanyIdVO = new ActiveShowByCompanyIdVO();
+            activeShowByCompanyIdVO.setActiveId(qubaomingActiveBase.getId());
+            activeShowByCompanyIdVO.setActiveName(qubaomingActiveBase.getActiveName());
+            activeShowByCompanyIdVO.setActiveImg(qubaomingActiveBase.getActiveImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, ""));
+            QubaomingActiveConfig qubaomingActiveConfig = quBaoMingActiveConfigService.selectOneByActiveId(qubaomingActiveBase.getId());
+            if (qubaomingActiveConfig != null) {
+                activeShowByCompanyIdVO.setActiveAddress(qubaomingActiveConfig.getActiveAddress());
+                activeShowByCompanyIdVO.setActiveStartTime(qubaomingActiveConfig.getActiveStartTime());
+                activeShowByCompanyIdVO.setActiveEndTime(qubaomingActiveConfig.getActiveEndTime());
+            }
+
+            WechatCompany wechatCompany = wechatCompanyService.selectOneByUserId(qubaomingActiveBase.getActiveUserId());
+            if (wechatCompany != null) {
+                activeShowByCompanyIdVO.setActiveCompanyName(wechatCompany.getCompanyName());
+            }
+            qubaomingActiveBaseList.add(activeShowByCompanyIdVO);
+        }
+
+        return qubaomingActiveBaseList;
+    }
+
     /**
      * 增加分享量
      *
@@ -74,7 +148,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         } else {
             qubaomingActiveBase.setActiveShareNum(qubaomingActiveBase.getActiveShareNum() + 1);
             return qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
-           ///////////////// return qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
+            ///////////////// return qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
         }
     }
 

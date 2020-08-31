@@ -2,6 +2,7 @@ package com.hyp.myweixin.service.qubaoming;
 
 import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveShowByCompanyIdQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
 
@@ -12,6 +13,15 @@ import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
  * @Description: TODO
  */
 public interface QubaomingActiveShowService {
+
+    /**
+     * 通过公司id查询活动列表
+     *
+     * @param activeShowByCompanyIdQuery
+     * @return
+     * @throws MyDefinitionException
+     */
+    PageInfo<Object> getActiveListByCompanyId(ActiveShowByCompanyIdQuery activeShowByCompanyIdQuery) throws MyDefinitionException;
 
 
     /**

@@ -3,6 +3,7 @@ package com.hyp.myweixin.controller.qubaoming.active;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveDetailShowQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveShowByCompanyIdQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveShowService;
@@ -41,6 +42,33 @@ public class ActiveShowController {
     private HttpServletRequest httpServletRequest;
     @Autowired
     private QubaomingActiveShowService QubaomingActiveShowService;
+
+
+    @ApiOperation(value = "根据公司ID查询公司下的活动信息 分页查询", tags = {"趣报名活动查看相关"})
+    @PostMapping("getActiveList/companyId/page")
+    public Result<Object> getActiveListByCompanyIdAndPage(
+            @ApiParam(name = "分页信息", value = "activeShowByCompanyIdQuery", required = true)
+            @Validated ActiveShowByCompanyIdQuery activeShowByCompanyIdQuery, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+            return Result.buildResult(Result.Status.OK,
+                    QubaomingActiveShowService.getActiveListByCompanyId(
+                            activeShowByCompanyIdQuery));
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
     @ApiOperation(value = "查看活动详情", tags = {"趣报名活动查看相关"})
     @PostMapping("activeDetail/activeId")
