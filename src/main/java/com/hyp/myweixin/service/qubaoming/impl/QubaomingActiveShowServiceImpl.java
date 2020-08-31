@@ -8,12 +8,15 @@ import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveShowByCompanyIdQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveByShowActiveCompleteVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShareImgVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShowByCompanyIdVO;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
+import com.hyp.myweixin.utils.dateutil.MyDateStyle;
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -160,10 +163,12 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
      * @throws MyDefinitionException
      */
     @Override
-    public String getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException {
+    public ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException {
         if (activeId == null) {
             throw new MyDefinitionException("参数不能为空");
         }
+
+        ActiveShareImgVO activeShareImgVO = new ActiveShareImgVO();
 
         QubaomingActiveBase qubaomingActiveBase = null;
         try {
@@ -174,9 +179,18 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         if (qubaomingActiveBase == null) {
             throw new MyDefinitionException("没有找到指定的活动数据");
         } else {
-            return qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
+            String activeImg = qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
+            activeShareImgVO.setActiveImg(activeImg);
+            activeShareImgVO.setActiveName(qubaomingActiveBase.getActiveName());
+            activeShareImgVO.setActiveDesc(qubaomingActiveBase.getActiveDesc());
+            activeShareImgVO.setActiveWechatImg("/upload/qubaoming/20200831195957code.jpg");
+            QubaomingActiveConfig qubaomingActiveConfigs = qubaomingActiveConfigService.selectOneByActiveId(activeId);
+            if (qubaomingActiveConfigs != null) {
+                Date date = MyDateUtil.numberDateFormatToDate(qubaomingActiveConfigs.getActiveEndTime());
+                activeShareImgVO.setActiveEndTime(MyDateUtil.DateToString(date, MyDateStyle.YYYY_MM_DD_HH_MM));
+            }
         }
-
+        return activeShareImgVO;
     }
 
     /**
@@ -317,6 +331,9 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         Example example = new Example(QubaomingActiveBase.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
+        if (StringUtils.isNotBlank(showActiveByPageQuery.getActiveQuery())) {
+            criteria.andLike("activeName", "%" + showActiveByPageQuery.getActiveQuery() + "%");
+        }
         example.orderBy("activeShowOrder").desc();
         example.orderBy("createTime").desc();
         example.orderBy("activeJoinNum").desc();

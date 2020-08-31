@@ -37,5 +37,9 @@ public class ShowActiveByPageQuery {
     private Integer userId;
 
 
+    @ApiModelProperty(value = "活动查询参数", name = "activeQuery", required = true)
+    private String activeQuery;
+
+
 
 }

@@ -5,6 +5,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveShowByCompanyIdQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ShowActiveByPageQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShareImgVO;
 
 /**
  * @author 何亚培
@@ -41,7 +42,7 @@ public interface QubaomingActiveShowService {
      * @return
      * @throws MyDefinitionException
      */
-    String getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException;
+    ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException;
 
 
     /**

@@ -55,7 +55,8 @@ public class ActiveShareController {
         }
 
         try {
-            return Result.buildResult(Result.Status.OK, "成功获取分享图", QubaomingActiveShowService.getActiveShareImgByActiveId(activeShareImgQuery.getActiveId()));
+            return Result.buildResult(Result.Status.OK, "成功获取分享图",
+                    QubaomingActiveShowService.getActiveShareImgByActiveId(activeShareImgQuery.getActiveId()));
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
