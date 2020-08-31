@@ -8,6 +8,7 @@ import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserCreateActiveQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserEnrollQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShowByCompanyIdVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.pcenter.PCenterActiveVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.pcenter.UserNumPreVO;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MySeparatorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,11 @@ public class PersonCenterServiceImpl implements PersonCenterService {
 
     @Autowired
     private QubaomingActiveUserCollectionService qubaomingActiveUserCollectionService;
+
+    @Autowired
+    private QuBaoMingCompanyUserCollectionService quBaoMingCompanyUserCollectionService;
+
+
     @Autowired
     private QubaomingActiveBaseService qubaomingActiveBaseService;
 
@@ -41,6 +47,79 @@ public class PersonCenterServiceImpl implements PersonCenterService {
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
 
+
+    /**
+     * 分页查询用户创建的活动列表
+     *
+     * @param userId 查询条件
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public UserNumPreVO getPersonCenterNumPreView(Integer userId) throws MyDefinitionException {
+
+        if (userId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        UserNumPreVO userNumPreVO = UserNumPreVO.init();
+
+        if (userId <= 0) {
+            return userNumPreVO;
+        }
+        userNumPreVO.setUserId(userId);
+        Example example3 = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria3 = example3.createCriteria();
+        criteria3.andEqualTo("userId", userId);
+        List<QubaomingUserSignUp> qubaomingUserSignUpList = null;
+        try {
+            qubaomingUserSignUpList = qubaomingUserSignUpService.selectQubaomingUserSignUpByExample(example3);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingUserSignUpList != null) {
+            userNumPreVO.setActiveSignUpNum(qubaomingUserSignUpList.size());
+        }
+        Example example2 = new Example(QubaomingActiveBase.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("activeUserId", userId);
+        List<QubaomingActiveBase> qubaomingActiveBaseList = null;
+        try {
+            qubaomingActiveBaseList = qubaomingActiveBaseService.selectUserActiveByExample(example2);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBaseList != null) {
+            userNumPreVO.setActiveCreateNum(qubaomingActiveBaseList.size());
+        }
+        Example example1 = new Example(QuBaoMingCompanyUserCollection.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("userId", userId);
+        List<QuBaoMingCompanyUserCollection> quBaoMingCompanyUserCollections = null;
+        try {
+            quBaoMingCompanyUserCollections = quBaoMingCompanyUserCollectionService.
+                    selectAllByExample(example1);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (quBaoMingCompanyUserCollections != null) {
+            userNumPreVO.setCompanyEnrollNum(quBaoMingCompanyUserCollections.size());
+        }
+
+        Example example = new Example(QubaomingActiveUserCollection.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId", userId);
+        List<QubaomingActiveUserCollection> qubaomingActiveUserCollectionList = null;
+        try {
+            qubaomingActiveUserCollectionList = qubaomingActiveUserCollectionService.selectQubaomingActiveUserCollectionByExample(example);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveUserCollectionList != null) {
+            userNumPreVO.setActiveCollectionNum(qubaomingActiveUserCollectionList.size());
+        }
+
+        return userNumPreVO;
+    }
 
     /**
      * 分页查询用户创建的活动列表

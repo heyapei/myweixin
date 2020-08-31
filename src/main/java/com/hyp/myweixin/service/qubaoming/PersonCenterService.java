@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserCreateActiveQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserEnrollQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.pcenter.UserNumPreVO;
 
 /**
  * @Author 何亚培
@@ -13,6 +14,15 @@ import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserEnrollQuery;
  */
 public interface PersonCenterService {
 
+
+    /**
+     * 分页查询用户创建的活动列表
+     *
+     * @param userId 查询条件
+     * @return
+     * @throws MyDefinitionException
+     */
+    UserNumPreVO getPersonCenterNumPreView(Integer userId) throws MyDefinitionException;
 
     /**
      * 分页查询用户创建的活动列表

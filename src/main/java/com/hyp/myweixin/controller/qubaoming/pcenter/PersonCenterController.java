@@ -4,6 +4,7 @@ import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserCreateActiveQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserEnrollQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserNumPreQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.PersonCenterService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -103,6 +104,29 @@ public class PersonCenterController {
 
         try {
             return Result.buildResult(Result.Status.OK, personCenterService.getUserSignUpPageInfo(userEnrollQuery));
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(value = "用户中心的收藏/关注/创建数据", tags = {"趣报名用户中心相关"})
+    @PostMapping("getPersonCenterNumPreView/userId")
+    public Result<Object> getPersonCenterNumPreView(
+            @ApiParam(name = "查询参数", value = "userNumPreQuery", required = true)
+            @Validated UserNumPreQuery userNumPreQuery, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+        try {
+            return Result.buildResult(Result.Status.OK,
+                    personCenterService.getPersonCenterNumPreView(userNumPreQuery.getUserId()));
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
