@@ -50,6 +50,60 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
 
+    /**
+     * 增加分享量
+     *
+     * @param activeId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer addActiveShareNumByActiveId(Integer activeId) throws MyDefinitionException {
+        if (activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有找到指定的活动数据");
+        } else {
+            qubaomingActiveBase.setActiveShareNum(qubaomingActiveBase.getActiveShareNum() + 1);
+            return qubaomingActiveBaseService.updateSelectiveQubaomingActiveBase(qubaomingActiveBase);
+           ///////////////// return qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
+        }
+    }
+
+    /**
+     * 获取活动的分享图
+     *
+     * @param activeId
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public String getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException {
+        if (activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有找到指定的活动数据");
+        } else {
+            return qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
+        }
+
+    }
 
     /**
      * 通过activeId查询具体的活动详情

@@ -15,6 +15,26 @@ public interface QubaomingActiveShowService {
 
 
     /**
+     * 增加分享量
+     *
+     * @param activeId
+     * @return
+     * @throws MyDefinitionException
+     */
+    Integer addActiveShareNumByActiveId(Integer activeId) throws MyDefinitionException;
+
+
+    /**
+     * 获取活动的分享图
+     *
+     * @param activeId
+     * @return
+     * @throws MyDefinitionException
+     */
+    String getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException;
+
+
+    /**
      * 通过activeId查询具体的活动详情
      * userId用于判断报名人数
      *
