@@ -11,7 +11,7 @@ import java.util.List;
  * @Date 2020/8/15 18:56
  * @Description: TODO
  */
-public interface ActiveConfigService {
+public interface QuBaoMingActiveConfigService {
 
 
     /**

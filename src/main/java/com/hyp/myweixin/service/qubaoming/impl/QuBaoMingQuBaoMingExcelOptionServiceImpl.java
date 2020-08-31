@@ -45,7 +45,7 @@ public class QuBaoMingQuBaoMingExcelOptionServiceImpl implements QuBaoMingExcelO
     private QubaomingActiveBaseService qubaomingActiveBaseService;
 
     @Autowired
-    private ActiveConfigService qubaomingActiveConfigService;
+    private QuBaoMingActiveConfigService qubaomingActiveConfigService;
 
 
     @Autowired

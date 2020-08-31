@@ -37,7 +37,7 @@ public class ActiveManagerServiceImpl implements ActiveManagerService {
     @Autowired
     private QubaomingActiveBaseService qubaomingActiveBaseService;
     @Autowired
-    private ActiveConfigService qubaomingActiveConfigService;
+    private QuBaoMingActiveConfigService qubaomingActiveConfigService;
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
     @Autowired

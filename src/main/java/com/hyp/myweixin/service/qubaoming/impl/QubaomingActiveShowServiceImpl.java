@@ -38,7 +38,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
     private WechatCompanyService wechatCompanyService;
 
     @Autowired
-    private ActiveConfigService qubaomingActiveConfigService;
+    private QuBaoMingActiveConfigService qubaomingActiveConfigService;
 
     @Autowired
     private QubaomingActiveUserCollectionService qubaomingActiveUserCollectionService;

@@ -36,7 +36,7 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
     @Autowired
     private QubaomingWeixinUserService qubaomingWeixinUserService;
     @Autowired
-    private ActiveConfigService qubaomingActiveConfigService;
+    private QuBaoMingActiveConfigService qubaomingActiveConfigService;
 
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;

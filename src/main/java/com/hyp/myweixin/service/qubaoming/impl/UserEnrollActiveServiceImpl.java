@@ -36,7 +36,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
     private QubaomingActiveBaseService qubaomingActiveBaseService;
 
     @Autowired
-    private ActiveConfigService qubaomingActiveConfigService;
+    private QuBaoMingActiveConfigService qubaomingActiveConfigService;
 
 
     @Autowired

@@ -25,8 +25,6 @@ public interface WechatCompanyService {
     Integer decreaseCollectionNum(Integer companyId) throws MyDefinitionException;
 
 
-
-
     /**
      * 新增公司主体收藏数
      *
@@ -46,6 +44,15 @@ public interface WechatCompanyService {
      */
     List<WechatCompany> selectListByExample(Example example) throws MyDefinitionException;
 
+
+    /**
+     * 通过用户ID查询用户下的主办方信息
+     *
+     * @param userId 用户ID
+     * @return 完整的实体类
+     * @throws MyDefinitionException
+     */
+    WechatCompany selectOneByUserId(Integer userId) throws MyDefinitionException;
 
     /**
      * 通过用户ID查询用户下的主办方信息

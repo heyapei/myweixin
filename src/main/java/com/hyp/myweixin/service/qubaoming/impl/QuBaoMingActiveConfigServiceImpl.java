@@ -3,7 +3,7 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.QubaomingActiveConfigMapper;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
-import com.hyp.myweixin.service.qubaoming.ActiveConfigService;
+import com.hyp.myweixin.service.qubaoming.QuBaoMingActiveConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class ActiveConfigServiceImpl implements ActiveConfigService {
+public class QuBaoMingActiveConfigServiceImpl implements QuBaoMingActiveConfigService {
 
 
     @Autowired
