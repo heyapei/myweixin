@@ -29,6 +29,7 @@ public class MyURLPatternConfiguration extends WebMvcConfigurationSupport {
 
 
         /*默认静态资源限制*/
+        registry.addResourceHandler("/qrcode/**").addResourceLocations("classpath:/qrcode/");
         registry.addResourceHandler("/upload/**").addResourceLocations("classpath:/upload/");
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/favicon.ico");
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");

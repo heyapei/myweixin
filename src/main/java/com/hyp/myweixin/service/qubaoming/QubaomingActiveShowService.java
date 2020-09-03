@@ -42,7 +42,7 @@ public interface QubaomingActiveShowService {
      * @return
      * @throws MyDefinitionException
      */
-    ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException;
+    ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId,String scene,String page) throws MyDefinitionException;
 
 
     /**

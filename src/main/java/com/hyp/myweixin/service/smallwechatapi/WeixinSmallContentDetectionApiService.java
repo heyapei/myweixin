@@ -14,6 +14,17 @@ public interface WeixinSmallContentDetectionApiService {
 
 
     /**
+     * 获取qubaoming无数量限制的二维码
+     *
+     * @param scene
+     * @param page
+     * @return
+     * @throws MyDefinitionException
+     */
+    String getQuBaoMingQrCodeUnlimited(String scene, String page) throws MyDefinitionException;
+
+
+    /**
      * 获取二维码信息
      *
      * @return

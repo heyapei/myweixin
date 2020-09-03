@@ -11,6 +11,7 @@ import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveDetailShowVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShareImgVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShowByCompanyIdVO;
 import com.hyp.myweixin.service.qubaoming.*;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
 import com.hyp.myweixin.utils.dateutil.MyDateStyle;
@@ -57,6 +58,9 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
 
     @Autowired
     private QuBaoMingActiveConfigService quBaoMingActiveConfigService;
+
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
 
     /**
@@ -163,7 +167,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
      * @throws MyDefinitionException
      */
     @Override
-    public ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId) throws MyDefinitionException {
+    public ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId,String scene,String page) throws MyDefinitionException {
         if (activeId == null) {
             throw new MyDefinitionException("参数不能为空");
         }
@@ -183,7 +187,11 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
             activeShareImgVO.setActiveImg(activeImg);
             activeShareImgVO.setActiveName(qubaomingActiveBase.getActiveName());
             activeShareImgVO.setActiveDesc(qubaomingActiveBase.getActiveDesc());
-            activeShareImgVO.setActiveWechatImg("/upload/qubaoming/20200831195957code.jpg");
+
+            String quBaoMingQrCodeUnlimited = weixinSmallContentDetectionApiService.
+                    getQuBaoMingQrCodeUnlimited(scene, page);
+            log.info("查询结果：{}", quBaoMingQrCodeUnlimited);
+            activeShareImgVO.setActiveWechatImg(quBaoMingQrCodeUnlimited);
             QubaomingActiveConfig qubaomingActiveConfigs = qubaomingActiveConfigService.selectOneByActiveId(activeId);
             if (qubaomingActiveConfigs != null) {
                 Date date = MyDateUtil.numberDateFormatToDate(qubaomingActiveConfigs.getActiveEndTime());

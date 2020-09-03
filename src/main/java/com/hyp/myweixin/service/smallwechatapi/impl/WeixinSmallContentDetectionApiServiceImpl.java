@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service.smallwechatapi.impl;
 
+import cn.hutool.core.codec.Base64;
 import com.alibaba.fastjson.JSONObject;
 import com.hyp.myweixin.config.weixin.WeChatPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
@@ -14,10 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,6 +100,12 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
      */
     @Value("${weixin.acode.create.qr_code.url}")
     private String CREATE_QR_CODE_URL;
+
+    /**
+     * qubaoming数量无限制的二维码图片存放地址
+     */
+    @Value("${weixin.acode.get.qubaoming.unlimited.img.path}")
+    private String QUBAOMING_UNLIMITED_ACODE_IMG_PATH;
     /**
      * 二维码接口 A
      */
@@ -129,6 +140,101 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
 
 
     /**
+     * 获取无数量限制的二维码
+     *
+     * @param scene
+     * @param page
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public String getQuBaoMingQrCodeUnlimited(String scene, String page) throws MyDefinitionException {
+
+        String pageTemp = page;
+        if (page != null) {
+            page = page.replaceAll("/", "");
+        } else {
+            page = "defaultIndex";
+        }
+        String qrCodeFileName = scene + page + ".png";
+        String pathBase = null;
+        try {
+            pathBase = ResourceUtils.getURL("classpath:").getPath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new MyDefinitionException("获取项目路径失败");
+        }
+        pathBase = pathBase + QUBAOMING_UNLIMITED_ACODE_IMG_PATH;
+
+        File pathFile = new File(pathBase);
+        //如果目录不存在
+        if (!pathFile.exists()) {
+            //创建目录
+            pathFile.mkdirs();
+        }
+
+        String realFileName = QUBAOMING_UNLIMITED_ACODE_IMG_PATH + "/" + qrCodeFileName;
+
+        String fileTemp = pathFile + "/" + qrCodeFileName;
+        File file = new File(fileTemp);
+        if (file.exists()) {
+            return realFileName;
+        } else {
+            String accessTokenByAppName = getAccessTokenByAppName("qubaoming");
+            String urlTemp = QR_CODE_GET_UNLIMITED_URL + accessTokenByAppName;
+            String base64 = null;
+
+            try {
+                //URL url = new URL("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + accessTokenByAppName);
+                URL url = new URL(urlTemp);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");// 提交模式
+                // conn.setConnectTimeout(10000);//连接超时 单位毫秒
+                // conn.setReadTimeout(2000);//读取超时 单位毫秒
+                // 发送POST请求必须设置如下两行
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                // 获取URLConnection对象对应的输出流
+                PrintWriter printWriter = new PrintWriter(httpURLConnection.getOutputStream());
+                // 发送请求参数
+                JSONObject paramJson = new JSONObject();
+                paramJson.put("scene", scene);
+                paramJson.put("page", pageTemp);
+                paramJson.put("width", 430);
+                paramJson.put("auto_color", true);
+                /**
+                 * line_color生效
+                 * paramJson.put("auto_color", false);
+                 * JSONObject lineColor = new JSONObject();
+                 * lineColor.put("r", 0);
+                 * lineColor.put("g", 0);
+                 * lineColor.put("b", 0);
+                 * paramJson.put("line_color", lineColor);
+                 * */
+                printWriter.write(paramJson.toString());
+                // flush输出流的缓冲
+                printWriter.flush();
+                //开始获取数据
+                BufferedInputStream bis = new BufferedInputStream(httpURLConnection.getInputStream());
+                OutputStream os = new FileOutputStream(new File(fileTemp));
+                int len;
+                byte[] arr = new byte[1024];
+                while ((len = bis.read(arr)) != -1) {
+                    os.write(arr, 0, len);
+                    os.flush();
+                }
+                os.close();
+                return realFileName;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return null;
+    }
+
+    /**
      * 获取二维码B信息
      *
      * @return
@@ -149,35 +255,79 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
 
         //see(accessToken);
 
-        String url = QR_CODE_GET_UNLIMITED_URL + accessToken;
-        log.info("请求地址：{}", url);
-        Map<String, Object> jsonMap = new HashMap<>(6);
-        //必填
-        jsonMap.put("scene", "b=1");
-        /*以下都为非必填项 page不填默认首页*/
-        jsonMap.put("page", "pages/chuangjian/chuangjian");
-       /* jsonMap.put("width", "430");
-        jsonMap.put("auto_color", "false");
-        jsonMap.put("line_color", "{\"r\":0,\"g\":0,\"b\":0}");
-        jsonMap.put("is_hyaline", "false");*/
-        Map<String, String> headMap = new HashMap<>(1);
-        headMap.put("Content-Type", "application/json");
+        String urlTemp = QR_CODE_GET_UNLIMITED_URL + accessToken;
+        String base64 = null;
 
-        String weixinQrCodeB = null;
         try {
-            weixinQrCodeB = myHttpClientUtil.postJson(url, jsonMap, headMap);
-        } catch (MyDefinitionException e) {
+            //URL url = new URL("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + accessTokenByAppName);
+            URL url = new URL(urlTemp);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("POST");// 提交模式
+            // conn.setConnectTimeout(10000);//连接超时 单位毫秒
+            // conn.setReadTimeout(2000);//读取超时 单位毫秒
+            // 发送POST请求必须设置如下两行
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+            // 获取URLConnection对象对应的输出流
+            PrintWriter printWriter = new PrintWriter(httpURLConnection.getOutputStream());
+            // 发送请求参数
+            JSONObject paramJson = new JSONObject();
+            paramJson.put("scene", "a=1234567890");
+            paramJson.put("page", "pages/index/index");
+            paramJson.put("width", 430);
+            paramJson.put("auto_color", true);
+            /**
+             * line_color生效
+             * paramJson.put("auto_color", false);
+             * JSONObject lineColor = new JSONObject();
+             * lineColor.put("r", 0);
+             * lineColor.put("g", 0);
+             * lineColor.put("b", 0);
+             * paramJson.put("line_color", lineColor);
+             * */
+
+
+            String path = null;
+            try {
+                path = ResourceUtils.getURL("classpath:").getPath();
+                //log.info("系统路径：{}", path);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                throw new MyDefinitionException("获取项目路径失败");
+            }
+
+            //String savePath = path + imgVideResConfig.getQuBaoMingActiveImgBasePath();
+
+
+            printWriter.write(paramJson.toString());
+            // flush输出流的缓冲
+            printWriter.flush();
+            //开始获取数据
+            BufferedInputStream bis = new BufferedInputStream(httpURLConnection.getInputStream());
+            OutputStream os = new FileOutputStream(new File("C:\\Users\\heyapei\\Pictures\\Screenshots\\abc.png"));
+            int len;
+            byte[] arr = new byte[1024];
+            while ((len = bis.read(arr)) != -1) {
+                os.write(arr, 0, len);
+                os.flush();
+            }
+            os.close();
+
+            File file = new File("C:\\Users\\heyapei\\Pictures\\Screenshots\\abc.png");
+            BufferedImage image = ImageIO.read(file);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", stream);
+            base64 = Base64.encode(stream.toByteArray());
+
+
+        } catch (Exception e) {
             e.printStackTrace();
-            log.error("获取二维码B请求失败，失败原因：{}", e.toString());
-            throw new MyDefinitionException("获取二维码B请求失败");
-        }
-        if (StringUtils.isBlank(weixinQrCodeB)) {
-            throw new MyDefinitionException("获取二维码B未能获取任何返回值");
         }
 
-        log.info("获取二维码B的结果:{}", weixinQrCodeB);
 
-        return weixinQrCodeB;
+        //log.info("获取二维码B的结果:{}", base64);
+
+        return base64;
     }
 
     /**

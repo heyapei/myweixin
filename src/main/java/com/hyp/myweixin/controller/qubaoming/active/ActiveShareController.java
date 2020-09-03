@@ -56,7 +56,8 @@ public class ActiveShareController {
 
         try {
             return Result.buildResult(Result.Status.OK, "成功获取分享图",
-                    QubaomingActiveShowService.getActiveShareImgByActiveId(activeShareImgQuery.getActiveId()));
+                    QubaomingActiveShowService.getActiveShareImgByActiveId(
+                            activeShareImgQuery.getActiveId(), activeShareImgQuery.getScene(), activeShareImgQuery.getPage()));
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -78,7 +79,8 @@ public class ActiveShareController {
             return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
         }
         try {
-            return Result.buildResult(Result.Status.OK, "增加分享成功", QubaomingActiveShowService.addActiveShareNumByActiveId(activeShareImgQuery.getActiveId()));
+            return Result.buildResult(Result.Status.OK, "增加分享成功",
+                    QubaomingActiveShowService.addActiveShareNumByActiveId(activeShareImgQuery.getActiveId()));
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
