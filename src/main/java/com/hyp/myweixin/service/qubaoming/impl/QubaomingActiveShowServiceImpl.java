@@ -338,7 +338,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         }
         Example example = new Example(QubaomingActiveBase.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
+        //criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
         if (StringUtils.isNotBlank(showActiveByPageQuery.getActiveQuery())) {
             criteria.andLike("activeName", "%" + showActiveByPageQuery.getActiveQuery() + "%");
         }
@@ -437,7 +437,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         Example.Criteria criteria = example.createCriteria();
         /*近一个月内创建的项目*/
         criteria.andBetween("createTime", Long.parseLong(MyDateUtil.numberDateFormatToDate(MyDateUtil.addDay(new Date(), -30), 13)), System.currentTimeMillis());
-        criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
+        //criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
         example.orderBy("activeShowOrder").desc();
         example.orderBy("activeJoinNum").desc();
         example.orderBy("activeShareNum").desc();
