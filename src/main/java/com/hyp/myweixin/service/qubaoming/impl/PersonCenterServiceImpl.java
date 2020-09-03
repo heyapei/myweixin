@@ -251,7 +251,8 @@ public class PersonCenterServiceImpl implements PersonCenterService {
                 throw new MyDefinitionException(e.getMessage());
             }
             if (qubaomingActiveBase == null) {
-                throw new MyDefinitionException("没有找到指定的活动信息");
+                //throw new MyDefinitionException("没有找到指定的活动信息");
+                continue;
             }
             pCenterActiveVO.setActiveId(qubaomingActiveBase.getId());
             pCenterActiveVO.setActiveName(qubaomingActiveBase.getActiveName());
