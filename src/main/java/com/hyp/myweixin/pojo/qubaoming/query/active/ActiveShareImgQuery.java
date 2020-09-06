@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 public class ActiveShareImgQuery {
 
     @ApiModelProperty(value = "场景", name = "scene", required = true)
-    @NotNull(message = "必须指定场景")
+    //@NotNull(message = "必须指定场景")
     private String scene;
 
     @ApiModelProperty(value = "所要到达的页面", name = "page", required = true)
