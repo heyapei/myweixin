@@ -132,7 +132,7 @@ public class QubaomingActiveUserCollectionServiceImpl implements QubaomingActive
     @Override
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         int i = 0;
@@ -155,7 +155,7 @@ public class QubaomingActiveUserCollectionServiceImpl implements QubaomingActive
     @Override
     public Integer updateSelectiveQubaomingActiveUserCollection(QubaomingActiveUserCollection qubaomingActiveUserCollection) throws MyDefinitionException {
         if (qubaomingActiveUserCollection == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -177,7 +177,7 @@ public class QubaomingActiveUserCollectionServiceImpl implements QubaomingActive
     @Override
     public QubaomingActiveUserCollection selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         QubaomingActiveUserCollection qubaomingActiveUserCollection = null;
         try {

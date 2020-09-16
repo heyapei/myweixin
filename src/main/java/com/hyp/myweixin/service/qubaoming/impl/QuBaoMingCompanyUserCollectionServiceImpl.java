@@ -3,7 +3,7 @@ package com.hyp.myweixin.service.qubaoming.impl;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.CompanyUserCollectionMapper;
 import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
-import com.hyp.myweixin.service.qubaoming.CompanyUserCollectionService;
+import com.hyp.myweixin.service.qubaoming.QuBaoMingCompanyUserCollectionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionService {
+public class QuBaoMingCompanyUserCollectionServiceImpl implements QuBaoMingCompanyUserCollectionService {
 
     @Autowired
     private CompanyUserCollectionMapper companyUserCollectionMapper;
@@ -84,7 +84,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
     @Override
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         int i = 0;
@@ -107,7 +107,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
     @Override
     public Integer updateSelectiveCompanyUserCollection(QuBaoMingCompanyUserCollection companyUserCollection) throws MyDefinitionException {
         if (companyUserCollection == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -129,7 +129,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
     @Override
     public QuBaoMingCompanyUserCollection selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {
@@ -152,7 +152,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
     public QuBaoMingCompanyUserCollection selectOneByExample(Example example) throws MyDefinitionException {
 
         if (example == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         QuBaoMingCompanyUserCollection companyUserCollection = null;
@@ -177,7 +177,7 @@ public class CompanyUserCollectionServiceImpl implements CompanyUserCollectionSe
     @Override
     public List<QuBaoMingCompanyUserCollection> selectAllByExample(Example example) throws MyDefinitionException {
         if (example == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         List<QuBaoMingCompanyUserCollection> companyUserCollections = null;

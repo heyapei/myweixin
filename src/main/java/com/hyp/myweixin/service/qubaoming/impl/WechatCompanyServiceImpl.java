@@ -90,6 +90,38 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
         return integer;
     }
 
+
+    /**
+     * 通过用户ID查询用户下的主办方信息
+     *
+     * @param userId 用户ID
+     * @return 完整的实体类
+     * @throws MyDefinitionException
+     */
+    @Override
+    public WechatCompany selectOneByUserId(Integer userId) throws MyDefinitionException {
+        if (userId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        Example example = new Example(WechatCompany.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId", userId);
+        example.orderBy("companyShowOrder").desc();
+        example.orderBy("companyUsedNum").desc();
+        example.orderBy("companyCollectionNum").desc();
+        example.orderBy("companyShareNum").desc();
+        example.orderBy("companyViewNum").desc();
+        WechatCompany wechatCompanies = null;
+        try {
+            wechatCompanies = wechatCompanyMapper.selectOneByExample(example);
+        } catch (Exception e) {
+            log.error("通过用户ID查询条件进行查询主办方信息操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("查询用户下唯一主办方信息操作过程错误");
+        }
+        return wechatCompanies;
+    }
+
     /**
      * 通过Example查询条件进行查询
      *
@@ -179,7 +211,7 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     @Override
     public Integer deleteByPk(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -201,7 +233,7 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     @Override
     public Integer updateSelectiveWechatCompany(WechatCompany wechatCompany) throws MyDefinitionException {
         if (wechatCompany == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         int i = 0;
         try {
@@ -223,7 +255,7 @@ public class WechatCompanyServiceImpl implements WechatCompanyService {
     @Override
     public WechatCompany selectByPkId(Integer pkId) throws MyDefinitionException {
         if (pkId == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         WechatCompany wechatCompany = null;
         try {

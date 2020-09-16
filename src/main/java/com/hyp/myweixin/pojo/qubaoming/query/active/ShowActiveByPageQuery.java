@@ -32,4 +32,14 @@ public class ShowActiveByPageQuery {
     private String sign;
 
 
+    @ApiModelProperty(value = "用户ID 允许不登陆 但是必传 传0标识未登录", name = "userId", required = true)
+    @NotNull(message = "用户ID必传，0标识未登录")
+    private Integer userId;
+
+
+    @ApiModelProperty(value = "活动查询参数", name = "activeQuery", required = true)
+    private String activeQuery;
+
+
+
 }

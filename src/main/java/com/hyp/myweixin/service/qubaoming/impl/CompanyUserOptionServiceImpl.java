@@ -7,7 +7,7 @@ import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyUserOptionQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.company.ShowUserCollectionPageQuery;
-import com.hyp.myweixin.service.qubaoming.CompanyUserCollectionService;
+import com.hyp.myweixin.service.qubaoming.QuBaoMingCompanyUserCollectionService;
 import com.hyp.myweixin.service.qubaoming.CompanyUserOptionService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -32,7 +32,7 @@ import java.util.List;
 @Slf4j
 public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
     @Autowired
-    private CompanyUserCollectionService companyUserCollectionService;
+    private QuBaoMingCompanyUserCollectionService companyUserCollectionService;
     @Autowired
     private WechatCompanyService wechatCompanyService;
 
@@ -48,7 +48,7 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
     @Override
     public PageInfo showCollectionListByUserId(ShowUserCollectionPageQuery showUserCollectionPageQuery) throws MyDefinitionException {
         if (showUserCollectionPageQuery == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         Example example = new Example(QuBaoMingCompanyUserCollection.class);
@@ -102,7 +102,7 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
     public Integer addUserCollectionCompany(CompanyUserOptionQuery companyUserOptionQuery) throws MyDefinitionException {
 
         if (companyUserOptionQuery == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
 
         QuBaoMingCompanyUserCollection companyUserCollection = null;
@@ -158,7 +158,7 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
     public Integer delUserCollectionCompany(CompanyUserOptionQuery companyUserOptionQuery) throws MyDefinitionException {
 
         if (companyUserOptionQuery == null) {
-            throw new MyDefinitionException("参数能为空");
+            throw new MyDefinitionException("参数不能为空");
         }
         QuBaoMingCompanyUserCollection companyUserCollection = null;
         try {

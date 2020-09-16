@@ -134,10 +134,13 @@ public class MyDateUtil {
      * 10位13位时间戳转Date
      *
      * @param timestamp 参数时间戳
-     * @param pattern   时间戳类型（"yyyy-MM-dd HH:mm:ss"）
+     * @param pattern   时间戳类型（"yyyy-MM-dd HH:mm:ss 为默认值"）
      * @return 返回的是date类型数据
      */
     public static Date numberDateFormatToDate(String timestamp, String pattern) {
+        if (pattern == null) {
+            pattern = "yyyy-MM-dd HH:mm:ss";
+        }
         //要转换的时间格式
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         Date date = null;
@@ -152,6 +155,37 @@ public class MyDateUtil {
             log.error("10位13位时间戳转Date错误，错误原因：{}",e.toString());
         }
         return date;
+    }
+
+    /**
+     * 10位13位时间戳转Date
+     *
+     * @param timestamp 参数时间戳
+     * @return 返回的是date类型数据
+     */
+    public static Date numberDateFormatToDate(String timestamp) {
+        return numberDateFormatToDate(timestamp, null);
+    }
+
+    /**
+     * 10位13位时间戳转Date
+     *
+     * @param timestamp 参数时间戳
+     * @return 返回的是date类型数据
+     */
+    public static Date numberDateFormatToDate(Long timestamp) {
+        return numberDateFormatToDate(String.valueOf(timestamp), null);
+    }
+
+
+    /**
+     * 10位13位时间戳转Date
+     *
+     * @param timestamp 参数时间戳
+     * @return 返回的是date类型数据
+     */
+    public static Date numberDateFormatToDate(Long timestamp,String pattern) {
+        return numberDateFormatToDate(String.valueOf(timestamp), pattern);
     }
 
     /**

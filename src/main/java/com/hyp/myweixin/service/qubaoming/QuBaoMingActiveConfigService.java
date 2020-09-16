@@ -11,11 +11,17 @@ import java.util.List;
  * @Date 2020/8/15 18:56
  * @Description: TODO
  */
-public interface QubaomingActiveConfigService {
+public interface QuBaoMingActiveConfigService {
 
 
-
-
+    /**
+     * 查询当前活动的配置信息 如果没有返回null
+     *
+     * @param activeId 主键
+     * @return 完整的实体类
+     * @throws MyDefinitionException
+     */
+    QubaomingActiveConfig selectOneByActiveId(Integer activeId) throws MyDefinitionException;
 
 
     /**

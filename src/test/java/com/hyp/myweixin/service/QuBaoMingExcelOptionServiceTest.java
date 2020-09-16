@@ -28,7 +28,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-public class ExcelOptionServiceTest {
+public class QuBaoMingExcelOptionServiceTest {
 
     @Autowired
     private ExcelOptionService excelOptionService;

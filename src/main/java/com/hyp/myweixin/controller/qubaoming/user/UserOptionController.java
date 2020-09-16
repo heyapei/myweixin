@@ -81,6 +81,7 @@ public class UserOptionController {
         QubaomingWeixinUser qubaomingWeixinUser = null;
         try {
             qubaomingWeixinUser = MyEntityUtil.entity2VM(qubaomingWeixinUserCreateQuery, QubaomingWeixinUser.class);
+            qubaomingWeixinUser.setUpdateTime(System.currentTimeMillis());
         } catch (Exception e) {
             log.error("用户数据转换错误，错误原因：{}", e.toString());
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "用户数据转换错误");
@@ -91,6 +92,8 @@ public class UserOptionController {
 
         try {
             qubaomingWeixinUser = (QubaomingWeixinUser) MyEntityUtil.entitySetDefaultValue(qubaomingWeixinUser);
+            qubaomingWeixinUser.setCreateTime(System.currentTimeMillis());
+            qubaomingWeixinUser.setUpdateTime(System.currentTimeMillis());
         } catch (MyDefinitionException e) {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, "用户数据默认值赋予错误");
         }

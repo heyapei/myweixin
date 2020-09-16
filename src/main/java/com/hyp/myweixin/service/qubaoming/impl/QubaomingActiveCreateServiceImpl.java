@@ -37,7 +37,7 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
     @Autowired
     private QubaomingWeixinUserService qubaomingWeixinUserService;
     @Autowired
-    private QubaomingActiveConfigService qubaomingActiveConfigService;
+    private QuBaoMingActiveConfigService qubaomingActiveConfigService;
 
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
@@ -170,6 +170,17 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
             } catch (MyDefinitionException e) {
                 throw new MyDefinitionException(e.getMessage());
             }
+        }
+
+        /*分析并处理空值*/
+        String activeRequireOption = qubaomingActiveConfig.getActiveRequireOption();
+        if (activeCreateSecondQuery != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String[] split = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+            for (String s : split) {
+                stringBuilder.append(s).append(MySeparatorUtil.SEMICOLON_SEPARATOR);
+            }
+            qubaomingActiveConfig.setActiveRequireOption(stringBuilder.toString());
         }
 
         try {

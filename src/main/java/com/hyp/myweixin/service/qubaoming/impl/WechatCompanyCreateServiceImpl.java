@@ -65,17 +65,20 @@ public class WechatCompanyCreateServiceImpl implements WechatCompanyCreateServic
                 throw new MyDefinitionException("您无权修改当前内容");
             }
         }
+        WechatCompany wechatCompany1 = null;
         try {
-            wechatCompany = (WechatCompany) MyEntityUtil.entitySetDefaultValue(MyEntityUtil.entity2VM(companyUpdateQuery, WechatCompany.class));
+            wechatCompany1 = (WechatCompany) MyEntityUtil.entitySetDefaultValue(MyEntityUtil.entity2VM(companyUpdateQuery, WechatCompany.class));
         } catch (MyDefinitionException e) {
             log.error("更新数据转换为能插入数据库操作出现了错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("数据转换操作出现了错误");
         }
-
-        wechatCompany.setId(companyUpdateQuery.getWechatCompanyId());
-
+        wechatCompany1.setId(companyUpdateQuery.getWechatCompanyId());
+        wechatCompany1.setCompanyCollectionNum(wechatCompany.getCompanyCollectionNum());
+        wechatCompany1.setCompanyUsedNum(wechatCompany.getCompanyUsedNum());
+        wechatCompany1.setCompanyShareNum(wechatCompany.getCompanyShareNum());
+        wechatCompany1.setCompanyViewNum(wechatCompany.getCompanyViewNum());
         try {
-            return wechatCompanyService.updateSelectiveWechatCompany(wechatCompany);
+            return wechatCompanyService.updateSelectiveWechatCompany(wechatCompany1);
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
         }
