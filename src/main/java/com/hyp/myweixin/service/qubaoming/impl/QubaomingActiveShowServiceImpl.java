@@ -185,8 +185,8 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         } else {
             String activeImg = qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
             activeShareImgVO.setActiveImg(activeImg);
-            activeShareImgVO.setActiveName(qubaomingActiveBase.getActiveName());
-            activeShareImgVO.setActiveDesc(qubaomingActiveBase.getActiveDesc());
+            activeShareImgVO.setActiveName(qubaomingActiveBase.getActiveName().replaceAll("\\n",""));
+            activeShareImgVO.setActiveDesc(qubaomingActiveBase.getActiveDesc().replaceAll("\\n",""));
 
             String quBaoMingQrCodeUnlimited = weixinSmallContentDetectionApiService.
                     getQuBaoMingQrCodeUnlimited(scene, page);

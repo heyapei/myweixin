@@ -9,6 +9,7 @@ import com.hyp.myweixin.pojo.qubaoming.query.pcenter.UserEnrollQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ActiveShowByCompanyIdVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.pcenter.PCenterActiveVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.pcenter.UserNumPreVO;
+import com.hyp.myweixin.service.AdministratorsOptionService;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MySeparatorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,9 @@ public class PersonCenterServiceImpl implements PersonCenterService {
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
 
+
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
 
     /**
      * 分页查询用户创建的活动列表
@@ -136,7 +140,9 @@ public class PersonCenterServiceImpl implements PersonCenterService {
         }
         Example example = new Example(QubaomingActiveBase.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("activeUserId", userCreateActiveQuery.getUserId());
+        if (!administratorsOptionService.isQuBaoMingSuperAdministrators(userCreateActiveQuery.getUserId())) {
+            criteria.andEqualTo("activeUserId", userCreateActiveQuery.getUserId());
+        }
         example.orderBy("createTime").desc();
         PageHelper.startPage(userCreateActiveQuery.getPageNum(), userCreateActiveQuery.getPageSize());
         PageInfo pageInfo = null;
