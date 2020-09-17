@@ -4,6 +4,9 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.GetActiveFirstVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.GetActiveSecondVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.GetActiveThirdVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
 
 /**
@@ -13,6 +16,42 @@ import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserI
  * @Description: TODO
  */
 public interface QubaomingActiveCreateService {
+
+
+    /**
+     * 获取第三页面的信息
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 第三页的信息
+     * @throws MyDefinitionException
+     */
+    GetActiveThirdVO getActiveThirdByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
+
+
+
+
+    /**
+     * 获取第二页面的信息
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 第二页的信息
+     * @throws MyDefinitionException
+     */
+    GetActiveSecondVO getActiveSecondByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
+
+
+
+    /**
+     * 获取第一页面的信息
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 第一页的信息
+     * @throws MyDefinitionException
+     */
+    GetActiveFirstVO getActiveFirstByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
 
 
     /**

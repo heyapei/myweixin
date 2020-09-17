@@ -7,16 +7,23 @@ import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.GetActiveFirstVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.GetActiveSecondVO;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.GetActiveThirdVO;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
+import com.hyp.myweixin.service.AdministratorsOptionService;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
+import com.hyp.myweixin.utils.dateutil.MyDateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +49,182 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
     @Autowired
     private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
 
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
+
+    /**
+     * 获取第三页面的信息
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 第三页的信息
+     * @throws MyDefinitionException
+     */
+    @Override
+    public GetActiveThirdVO getActiveThirdByActiveId(Integer activeId, Integer userId) throws MyDefinitionException {
+
+        if (activeId == null || userId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有查找到活动数据");
+        }
+
+        if (!qubaomingActiveBase.getActiveUserId().equals(userId)) {
+            if (!administratorsOptionService.isQuBaoMingSuperAdministrators(userId)) {
+                throw new MyDefinitionException("没有管理员权限操作");
+            }
+        }
+
+        GetActiveThirdVO getActiveThirdVO = new GetActiveThirdVO();
+        getActiveThirdVO.setUserId(userId);
+        getActiveThirdVO.setActiveId(activeId);
+        getActiveThirdVO.setActiveShareImgS(qubaomingActiveBase.getActiveShareImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+        getActiveThirdVO.setCompanyId(qubaomingActiveBase.getActiveCompanyId());
+
+
+        return getActiveThirdVO;
+    }
+
+    /**
+     * 获取第二页面的信息
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 第二页的信息
+     * @throws MyDefinitionException
+     */
+    @Override
+    public GetActiveSecondVO getActiveSecondByActiveId(Integer activeId, Integer userId) throws MyDefinitionException {
+
+        if (activeId == null || userId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有查找到活动数据");
+        }
+
+        if (!qubaomingActiveBase.getActiveUserId().equals(userId)) {
+            if (!administratorsOptionService.isQuBaoMingSuperAdministrators(userId)) {
+                throw new MyDefinitionException("没有管理员权限操作");
+            }
+        }
+
+        QubaomingActiveConfig qubaomingActiveConfig = null;
+        try {
+            qubaomingActiveConfig = qubaomingActiveConfigService.selectOneByActiveId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveConfig == null) {
+            throw new MyDefinitionException("没有找到当前活动配置项");
+        }
+
+        GetActiveSecondVO getActiveSecondVO = new GetActiveSecondVO();
+
+        getActiveSecondVO.setActiveId(activeId);
+        getActiveSecondVO.setUserId(userId);
+        getActiveSecondVO.setActiveAddress(qubaomingActiveConfig.getActiveAddress());
+        getActiveSecondVO.setActiveJoinNumMax(qubaomingActiveConfig.getActiveJoinNumMax());
+        getActiveSecondVO.setActiveRequireOption(qubaomingActiveConfig.getActiveRequireOption());
+        getActiveSecondVO.setActiveType(qubaomingActiveConfig.getActiveType());
+        Long activeStartTime = qubaomingActiveConfig.getActiveStartTime();
+        if (activeStartTime != null) {
+            Date date = MyDateUtil.numberDateFormatToDate(activeStartTime);
+            getActiveSecondVO.setActiveStartTimeDate(MyDateUtil.DateToString(date, MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveStartTimeDateTime(MyDateUtil.DateToString(date, MyDateStyle.HH_MM));
+        } else {
+            getActiveSecondVO.setActiveStartTimeDate(MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveStartTimeDateTime(MyDateUtil.DateToString(new Date(), MyDateStyle.HH_MM));
+        }
+        Long activeEndTime = qubaomingActiveConfig.getActiveEndTime();
+        if (activeEndTime != null) {
+            Date date = MyDateUtil.numberDateFormatToDate(activeEndTime);
+            getActiveSecondVO.setActiveEndTimeDate(MyDateUtil.DateToString(date, MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveEndTimeDateTime(MyDateUtil.DateToString(date, MyDateStyle.HH_MM));
+        } else {
+            getActiveSecondVO.setActiveEndTimeDate(MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveEndTimeDateTime(MyDateUtil.DateToString(new Date(), MyDateStyle.HH_MM));
+        }
+        Long signUpStartTime = qubaomingActiveConfig.getSignUpStartTime();
+        if (signUpStartTime != null) {
+            Date date = MyDateUtil.numberDateFormatToDate(signUpStartTime);
+            getActiveSecondVO.setActiveSignUpStartTimeDate(MyDateUtil.DateToString(date, MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveSignUpStartTimeDateTime(MyDateUtil.DateToString(date, MyDateStyle.HH_MM));
+        } else {
+            getActiveSecondVO.setActiveSignUpStartTimeDate(MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveSignUpStartTimeDateTime(MyDateUtil.DateToString(new Date(), MyDateStyle.HH_MM));
+        }
+
+        Long signUpEndTime = qubaomingActiveConfig.getSignUpEndTime();
+        if (signUpEndTime != null) {
+            Date date = MyDateUtil.numberDateFormatToDate(signUpEndTime);
+            getActiveSecondVO.setActiveSignUpEndTimeDate(MyDateUtil.DateToString(date, MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveSignUpEndTimeDateTime(MyDateUtil.DateToString(date, MyDateStyle.HH_MM));
+        } else {
+            getActiveSecondVO.setActiveSignUpEndTimeDate(MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD));
+            getActiveSecondVO.setActiveSignUpEndTimeDateTime(MyDateUtil.DateToString(new Date(), MyDateStyle.HH_MM));
+        }
+
+        return getActiveSecondVO;
+    }
+
+    /**
+     * 获取第一页面的信息
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 第一页的信息
+     * @throws MyDefinitionException
+     */
+    @Override
+    public GetActiveFirstVO getActiveFirstByActiveId(Integer activeId, Integer userId) throws MyDefinitionException {
+        if (activeId == null || userId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有查找到活动数据");
+        }
+
+        if (!qubaomingActiveBase.getActiveUserId().equals(userId)) {
+            if (!administratorsOptionService.isQuBaoMingSuperAdministrators(userId)) {
+                throw new MyDefinitionException("没有管理员权限操作");
+            }
+        }
+
+        GetActiveFirstVO getActiveFirstVO = new GetActiveFirstVO();
+        getActiveFirstVO.setUserId(userId);
+        getActiveFirstVO.setActiveId(activeId);
+        getActiveFirstVO.setActiveDesc(qubaomingActiveBase.getActiveDesc());
+        getActiveFirstVO.setActiveDescImgS(qubaomingActiveBase.getActiveDescImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+        getActiveFirstVO.setActiveName(qubaomingActiveBase.getActiveName());
+        getActiveFirstVO.setActiveImgS(qubaomingActiveBase.getActiveImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+        getActiveFirstVO.setActiveDetail(qubaomingActiveBase.getActiveDetail());
+        getActiveFirstVO.setActiveDetailImgS(qubaomingActiveBase.getActiveDetailImg().split(MySeparatorUtil.SEMICOLON_SEPARATOR));
+
+        return getActiveFirstVO;
+    }
 
     /**
      * 新增活动分享图
@@ -178,6 +361,9 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
             StringBuilder stringBuilder = new StringBuilder();
             String[] split = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
             for (String s : split) {
+                if (StringUtils.isBlank(s)) {
+                    continue;
+                }
                 stringBuilder.append(s).append(MySeparatorUtil.SEMICOLON_SEPARATOR);
             }
             qubaomingActiveConfig.setActiveRequireOption(stringBuilder.toString());
@@ -197,7 +383,7 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
 
 
         /*去除空数据 只保留有效数据*/
-        String activeRequireOption = qubaomingActiveConfig.getActiveRequireOption();
+        activeRequireOption = qubaomingActiveConfig.getActiveRequireOption();
         if (StringUtils.isNotBlank(activeRequireOption)) {
             String[] split = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
             StringBuffer stringBuffer = new StringBuffer();

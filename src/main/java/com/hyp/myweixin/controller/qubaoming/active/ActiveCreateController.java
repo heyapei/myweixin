@@ -5,8 +5,8 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
-import com.hyp.myweixin.pojo.qubaoming.vo.active.AddActiveShareImgQuery;
-import com.hyp.myweixin.pojo.qubaoming.vo.active.ValidateUnCompleteByActiveUserIdVO;
+import com.hyp.myweixin.pojo.qubaoming.query.active.GetActiveFirstQuery;
+import com.hyp.myweixin.pojo.qubaoming.vo.active.*;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCreateService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
@@ -45,6 +45,99 @@ public class ActiveCreateController {
     private HttpServletRequest httpServletRequest;
     @Autowired
     private QubaomingActiveCreateService qubaomingActiveCreateService;
+
+
+    @ApiOperation(value = "获取活动第三页的信息", tags = {"趣报名活动创建"})
+    @PostMapping("getActiveThird/activeId")
+    public Result<Object> getActiveThird(
+            @ApiParam(name = "获取第三页的信息参数", value = "getActiveFirst", required = true)
+            @Validated GetActiveFirstQuery getActiveFirst,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+            GetActiveThirdVO activeThirdByActiveId = qubaomingActiveCreateService.getActiveThirdByActiveId(
+                    getActiveFirst.getActiveId(), getActiveFirst.getUserId());
+
+            if (activeThirdByActiveId != null) {
+                return Result.buildResult(Result.Status.OK, activeThirdByActiveId);
+            } else {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "未能查找到活动数据");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(value = "获取活动第二页的信息", tags = {"趣报名活动创建"})
+    @PostMapping("getActiveSecond/activeId")
+    public Result<Object> getActiveSecond(
+            @ApiParam(name = "获取第二页的信息参数", value = "getActiveFirst", required = true)
+            @Validated GetActiveFirstQuery getActiveFirst,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+            GetActiveSecondVO activeSecondByActiveId = qubaomingActiveCreateService.getActiveSecondByActiveId(
+                    getActiveFirst.getActiveId(), getActiveFirst.getUserId());
+
+            if (activeSecondByActiveId != null) {
+                return Result.buildResult(Result.Status.OK, activeSecondByActiveId);
+            } else {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "未能查找到活动数据");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(value = "获取活动第一页的信息", tags = {"趣报名活动创建"})
+    @PostMapping("getActiveFirst/activeId")
+    public Result<Object> getActiveFirst(
+            @ApiParam(name = "获取第一页的信息参数", value = "getActiveFirst", required = true)
+            @Validated GetActiveFirstQuery getActiveFirst,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+            GetActiveFirstVO activeFirstByActiveId = qubaomingActiveCreateService.getActiveFirstByActiveId(
+                    getActiveFirst.getActiveId(), getActiveFirst.getUserId());
+
+            if (activeFirstByActiveId != null) {
+                return Result.buildResult(Result.Status.OK, activeFirstByActiveId);
+            } else {
+                return Result.buildResult(Result.Status.SERVER_ERROR, "未能查找到活动数据");
+            }
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 
 
     @ApiOperation(value = "提交分享图", tags = {"趣报名活动创建"})
