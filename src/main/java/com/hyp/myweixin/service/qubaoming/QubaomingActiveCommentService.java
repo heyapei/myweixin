@@ -61,6 +61,15 @@ public interface QubaomingActiveCommentService {
     Integer deleteByPk(Integer pkId) throws MyDefinitionException;
 
     /**
+     * 根据条件删除数据
+     *
+     * @param example 条件
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteByExample(Example example) throws MyDefinitionException;
+
+    /**
      * 更新有值的数据信息 要求必须有主键信息
      *
      * @param qubaomingActiveComment

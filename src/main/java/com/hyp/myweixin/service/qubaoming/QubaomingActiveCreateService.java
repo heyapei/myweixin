@@ -19,6 +19,21 @@ public interface QubaomingActiveCreateService {
 
 
     /**
+     * 删除活动 按照活动ID 需要判断是否为创建人
+     * <p>
+     * 1. 先判断是否存在报名信息 如果有则创建人 无法删除 但是超级管理员可以删除
+     * 2. 如果没有报名的信息 则创建人就可以直接删除
+     * </p>
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteActiveByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
+
+
+    /**
      * 获取第三页面的信息
      *
      * @param activeId 活动ID
@@ -27,8 +42,6 @@ public interface QubaomingActiveCreateService {
      * @throws MyDefinitionException
      */
     GetActiveThirdVO getActiveThirdByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
-
-
 
 
     /**
@@ -40,7 +53,6 @@ public interface QubaomingActiveCreateService {
      * @throws MyDefinitionException
      */
     GetActiveSecondVO getActiveSecondByActiveId(Integer activeId, Integer userId) throws MyDefinitionException;
-
 
 
     /**

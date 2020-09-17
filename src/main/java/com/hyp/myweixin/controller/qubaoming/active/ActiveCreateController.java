@@ -2,10 +2,7 @@ package com.hyp.myweixin.controller.qubaoming.active;
 
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
-import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
-import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
-import com.hyp.myweixin.pojo.qubaoming.query.active.GetActiveFirstQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.active.*;
 import com.hyp.myweixin.pojo.qubaoming.vo.active.*;
 import com.hyp.myweixin.pojo.vo.result.Result;
 import com.hyp.myweixin.service.qubaoming.QubaomingActiveCreateService;
@@ -283,6 +280,33 @@ public class ActiveCreateController {
             return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return Result.buildResult(Result.Status.OK, validateUnCompleteByActiveUserIdVO);
+    }
+
+
+    @ApiOperation(value = "按照主键删除活动", tags = {"趣报名活动创建"})
+    @PostMapping("deleteActive/activeId")
+    public Result<Integer> deleteActiveByActiveId(
+            @ApiParam(name = "删除用参数", value = "deleteActiveQuery", required = true)
+            @Validated DeleteActiveQuery deleteActiveQuery,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        /*鉴权*/
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+
+        try {
+           qubaomingActiveCreateService.deleteActiveByActiveId(deleteActiveQuery.getActiveId(), deleteActiveQuery.getUserId());
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        return Result.buildResult(Result.Status.OK);
     }
 
 

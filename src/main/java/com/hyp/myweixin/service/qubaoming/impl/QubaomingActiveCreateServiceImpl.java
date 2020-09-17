@@ -1,9 +1,7 @@
 package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
-import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
+import com.hyp.myweixin.pojo.qubaoming.model.*;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateFirstQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateSecondQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.active.ActiveCreateThirdQuery;
@@ -22,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -51,6 +51,87 @@ public class QubaomingActiveCreateServiceImpl implements QubaomingActiveCreateSe
 
     @Autowired
     private AdministratorsOptionService administratorsOptionService;
+
+    @Autowired
+    private QubaomingUserSignUpService qubaomingUserSignUpService;
+
+    @Autowired
+    private QubaomingActiveUserCollectionService qubaomingActiveUserCollectionService;
+
+    @Autowired
+    private QubaomingActiveCommentService qubaomingActiveCommentService;
+
+    /**
+     * 删除活动 按照活动ID 需要判断是否为创建人
+     * <p>
+     * 1. 先判断是否存在报名信息 如果有则创建人 无法删除 但是超级管理员可以删除
+     * 2. 如果没有报名的信息 则创建人就可以直接删除
+     * </p>
+     *
+     * @param activeId 活动ID
+     * @param userId   用户ID
+     * @return 影响行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteActiveByActiveId(Integer activeId, Integer userId) throws MyDefinitionException {
+
+        if (activeId == null || userId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(activeId);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveBase == null) {
+            throw new MyDefinitionException("没有找到活动信息");
+        }
+
+        if (!qubaomingActiveBase.getActiveUserId().equals(userId)) {
+            if (!administratorsOptionService.isQuBaoMingSuperAdministrators(userId)) {
+                throw new MyDefinitionException("不是当前活动创建人无法删除");
+            }
+        }
+
+        Example example = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeId", activeId);
+        List<QubaomingUserSignUp> qubaomingUserSignUpList = qubaomingUserSignUpService.selectQubaomingUserSignUpByExample(example);
+        if (qubaomingUserSignUpList != null && qubaomingUserSignUpList.size() > 0) {
+            if (!administratorsOptionService.isQuBaoMingSuperAdministrators(userId)) {
+                throw new MyDefinitionException("当前已有学员报名，请联系超级管理员删除");
+            }
+        }
+
+
+        /*删除活动*/
+        qubaomingActiveBaseService.deleteByPk(activeId);
+        /*删除配置信息*/
+        Example example1 = new Example(QubaomingActiveConfig.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("activeId", activeId);
+        qubaomingActiveConfigService.deleteByExample(example1);
+        /*删除报名信息*/
+        Example example2 = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("activeId", activeId);
+        qubaomingUserSignUpService.deleteQubaomingUserSignUpByExample(example2);
+        /*删除活动收藏信息*/
+        Example example3 = new Example(QubaomingActiveUserCollection.class);
+        Example.Criteria criteria3 = example3.createCriteria();
+        criteria3.andEqualTo("activeId", activeId);
+        qubaomingActiveUserCollectionService.deleteQubaomingActiveUserCollectionByExample(example3);
+        /*删除活动评价信息*/
+        Example example4 = new Example(QubaomingActiveComment.class);
+        Example.Criteria criteria4 = example4.createCriteria();
+        criteria4.andEqualTo("activeId", activeId);
+        qubaomingActiveCommentService.deleteByExample(example4);
+        return 1;
+    }
 
     /**
      * 获取第三页面的信息

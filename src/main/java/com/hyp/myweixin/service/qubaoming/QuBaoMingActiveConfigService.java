@@ -2,6 +2,7 @@ package com.hyp.myweixin.service.qubaoming;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -54,6 +55,16 @@ public interface QuBaoMingActiveConfigService {
      * @throws MyDefinitionException
      */
     Integer deleteByPk(Integer pkId) throws MyDefinitionException;
+
+    /**
+     * 更新有值的配置数据信息 要求必须有主键信息
+     *
+     * @param example 删除条件
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    Integer deleteByExample(Example example) throws MyDefinitionException;
+
 
     /**
      * 更新有值的配置数据信息 要求必须有主键信息

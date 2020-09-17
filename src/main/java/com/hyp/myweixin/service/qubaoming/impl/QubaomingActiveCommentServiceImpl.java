@@ -185,6 +185,28 @@ public class QubaomingActiveCommentServiceImpl implements QubaomingActiveComment
     }
 
     /**
+     * 根据条件删除数据
+     *
+     * @param example 条件
+     * @return 影响的行数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteByExample(Example example) throws MyDefinitionException {
+        if (example == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        int i = 0;
+        try {
+            i = qubaomingActiveCommentMapper.deleteByExample(example);
+        } catch (Exception e) {
+            log.error("根据条件删除趣报名活动评论数据操作过程错误，错误原因：{}", e.toString());
+            throw new MyDefinitionException("删除活动评论数据操作过程错误");
+        }
+        return i;
+    }
+
+    /**
      * 更新有值的数据信息 要求必须有主键信息
      *
      * @param qubaomingActiveComment
