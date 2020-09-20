@@ -326,7 +326,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
@@ -342,6 +341,17 @@
             <version>5.4.0</version>
         </dependency>
 
+
+        <!--别人封装的一个类，专门解决emoji问题的
+        直接就可以在代码中使用了。
+        EmojiParser.removeAllEmojis(str)
+        这个方法可以过滤掉字符串内的emoji表情。
+        -->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>4.0.0</version>
+        </dependency>
 
 
     </dependencies>

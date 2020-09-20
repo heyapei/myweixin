@@ -7,8 +7,9 @@ import com.hyp.myweixin.pojo.qubaoming.model.QuBaoMingCompanyUserCollection;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyUserOptionQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.company.ShowUserCollectionPageQuery;
-import com.hyp.myweixin.service.qubaoming.QuBaoMingCompanyUserCollectionService;
 import com.hyp.myweixin.service.qubaoming.CompanyUserOptionService;
+import com.hyp.myweixin.service.qubaoming.QuBaoMingCompanyUserCollectionService;
+import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
 import com.hyp.myweixin.utils.MyEntityUtil;
 import com.hyp.myweixin.utils.MySeparatorUtil;
@@ -35,7 +36,8 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
     private QuBaoMingCompanyUserCollectionService companyUserCollectionService;
     @Autowired
     private WechatCompanyService wechatCompanyService;
-
+    @Autowired
+    private QubaomingWeixinUserService qubaomingWeixinUserService;
 
 
     /**
@@ -103,6 +105,12 @@ public class CompanyUserOptionServiceImpl implements CompanyUserOptionService {
 
         if (companyUserOptionQuery == null) {
             throw new MyDefinitionException("参数不能为空");
+        }
+
+        try {
+            qubaomingWeixinUserService.validateUserRight(companyUserOptionQuery.getUserId());
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
         }
 
         QuBaoMingCompanyUserCollection companyUserCollection = null;

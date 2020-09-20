@@ -8,7 +8,9 @@ import com.hyp.myweixin.pojo.qubaoming.model.QubaomingUserSignUp;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.MySeparatorUtil;
+import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,6 +76,14 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         }
         if (qubaomingActiveBase == null) {
             throw new MyDefinitionException("没有找到指定的活动");
+        }
+
+        /*处理表情包问题*/
+        if (StringUtils.isNotBlank(signUpOption)) {
+            String s = EmojiParser.removeAllEmojis(signUpOption);
+            if (StringUtils.isNotBlank(s)) {
+                signUpOption = s;
+            }
         }
 
         Example example = new Example(QubaomingUserSignUp.class);

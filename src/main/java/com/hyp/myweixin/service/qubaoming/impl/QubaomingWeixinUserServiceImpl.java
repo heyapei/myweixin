@@ -5,7 +5,9 @@ import com.hyp.myweixin.mapper.qubaoming.QubaomingWeixinUserMapper;
 import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingWeixinUser;
 import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
+import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -80,6 +82,15 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
             throw new MyDefinitionException("参数不能为空");
         }
 
+        /*处理表情包问题*/
+        String nickName = qubaomingWeixinUser.getNickName();
+        if (StringUtils.isNotBlank(nickName)) {
+            String s = EmojiParser.removeAllEmojis(nickName);
+            if (StringUtils.isNotBlank(s)) {
+                qubaomingWeixinUser.setNickName(s);
+            }
+        }
+
         Integer pkId = null;
 
         try {
@@ -127,6 +138,15 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
     public Integer updateSelectiveQubaomingWeixinUserBase(QubaomingWeixinUser qubaomingWeixinUser) throws MyDefinitionException {
         if (qubaomingWeixinUser == null) {
             throw new MyDefinitionException("参数不能为空");
+        }
+
+        /*处理表情包问题*/
+        String nickName = qubaomingWeixinUser.getNickName();
+        if (StringUtils.isNotBlank(nickName)) {
+            String s = EmojiParser.removeAllEmojis(nickName);
+            if (StringUtils.isNotBlank(s)) {
+                qubaomingWeixinUser.setNickName(s);
+            }
         }
 
         int i = 0;
