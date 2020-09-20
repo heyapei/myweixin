@@ -122,4 +122,27 @@ public class WeixinResourceServiceImpl implements WeixinResourceService {
             throw new MyDefinitionException("通过md5值获取数据错误");
         }
     }
+
+    /**
+     * 按照删除条件删除
+     *
+     * @param example 删除条件
+     * @return 影响函数
+     * @throws MyDefinitionException
+     */
+    @Override
+    public Integer deleteByExample(Example example) throws MyDefinitionException {
+
+        if (example == null) {
+            throw new MyDefinitionException("删除条件不能为空");
+        }
+        int i = 0;
+        try {
+            i = weixinResourceMapper.deleteByExample(example);
+        } catch (Exception e) {
+            log.error("按照删除条件删除文件失败，失败原因：{}", e.toString());
+            throw new MyDefinitionException("删除文件失败");
+        }
+        return i;
+    }
 }

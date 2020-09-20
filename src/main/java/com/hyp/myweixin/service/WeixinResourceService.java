@@ -1,6 +1,8 @@
 package com.hyp.myweixin.service;
 
+import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.modal.WeixinResource;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -46,6 +48,16 @@ public interface WeixinResourceService {
      * @return 主键ID
      */
     Integer addWeixinResource(WeixinResource weixinResource);
+
+
+    /**
+     * 按照删除条件删除
+     *
+     * @param example 删除条件
+     * @return 影响函数
+     * @throws MyDefinitionException
+     */
+    Integer deleteByExample(Example example) throws MyDefinitionException;
 
 
 }

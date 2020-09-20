@@ -39,7 +39,8 @@ public class WeixinResourceConfig {
 
     public enum ConfigType {
 
-        HeadImg(0, "头部图片");
+        HeadImg(0, "头部图片"),
+        QuBaoMingRotationChart(6, "趣报名轮播图");
 
 
         private Integer configType;

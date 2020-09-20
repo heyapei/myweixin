@@ -43,11 +43,17 @@ public class ImgVideResConfig {
     @Value("${active.img.qubaoming.user.work.path}")
     private String quBaoMingActiveUserWorkPath;
 
+    @Value("${active.img.qubaoming.rotation.chart.path}")
+    private String quBaoMingRotationChartPath;
+
     @Value("${active.img.qubaoming.vote.work.thumbnails.path}")
     private String quBaoMingActiveVoteWorkThumbnailsPath;
 
     @Value("${active.img.qubaoming.user.work.thumbnails.path}")
     private String quBaoMingActiveUserWorkThumbnailsPath;
+
+    @Value("${active.img.qubaoming.rotation.chart.thumbnails.path}")
+    private String quBaoMingRotationChartThumbnailsPath;
 
 
 }

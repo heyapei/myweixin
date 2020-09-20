@@ -81,6 +81,9 @@ public class ImgFileServiceImpl implements ImgFileService {
         } else if (type.equalsIgnoreCase(imgVideResConfig.getQuBaoMingActiveUserWorkPath())) {
             resource_config_id = 5;
             savePath += imgVideResConfig.getQuBaoMingActiveUserWorkPath();
+        } else if (type.equalsIgnoreCase(imgVideResConfig.getQuBaoMingRotationChartPath())) {
+            resource_config_id = 6;
+            savePath += imgVideResConfig.getQuBaoMingRotationChartPath();
         } else {
             throw new MyDefinitionException("还未定义数据，还请和技术沟通");
         }
@@ -195,13 +198,17 @@ public class ImgFileServiceImpl implements ImgFileService {
         String thumbnailPath1 = null;
         String activeUserWorkThumbnailsPath = imgVideResConfig.getQuBaoMingActiveUserWorkThumbnailsPath();
         String activeVoteWorkThumbnailsPath = imgVideResConfig.getQuBaoMingActiveVoteWorkThumbnailsPath();
+        String rotationChartThumbnailsPath = imgVideResConfig.getQuBaoMingRotationChartThumbnailsPath();
         String activeUserWorkPath = imgVideResConfig.getQuBaoMingActiveUserWorkPath();
         String activeVoteWorkPath = imgVideResConfig.getQuBaoMingActiveVoteWorkPath();
+        String rotationChartPath = imgVideResConfig.getQuBaoMingRotationChartPath();
 
         if (fileUrl.contains(activeUserWorkPath)) {
             thumbnailPath1 = fileUrl.replaceAll(activeUserWorkPath, activeUserWorkThumbnailsPath);
         } else if (fileUrl.contains(activeVoteWorkPath)) {
             thumbnailPath1 = fileUrl.replaceAll(activeVoteWorkPath, activeVoteWorkThumbnailsPath);
+        }else if (fileUrl.contains(rotationChartPath)) {
+            thumbnailPath1 = fileUrl.replaceAll(rotationChartPath, rotationChartThumbnailsPath);
         }
 
 
