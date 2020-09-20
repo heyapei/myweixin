@@ -2,7 +2,6 @@ package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.mapper.qubaoming.QubaomingWeixinUserMapper;
-import com.hyp.myweixin.pojo.modal.WeixinVoteUser;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingWeixinUser;
 import com.hyp.myweixin.service.qubaoming.QubaomingWeixinUserService;
 import com.vdurmont.emoji.EmojiParser;
@@ -37,7 +36,7 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
         QubaomingWeixinUser qubaomingWeixinUser = selectByPkId(id);
         if (qubaomingWeixinUser == null) {
             throw new MyDefinitionException("没有找到当前用户信息，请重新进行授权操作");
-        }else if (qubaomingWeixinUser.getEnable().equals(QubaomingWeixinUser.ENABLEENUM.UN_ENABLE.getCode())) {
+        } else if (qubaomingWeixinUser.getEnable().equals(QubaomingWeixinUser.ENABLEENUM.UN_ENABLE.getCode())) {
             throw new MyDefinitionException("当前用户已被禁用");
         }
     }
@@ -88,6 +87,8 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
             String s = EmojiParser.removeAllEmojis(nickName);
             if (StringUtils.isNotBlank(s)) {
                 qubaomingWeixinUser.setNickName(s);
+            } else {
+                qubaomingWeixinUser.setNickName("未知");
             }
         }
 
@@ -99,7 +100,7 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
                 pkId = qubaomingWeixinUser.getId();
             }
         } catch (Exception e) {
-            log.error("创建趣报名用户基础信息返回主键操作过程错误，错误原因：{}",e.toString());
+            log.error("创建趣报名用户基础信息返回主键操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("创建趣报名用户基础信息返回主键操作过程错误");
         }
         return pkId;
@@ -121,10 +122,10 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
         try {
             i = qubaomingWeixinUserMapper.deleteByPrimaryKey(pkId);
         } catch (Exception e) {
-            log.error("根据主键删除趣报名数据操作过程错误，错误原因：{}",e.toString());
+            log.error("根据主键删除趣报名数据操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("删除趣报名数据操作过程错误");
         }
-        return  i;
+        return i;
     }
 
     /**
@@ -146,6 +147,8 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
             String s = EmojiParser.removeAllEmojis(nickName);
             if (StringUtils.isNotBlank(s)) {
                 qubaomingWeixinUser.setNickName(s);
+            } else {
+                qubaomingWeixinUser.setNickName("未知");
             }
         }
 
@@ -153,7 +156,7 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
         try {
             i = qubaomingWeixinUserMapper.updateByPrimaryKeySelective(qubaomingWeixinUser);
         } catch (Exception e) {
-            log.error("更新有值的趣报名数据信息操作过程错误，错误原因：{}",e.toString());
+            log.error("更新有值的趣报名数据信息操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("更新有值的趣报名数据信息操作过程错误");
         }
         return i;
@@ -177,7 +180,7 @@ public class QubaomingWeixinUserServiceImpl implements QubaomingWeixinUserServic
         try {
             qubaomingWeixinUser = qubaomingWeixinUserMapper.selectByPrimaryKey(pkId);
         } catch (Exception e) {
-            log.error("通过主键查找趣报名数据操作过程错误，错误原因：{}",e.toString());
+            log.error("通过主键查找趣报名数据操作过程错误，错误原因：{}", e.toString());
             throw new MyDefinitionException("查找趣报名数据操作过程错误");
         }
         return qubaomingWeixinUser;

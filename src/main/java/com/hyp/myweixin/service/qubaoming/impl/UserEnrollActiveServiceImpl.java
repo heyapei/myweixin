@@ -1,21 +1,24 @@
 package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.hyp.myweixin.exception.MyDefinitionException;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveConfig;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveUserCollection;
-import com.hyp.myweixin.pojo.qubaoming.model.QubaomingUserSignUp;
+import com.hyp.myweixin.pojo.dto.mail.MailDTO;
+import com.hyp.myweixin.pojo.qubaoming.model.*;
+import com.hyp.myweixin.service.MailService;
 import com.hyp.myweixin.service.qubaoming.*;
 import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.MySeparatorUtil;
+import com.hyp.myweixin.utils.dateutil.MyDateStyle;
+import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,6 +46,9 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
 
     @Autowired
     private QubaomingUserSignUpService qubaomingUserSignUpService;
+
+    @Autowired
+    private MailService mailService;
 
 
     /**
@@ -83,6 +89,8 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
             String s = EmojiParser.removeAllEmojis(signUpOption);
             if (StringUtils.isNotBlank(s)) {
                 signUpOption = s;
+            } else {
+                signUpOption = "";
             }
         }
 
@@ -124,8 +132,41 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
                 throw new MyDefinitionException(e.getMessage());
             }
         }
+        sendUserEnrollMail(qubaomingUserSignUp);
         return pkId;
     }
+
+    @Async("threadPoolTaskExecutor")
+    void sendUserEnrollMail(QubaomingUserSignUp qubaomingUserSignUp) {
+        MailDTO mailDTO = new MailDTO();
+        QubaomingWeixinUser qubaomingWeixinUser = null;
+        try {
+            qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(qubaomingUserSignUp.getUserId());
+        } catch (MyDefinitionException e) {
+            // do nothing
+        }
+        String nickName = "无此用户";
+        if (qubaomingWeixinUser != null) {
+            nickName = qubaomingWeixinUser.getNickName();
+        }
+        QubaomingActiveBase qubaomingActiveBase = null;
+        try {
+            qubaomingActiveBase = qubaomingActiveBaseService.selectByPkId(qubaomingUserSignUp.getActiveId());
+        } catch (MyDefinitionException e) {
+            // do nothing
+        }
+        String activeName = "无此活动";
+        if (qubaomingActiveBase != null) {
+            activeName = qubaomingActiveBase.getActiveName();
+        }
+        mailDTO.setContent("您好，用户ID：" + qubaomingUserSignUp.getUserId() + "（" + nickName + "），在" + MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD_HH_MM)
+                + "，报名了活动ID：" + qubaomingUserSignUp.getActiveId() + "（" + activeName + "）,报名填写内容为：" + qubaomingUserSignUp.getSignUpInfo() + "！请您悉知，感谢您使用趣报名平台！");
+        mailDTO.setAttachment(null);
+        mailDTO.setTitle("趣报名--用户报名成功通知");
+        mailDTO.setEmail("1004683635@qq.com");
+        mailService.sendTextMailAsync(mailDTO);
+    }
+
 
     /**
      * 获取指定活动要求的必填项目

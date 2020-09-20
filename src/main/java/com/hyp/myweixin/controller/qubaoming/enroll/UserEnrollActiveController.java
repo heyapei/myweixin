@@ -6,6 +6,7 @@ import com.hyp.myweixin.pojo.qubaoming.query.enroll.JudgeActiveSignUpQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.enroll.UserEnrollActiveQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.enroll.UserSignUpActiveQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
+import com.hyp.myweixin.service.MailService;
 import com.hyp.myweixin.service.qubaoming.UserEnrollActiveService;
 import com.hyp.myweixin.utils.MyRequestVailDateUtil;
 import io.swagger.annotations.ApiOperation;
