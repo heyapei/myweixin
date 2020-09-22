@@ -159,8 +159,39 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         if (qubaomingActiveBase != null) {
             activeName = qubaomingActiveBase.getActiveName();
         }
+
+        QubaomingActiveConfig qubaomingActiveConfig = qubaomingActiveConfigService.selectOneByActiveId(qubaomingUserSignUp.getActiveId());
+        StringBuilder stringBuilder = new StringBuilder();
+        String activeRequireOption = qubaomingActiveConfig.getActiveRequireOption();
+        String[] activeRequireOptionList = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+        String[] signUpInfo = qubaomingUserSignUp.getSignUpInfo().split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+
+        for (int i = 0; i < activeRequireOptionList.length; i++) {
+            if (activeRequireOptionList[i].equalsIgnoreCase(
+                    String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.NAME.getCode()))) {
+                stringBuilder.append(QubaomingActiveConfig.ActiveRequireOptionEnum.NAME.getMsg())
+                        .append(":")
+                        .append(signUpInfo[i]).append(";");
+            } else if (activeRequireOptionList[i].equalsIgnoreCase(
+                    String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.AGE.getCode()))) {
+                stringBuilder.append(QubaomingActiveConfig.ActiveRequireOptionEnum.AGE.getMsg())
+                        .append(":")
+                        .append(signUpInfo[i]).append(";");
+            } else if (activeRequireOptionList[i].equalsIgnoreCase(
+                    String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.PHONE.getCode()))) {
+                stringBuilder.append(QubaomingActiveConfig.ActiveRequireOptionEnum.PHONE.getMsg())
+                        .append(":")
+                        .append(signUpInfo[i]).append(";");
+            } else if (activeRequireOptionList[i].equalsIgnoreCase(
+                    String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.GENDER.getCode()))) {
+                stringBuilder.append(QubaomingActiveConfig.ActiveRequireOptionEnum.GENDER.getMsg())
+                        .append(":")
+                        .append(signUpInfo[i]).append(";");
+            }
+        }
+
         mailDTO.setContent("您好，用户ID：" + qubaomingUserSignUp.getUserId() + "（" + nickName + "），在" + MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD_HH_MM)
-                + "，报名了活动ID：" + qubaomingUserSignUp.getActiveId() + "（" + activeName + "）,报名填写内容为：" + qubaomingUserSignUp.getSignUpInfo() + "！请您悉知，感谢您使用趣报名平台！");
+                + "，报名了活动ID：" + qubaomingUserSignUp.getActiveId() + "（" + activeName + "）,报名填写内容为：" + stringBuilder.toString() + "！请您悉知，感谢您使用趣报名平台！");
         mailDTO.setAttachment(null);
         mailDTO.setTitle("趣报名--用户报名成功通知");
         mailDTO.setEmail("1004683635@qq.com");
