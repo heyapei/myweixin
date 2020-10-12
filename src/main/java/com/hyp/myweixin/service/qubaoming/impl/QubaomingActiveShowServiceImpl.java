@@ -441,9 +441,9 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         criteria.andNotEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.UN_COMPLETE.getCode());
         //criteria.andEqualTo("activeStatus", QubaomingActiveBase.ActiveStatusEnum.ONLINE.getCode());
         example.orderBy("activeShowOrder").desc();
-        example.orderBy("activeJoinNum").desc();
         example.orderBy("activeShareNum").desc();
         example.orderBy("activeCollectionNum").desc();
+        example.orderBy("activeJoinNum").desc();
         example.orderBy("activeViewNum").desc();
 
         PageHelper.startPage(showActiveByPageQuery.getPageNum(), showActiveByPageQuery.getPageSize());
