@@ -10,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,14 +64,14 @@ public class WeixinSmallContentDetectionApiServiceTest {
             paramJson.put("width", 430);
             paramJson.put("auto_color", true);
             *//**
-             * line_color生效
-             * paramJson.put("auto_color", false);
-             * JSONObject lineColor = new JSONObject();
-             * lineColor.put("r", 0);
-             * lineColor.put("g", 0);
-             * lineColor.put("b", 0);
-             * paramJson.put("line_color", lineColor);
-             * *//*
+         * line_color生效
+         * paramJson.put("auto_color", false);
+         * JSONObject lineColor = new JSONObject();
+         * lineColor.put("r", 0);
+         * lineColor.put("g", 0);
+         * lineColor.put("b", 0);
+         * paramJson.put("line_color", lineColor);
+         * *//*
 
             printWriter.write(paramJson.toString());
             // flush输出流的缓冲
@@ -119,5 +117,42 @@ public class WeixinSmallContentDetectionApiServiceTest {
 
         Boolean aBoolean = weixinSmallContentDetectionApiService.checkImgSecCheckApi(multipartFile, null);
         log.info("查询结果：{}", aBoolean);
+    }
+
+    @Test
+    public void sendQuBaoMingUserSubmitMessage() {
+
+        String jsonString = "{\n" +
+                "\t\"touser\": \"oBu7k5Fdlthu_8f82uY_9eXu7Eug\",\n" +
+                "\t\"data\": {\n" +
+                "\t\t\"phone_number7\": {\n" +
+                "\t\t\t\"value\": \"15518901416\"\n" +
+                "\t\t},\n" +
+                "\t\t\"thing3\": {\n" +
+                "\t\t\t\"value\": \"北京市大兴区博物馆\"\n" +
+                "\t\t},\n" +
+                "\t\t  \"thing2\": {\n" +
+                "\t\t\t\"value\": \"国家会计学员培训\"\n" +
+                "\t\t},\n" +
+                "\t\t\"date4\": {\n" +
+                "\t\t\t\"value\": \"2019年10月22日 14:30\"\n" +
+                "\t\t},\n" +
+                "\t\t\"name1\": {\n" +
+                "\t\t\t\"value\": \"上海\"\n" +
+                "\t\t}\n" +
+                "\t},\n" +
+                "\t\"template_id\": \"AqFKNC0aP5aQFEZXaDVilNWSy_F39KgHX_USzmGwbcM\",\n" +
+                "\t\"miniprogram_state\": \"developer\",\n" +
+                "\t\"page\": \"index\",\n" +
+                "\t\"lang\": \"zh_CN\"\n" +
+                "}";
+
+        JSONObject jsonObject = JSONObject.parseObject(jsonString);
+        log.info("json参数：{}",jsonObject.toJSONString());
+
+        JSONObject accessToken = weixinSmallContentDetectionApiService.
+                sendQuBaoMingUserSubmitMessage(jsonObject);
+
+        log.info("结果：{}", accessToken.toJSONString());
     }
 }

@@ -1,10 +1,12 @@
 package com.hyp.myweixin.service.qubaoming.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.mail.MailDTO;
 import com.hyp.myweixin.pojo.qubaoming.model.*;
 import com.hyp.myweixin.service.MailService;
 import com.hyp.myweixin.service.qubaoming.*;
+import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiService;
 import com.hyp.myweixin.utils.MyErrorList;
 import com.hyp.myweixin.utils.MySeparatorUtil;
 import com.hyp.myweixin.utils.dateutil.MyDateStyle;
@@ -49,6 +51,9 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private WechatCompanyService wechatCompanyService;
 
 
     /**
@@ -133,7 +138,56 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
             }
         }
         sendUserEnrollMail(qubaomingUserSignUp);
+
+        QubaomingWeixinUser qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(userId);
+        sendUserSubmitMessage(qubaomingWeixinUser.getOpenId(),
+                wechatCompanyService.selectOneByUserId(qubaomingActiveBase.getActiveUserId()).getPhone(),
+                qubaomingActiveConfigs.get(0).getActiveAddress(), qubaomingActiveBase.getActiveName(),
+                qubaomingWeixinUser.getNickName(),
+                MyDateUtil.numberDateFormat(String.valueOf(
+                        qubaomingActiveConfigs.get(0).getActiveStartTime()), "yyyy年MM月dd日 HH:mm"));
+
         return pkId;
+    }
+
+    @Autowired
+    private WeixinSmallContentDetectionApiService weixinSmallContentDetectionApiService;
+
+    @Async("threadPoolTaskExecutor")
+    void sendUserSubmitMessage(String openId, String phone, String activeAddress,
+                               String activeName, String realName, String activeStartTime) {
+
+        String jsonString = "{\n" +
+                "\t\"touser\": \"" + openId + "\",\n" +
+                "\t\"data\": {\n" +
+                "\t\t\"phone_number7\": {\n" +
+                "\t\t\t\"value\": \"" + phone + "\"\n" +
+                "\t\t},\n" +
+                "\t\t\"thing3\": {\n" +
+                "\t\t\t\"value\": \"" + activeAddress + "\"\n" +
+                "\t\t},\n" +
+                "\t\t  \"thing2\": {\n" +
+                "\t\t\t\"value\": \"" + activeName + "\"\n" +
+                "\t\t},\n" +
+                "\t\t\"date4\": {\n" +
+                "\t\t\t\"value\": \"" + activeStartTime + "\"\n" +
+                "\t\t},\n" +
+                "\t\t\"name1\": {\n" +
+                "\t\t\t\"value\": \"" + realName + "\"\n" +
+                "\t\t}\n" +
+                "\t},\n" +
+                "\t\"template_id\": \"AqFKNC0aP5aQFEZXaDVilNWSy_F39KgHX_USzmGwbcM\",\n" +
+                "\t\"miniprogram_state\": \"formal\",\n" +
+                "\t\"page\": \"index\",\n" +
+                "\t\"lang\": \"zh_CN\"\n" +
+                "}";
+        JSONObject jsonObject = JSONObject.parseObject(jsonString);
+        //log.info("json参数：{}", jsonObject.toJSONString());
+        JSONObject jsonObject1 = weixinSmallContentDetectionApiService.
+                sendQuBaoMingUserSubmitMessage(jsonObject);
+
+
+
     }
 
     @Async("threadPoolTaskExecutor")

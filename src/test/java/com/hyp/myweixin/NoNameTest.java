@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.KeyPair;
+import java.util.Vector;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 
 /**
@@ -45,6 +48,17 @@ public class NoNameTest {
 
     @Autowired
     private HttpServletResponse httpServletResponse;
+
+
+    @Test
+    public void testVector() throws Exception {
+        Vector vector = new Vector(16);
+        vector.add(null);
+        System.out.println(vector.toString());
+
+
+
+    }
 
     @Test
     public void testExcelExportRedis() throws Exception {
@@ -190,9 +204,10 @@ public class NoNameTest {
     @Test
     public void testAES() throws Exception {
         //getKey(); 5cc3b16449beb0b2048c4daa4f9e2ffd
-        String nihaoya = Encode_AES_CBC_NoPadding("Egi2zRHPg6TQHNhE", "nihaoya");
+        /*String nihaoya = Encode_AES_CBC_NoPadding("Egi2zRHPg6TQHNhE", "nihaoya");
         System.out.println(nihaoya); // eT0jbAS+vgXzdlYUGBOtiQ==
         System.out.println(DeCode_AES_CBC_NoPadding("Egi2zRHPg6TQHNhE", "eT0jbAS+vgXzdlYUGBOtiQ=="));
+*/
 
     }
 

@@ -116,6 +116,11 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
      */
     @Value("${weixin.acode.get.unlimited.url}")
     private String QR_CODE_GET_UNLIMITED_URL;
+    /**
+     * 发送消息通知的接口地址
+     */
+    @Value("${weixin.message.send.url}")
+    private String MESSAGE_SEND_URL;
 
     private static final Integer IMG_SEC_CHECK_WIDTH = 600;
     private static final Integer IMG_SEC_CHECK_HEIGHT = 1000;
@@ -138,6 +143,50 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
     @Autowired
     private MyThumbnailImgOptionUtil myThumbnailImgOptionUtil;
 
+
+    /**
+     * 发送模板信息
+     *
+     * @param jsonObject 发送的参数
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public JSONObject sendQuBaoMingUserSubmitMessage(JSONObject jsonObject) throws MyDefinitionException {
+
+        if (jsonObject == null) {
+            throw new MyDefinitionException("发送的json参数不能为空");
+        }
+        JSONObject accessToken1 = null;
+        try {
+            accessToken1 = getQuBaoMingAccessToken();
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        String accessToken = accessToken1.getString(JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN);
+        String url = MESSAGE_SEND_URL + accessToken;
+
+        log.info("请求地址：{}",url);
+        String msgCheckResult = null;
+        try {
+            msgCheckResult = myHttpClientUtil.postJson(url, jsonObject, null);
+        } catch (Exception e) {
+            log.error("发送消息通知失败，失败原因：{}，失败的信息是：{}", e.toString(), jsonObject.toString());
+            throw new MyDefinitionException("发送消息通知失败");
+        }
+        log.info("发送消息通知结果:{}", msgCheckResult);
+        JSONObject jsonObject1 = null;
+        try {
+            jsonObject1 = JSONObject.parseObject(msgCheckResult);
+        } catch (Exception e) {
+            log.error("发送消息通知结果数据转换失败，错误原因：{}", e.toString());
+            throw new MyDefinitionException("发送消息通知结果数据转换失败");
+        }
+        if (jsonObject == null) {
+            throw new MyDefinitionException("发送消息通知结果数据转换失败");
+        }
+        return jsonObject1;
+    }
 
     /**
      * 获取无数量限制的二维码

@@ -14,6 +14,16 @@ public interface WeixinSmallContentDetectionApiService {
 
 
     /**
+     * 发送模板信息
+     *
+     * @param jsonObject 发送的参数
+     * @return
+     * @throws MyDefinitionException
+     */
+    JSONObject sendQuBaoMingUserSubmitMessage(JSONObject jsonObject) throws MyDefinitionException;
+
+
+    /**
      * 获取qubaoming无数量限制的二维码
      *
      * @param scene

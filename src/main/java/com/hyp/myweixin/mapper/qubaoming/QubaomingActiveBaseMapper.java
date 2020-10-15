@@ -1,6 +1,5 @@
 package com.hyp.myweixin.mapper.qubaoming;
 
-import com.hyp.myweixin.pojo.modal.WeixinVoteBase;
 import com.hyp.myweixin.pojo.qubaoming.model.QubaomingActiveBase;
 import com.hyp.myweixin.utils.MyMapper;
 import org.springframework.stereotype.Repository;
