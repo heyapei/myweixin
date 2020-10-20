@@ -173,6 +173,46 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
     void sendUserSubmitMessage(String openId, String phone, String activeAddress,
                                String activeName, String realName, String activeStartTime) {
 
+        if (StringUtils.isNotBlank(phone)) {
+            int length = 17;
+            if (phone.length() >= length) {
+                phone = phone.substring(0, length-1);
+            }
+        } else {
+            phone = "";
+        }
+
+        if (StringUtils.isNotBlank(activeAddress)) {
+            int length = 20;
+            if (activeAddress.length() >= length) {
+                activeAddress = activeAddress.substring(0, length-1);
+            }
+        } else {
+            activeAddress = "";
+        }
+
+        if (StringUtils.isNotBlank(activeName)) {
+            int length = 20;
+            if (activeName.length() >= length) {
+                activeName = activeName.substring(0, length-1);
+            }
+        } else {
+            activeName = "";
+        }
+
+
+        if (StringUtils.isNotBlank(realName)) {
+            int length = 10;
+            if (realName.length() >= length) {
+                realName = realName.substring(0, length-1);
+            }
+        } else {
+            realName = "";
+        }
+
+
+
+
         String jsonString = "{\n" +
                 "\t\"touser\": \"" + openId + "\",\n" +
                 "\t\"data\": {\n" +

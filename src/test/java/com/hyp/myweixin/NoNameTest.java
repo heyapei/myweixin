@@ -51,6 +51,12 @@ public class NoNameTest {
 
 
     @Test
+    public void testLength() {
+        log.info("文字长度{}","温馨提示：请提前10-15分钟进场签到".length());
+    }
+
+
+    @Test
     public void testVector() throws Exception {
         Vector vector = new Vector(16);
         vector.add(null);

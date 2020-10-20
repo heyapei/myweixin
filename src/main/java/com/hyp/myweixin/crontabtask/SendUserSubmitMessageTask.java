@@ -7,6 +7,7 @@ import com.hyp.myweixin.service.smallwechatapi.WeixinSmallContentDetectionApiSer
 import com.hyp.myweixin.utils.dateutil.MyDateUtil;
 import com.hyp.myweixin.utils.redis.MyRedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -143,7 +144,7 @@ public class SendUserSubmitMessageTask {
                         }
                         sendTemplateMessage(qubaomingWeixinUser.getOpenId(),
                                 qubaomingActiveBase.getActiveName(), MyDateUtil.numberDateFormat(String.valueOf(qubaomingActiveConfig.getActiveStartTime()), "yyyy-MM-dd HH:mm"),
-                                qubaomingActiveConfig.getActiveAddress(), wechatCompanies.get(0).getCompanyName(), "活动快要开始了，请提前10-15分钟进场签到");
+                                qubaomingActiveConfig.getActiveAddress(), wechatCompanies.get(0).getCompanyName(), "温馨提示：请提前10-15分钟进场签到");
 
                         qubaomingMessageSubmit.setStatus(QubaomingMessageSubmit.StatusEnum.SUCCESS.getCode());
                         qubaomingMessageSubmit.setSendTime(new Date());
@@ -161,6 +162,43 @@ public class SendUserSubmitMessageTask {
     private JSONObject sendTemplateMessage(String openId, String activeName, String startTime,
                                            String activeAddress
             , String companyName, String tip) {
+
+
+        if (StringUtils.isNotBlank(activeName)) {
+            int length = 20;
+            if (activeName.length() >= length) {
+                activeName = activeName.substring(0, length-1);
+            }
+        } else {
+            activeName = "";
+        }
+
+        if (StringUtils.isNotBlank(activeAddress)) {
+            int length = 20;
+            if (activeAddress.length() >= length) {
+                activeAddress = activeAddress.substring(0, length-1);
+            }
+        } else {
+            activeAddress = "";
+        }
+
+        if (StringUtils.isNotBlank(companyName)) {
+            int length = 20;
+            if (companyName.length() >= length) {
+                companyName = companyName.substring(0, length-1);
+            }
+        } else {
+            companyName = "";
+        }
+
+        if (StringUtils.isNotBlank(tip)) {
+            int length = 20;
+            if (tip.length() >= length) {
+                tip = tip.substring(0, length-1);
+            }
+        } else {
+            tip = "";
+        }
 
 
         String jsonString = "{\n" +
