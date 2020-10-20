@@ -140,9 +140,25 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         sendUserEnrollMail(qubaomingUserSignUp);
 
         QubaomingWeixinUser qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(userId);
+
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String activeRequireOption = qubaomingActiveConfigs.get(0).getActiveRequireOption();
+        String[] activeRequireOptionList = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+        String[] signUpInfo = qubaomingUserSignUp.getSignUpInfo().split(MySeparatorUtil.SEMICOLON_SEPARATOR);
+
+        for (int i = 0; i < activeRequireOptionList.length; i++) {
+            if (activeRequireOptionList[i].equalsIgnoreCase(
+                    String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.PHONE.getCode()))) {
+                stringBuilder.append(signUpInfo[i]);
+            }
+        }
+
+
         sendUserSubmitMessage(qubaomingWeixinUser.getOpenId(),
-                wechatCompanyService.selectOneByUserId(qubaomingActiveBase.getActiveUserId()).getPhone(),
-                qubaomingActiveConfigs.get(0).getActiveAddress(), qubaomingActiveBase.getActiveName(),
+                stringBuilder.toString(),
+                qubaomingActiveConfigs.get(0).getActiveAddress(),
+                qubaomingActiveBase.getActiveName(),
                 qubaomingWeixinUser.getNickName(),
                 MyDateUtil.numberDateFormat(String.valueOf(
                         qubaomingActiveConfigs.get(0).getActiveStartTime()), "yyyy年MM月dd日 HH:mm"));
@@ -178,14 +194,13 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
                 "\t},\n" +
                 "\t\"template_id\": \"AqFKNC0aP5aQFEZXaDVilNWSy_F39KgHX_USzmGwbcM\",\n" +
                 "\t\"miniprogram_state\": \"formal\",\n" +
-                "\t\"page\": \"index\",\n" +
+                "\t\"page\": \"pages/index/index\",\n" +
                 "\t\"lang\": \"zh_CN\"\n" +
                 "}";
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
         //log.info("json参数：{}", jsonObject.toJSONString());
         JSONObject jsonObject1 = weixinSmallContentDetectionApiService.
                 sendQuBaoMingUserSubmitMessage(jsonObject);
-
 
 
     }

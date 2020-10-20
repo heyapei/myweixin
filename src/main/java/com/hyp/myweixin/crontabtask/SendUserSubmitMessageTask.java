@@ -86,18 +86,24 @@ public class SendUserSubmitMessageTask {
     @Scheduled(cron = "${crontab.task.loop.minute.thirty}")
     public void asyncFeedbackFromWeixin() {
 
-        //log.info("redis的key" + REDIS_KEY_QUBAOMING_ACTIVE_START_TIME);
+        log.info("活动开始前通知模板，每三十分钟执行一次，发送用户通知的定时任务redis的key" + REDIS_KEY_QUBAOMING_ACTIVE_START_TIME);
         Example example = new Example(QubaomingMessageSubmit.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("messageId", qubaoming_active_start_template);
         criteria.andEqualTo("status", QubaomingMessageSubmit.StatusEnum.UN_SEND.getCode());
         List<QubaomingMessageSubmit> qubaomingMessageSubmitByExample = userSubmitMessageService.getQubaomingMessageSubmitByExample(example);
         if (qubaomingMessageSubmitByExample != null) {
+
+            log.info("查找到待发送的数据：{}", qubaomingMessageSubmitByExample.toString());
+
             for (QubaomingMessageSubmit qubaomingMessageSubmit : qubaomingMessageSubmitByExample) {
 
                 String startTime = (String) myRedisUtil.get(REDIS_KEY_QUBAOMING_ACTIVE_START_TIME +
                         qubaomingMessageSubmit.getActiveId());
                 if (startTime != null) {
+
+                    log.info("从redis查找出来开始时间：{}", startTime);
+
                     boolean b = twoHourRange(Long.parseLong(startTime));
                     if (b) {
                         QubaomingWeixinUser qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(qubaomingMessageSubmit.getUserId());
@@ -118,6 +124,10 @@ public class SendUserSubmitMessageTask {
                 } else {
                     QubaomingActiveConfig qubaomingActiveConfig = quBaoMingActiveConfigService.selectOneByActiveId(qubaomingMessageSubmit.getActiveId());
                     if (qubaomingActiveConfig != null) {
+
+                        log.info("从数据库中查找出来的活动配置：{}", qubaomingActiveConfig.toString());
+
+
                         myRedisUtil.set(REDIS_KEY_QUBAOMING_ACTIVE_START_TIME +
                                         qubaomingMessageSubmit.getActiveId(),
                                 qubaomingActiveConfig.getActiveStartTime(), ACTIVE_START_TIME_REDIS_EXPIRE);
@@ -133,7 +143,7 @@ public class SendUserSubmitMessageTask {
                         }
                         sendTemplateMessage(qubaomingWeixinUser.getOpenId(),
                                 qubaomingActiveBase.getActiveName(), MyDateUtil.numberDateFormat(String.valueOf(qubaomingActiveConfig.getActiveStartTime()), "yyyy-MM-dd HH:mm"),
-                                qubaomingActiveConfig.getActiveAddress(), wechatCompanies.get(0).getCompanyName(), "活动快要开始了，请您抓紧时间参加活动");
+                                qubaomingActiveConfig.getActiveAddress(), wechatCompanies.get(0).getCompanyName(), "活动快要开始了，请提前10-15分钟进场签到");
 
                         qubaomingMessageSubmit.setStatus(QubaomingMessageSubmit.StatusEnum.SUCCESS.getCode());
                         qubaomingMessageSubmit.setSendTime(new Date());
@@ -151,6 +161,8 @@ public class SendUserSubmitMessageTask {
     private JSONObject sendTemplateMessage(String openId, String activeName, String startTime,
                                            String activeAddress
             , String companyName, String tip) {
+
+
         String jsonString = "{\n" +
                 "\t\"touser\": \"" + openId + "\",\n" +
                 "\t\"data\": {\n" +
@@ -172,14 +184,15 @@ public class SendUserSubmitMessageTask {
                 "\t},\n" +
                 "\t\"template_id\": \"" + qubaoming_active_start_template + "\",\n" +
                 "\t\"miniprogram_state\": \"formal\",\n" +
-                "\t\"page\": \"index\",\n" +
+                "\t\"page\": \"pages/index/index\",\n" +
                 "\t\"lang\": \"zh_CN\"\n" +
                 "}";
 
         JSONObject jsonObject = JSONObject.parseObject(jsonString);
-        //log.info("json参数：{}", jsonObject.toJSONString());
         JSONObject accessToken = weixinSmallContentDetectionApiService.
                 sendQuBaoMingUserSubmitMessage(jsonObject);
+        log.info("定时任务发送信息时的json参数：{}，发送结果：{}", jsonObject.toJSONString(), accessToken);
+
         return accessToken;
     }
 
