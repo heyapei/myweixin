@@ -596,4 +596,45 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
 
         return integer;
     }
+
+
+    /**
+     * 获取活动收藏人员头像信息
+     *
+     * @param activeId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public PageInfo<Object> getCollectionUserInfoByActiveIdPage(Integer activeId, Integer pageNum, Integer pageSize) throws MyDefinitionException {
+        if (activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+        Example example = new Example(QubaomingActiveUserCollection.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeId", activeId);
+        example.orderBy("createTime").desc();
+        PageHelper.startPage(pageNum, pageSize);
+        PageInfo pageInfo = null;
+        List<QubaomingActiveUserCollection> qubaomingActiveUserCollectionList = null;
+        try {
+             qubaomingActiveUserCollectionList = qubaomingActiveUserCollectionService.selectQubaomingActiveUserCollectionByExample(example);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingActiveUserCollectionList != null) {
+            pageInfo = new PageInfo(qubaomingActiveUserCollectionList);
+        }
+
+
+        List<String> userAvatars = new ArrayList<>();
+        for (QubaomingActiveUserCollection qubaomingActiveUserCollection : qubaomingActiveUserCollectionList) {
+            QubaomingWeixinUser qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(qubaomingActiveUserCollection.getUserId());
+            userAvatars.add(qubaomingWeixinUser.getAvatarUrl());
+        }
+        pageInfo.setList(userAvatars);
+        return pageInfo;
+    }
 }
