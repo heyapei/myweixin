@@ -187,7 +187,8 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         QubaomingWeixinUser qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(userId);
 
 
-        StringBuilder stringBuilder = new StringBuilder();
+        String phone = "";
+        String name = "";
         String activeRequireOption = qubaomingActiveConfigs.get(0).getActiveRequireOption();
         String[] activeRequireOptionList = activeRequireOption.split(MySeparatorUtil.SEMICOLON_SEPARATOR);
         String[] signUpInfo = qubaomingUserSignUp.getSignUpInfo().split(MySeparatorUtil.SEMICOLON_SEPARATOR);
@@ -195,16 +196,18 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         for (int i = 0; i < activeRequireOptionList.length; i++) {
             if (activeRequireOptionList[i].equalsIgnoreCase(
                     String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.PHONE.getCode()))) {
-                stringBuilder.append(signUpInfo[i]);
+                phone = signUpInfo[i];
+            } else if (activeRequireOptionList[i].equalsIgnoreCase(
+                    String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.NAME.getCode()))) {
+                name = signUpInfo[i];
             }
         }
 
-
         sendUserSubmitMessage(qubaomingWeixinUser.getOpenId(),
-                stringBuilder.toString(),
+                phone,
                 qubaomingActiveConfigs.get(0).getActiveAddress(),
                 qubaomingActiveBase.getActiveName(),
-                qubaomingWeixinUser.getNickName(),
+                name,
                 MyDateUtil.numberDateFormat(String.valueOf(
                         qubaomingActiveConfigs.get(0).getActiveStartTime()), "yyyy年MM月dd日 HH:mm"));
 
