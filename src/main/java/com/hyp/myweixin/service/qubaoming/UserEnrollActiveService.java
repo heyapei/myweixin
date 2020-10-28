@@ -1,7 +1,11 @@
 package com.hyp.myweixin.service.qubaoming;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.utils.MyErrorList;
+
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -12,6 +16,20 @@ import com.hyp.myweixin.utils.MyErrorList;
 public interface UserEnrollActiveService {
 
     /*妈的写错了，enroll应该是报名留着的 但是搞成了收藏了 卧槽*/
+
+
+    /**
+     * 获取活动的报名人的头像数据
+     * @param activeId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws MyDefinitionException
+     */
+    PageInfo<Object> getSignUpUserInfoByActiveIdPage(Integer activeId,Integer pageNum,Integer pageSize) throws MyDefinitionException;
+
+
+
 
     /**
      * 用户报名参加活动

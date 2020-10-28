@@ -1,8 +1,10 @@
 package com.hyp.myweixin.controller.qubaoming.enroll;
 
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.config.secretkey.SecretKeyPropertiesValue;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.query.enroll.JudgeActiveSignUpQuery;
+import com.hyp.myweixin.pojo.qubaoming.query.enroll.SignUpUserInfoListQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.enroll.UserEnrollActiveQuery;
 import com.hyp.myweixin.pojo.qubaoming.query.enroll.UserSignUpActiveQuery;
 import com.hyp.myweixin.pojo.vo.result.Result;
@@ -43,6 +45,34 @@ public class UserEnrollActiveController {
 
     @Autowired
     private UserEnrollActiveService userEnrollActiveService;
+
+
+
+    @ApiOperation(value = "获取活动的报名的人员头像数据", tags = {"趣报名活动相关"})
+    @PostMapping("getSignUpList/active/page")
+    public Result<Object> getSignUpUserInfoByActiveIdPage(
+            @ApiParam(name = "获取活动的报名的人员头像数据查询参数", value = "signUpUserInfoListQuery", required = true)
+            @Validated SignUpUserInfoListQuery signUpUserInfoListQuery
+            , BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ObjectError next = bindingResult.getAllErrors().iterator().next();
+            return Result.buildResult(Result.Status.SERVER_ERROR, next.getDefaultMessage());
+        }
+        boolean b = myRequestVailDateUtil.validateSignMd5Date(httpServletRequest, secretKeyPropertiesValue.getMd5Key(), 10);
+        if (!b) {
+            return Result.buildResult(Result.Status.UNAUTHORIZED, "密钥验证错误");
+        }
+        PageInfo<Object> signUpUserInfoByActiveIdPage = null;
+        try {
+            signUpUserInfoByActiveIdPage = userEnrollActiveService.getSignUpUserInfoByActiveIdPage(signUpUserInfoListQuery.getActiveId(),
+                    signUpUserInfoListQuery.getPageNum(), signUpUserInfoListQuery.getPageSize());
+        } catch (MyDefinitionException e) {
+            return Result.buildResult(Result.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        return Result.buildResult(Result.Status.OK, "请求成功", signUpUserInfoByActiveIdPage);
+    }
+
+
 
 
     @ApiOperation(value = "用户报名参加活动", tags = {"趣报名活动相关"})

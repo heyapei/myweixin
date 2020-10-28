@@ -1,5 +1,6 @@
 package com.hyp.myweixin.service.qubaoming;
 
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
+import java.util.List;
 
 /**
  * @Author 何亚培
@@ -28,4 +29,16 @@ public class UserEnrollActiveServiceTest {
 
         userEnrollActiveService.UserEnrollActive(1, 1);
     }
+
+    @Test
+    public void getSignUpUserInfoByActiveIdPage() {
+        PageInfo<Object> signUpUserInfoByActiveIdPage = userEnrollActiveService.getSignUpUserInfoByActiveIdPage(7, 1, 20);
+        List<Object> list = signUpUserInfoByActiveIdPage.getList();
+        for (Object o : list) {
+            System.out.println(o.toString());
+        }
+
+    }
+
+
 }

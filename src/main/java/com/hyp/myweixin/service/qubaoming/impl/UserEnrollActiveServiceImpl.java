@@ -1,6 +1,8 @@
 package com.hyp.myweixin.service.qubaoming.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.dto.mail.MailDTO;
 import com.hyp.myweixin.pojo.qubaoming.model.*;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +58,48 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
     @Autowired
     private WechatCompanyService wechatCompanyService;
 
+    /**
+     * 获取活动的报名人的头像数据
+     *
+     * @param activeId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws MyDefinitionException
+     */
+    @Override
+    public PageInfo<Object> getSignUpUserInfoByActiveIdPage(Integer activeId, Integer pageNum, Integer pageSize) throws MyDefinitionException {
+
+        if (activeId == null) {
+            throw new MyDefinitionException("参数不能为空");
+        }
+
+
+        Example example = new Example(QubaomingUserSignUp.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("activeId", activeId);
+        example.orderBy("createTime").desc();
+        PageHelper.startPage(pageNum, pageSize);
+        PageInfo pageInfo = null;
+        List<QubaomingUserSignUp> qubaomingUserSignUpList = null;
+        try {
+            qubaomingUserSignUpList = qubaomingUserSignUpService.selectQubaomingUserSignUpByExample(example);
+        } catch (MyDefinitionException e) {
+            throw new MyDefinitionException(e.getMessage());
+        }
+        if (qubaomingUserSignUpList != null) {
+            pageInfo = new PageInfo(qubaomingUserSignUpList);
+        }
+
+
+        List<String> userAvatars = new ArrayList<>();
+        for (QubaomingUserSignUp qubaomingUserSignUp : qubaomingUserSignUpList) {
+            QubaomingWeixinUser qubaomingWeixinUser = qubaomingWeixinUserService.selectByPkId(qubaomingUserSignUp.getUserId());
+            userAvatars.add(qubaomingWeixinUser.getAvatarUrl());
+        }
+        pageInfo.setList(userAvatars);
+        return pageInfo;
+    }
 
     /**
      * 用户报名参加活动
@@ -176,7 +221,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         if (StringUtils.isNotBlank(phone)) {
             int length = 17;
             if (phone.length() >= length) {
-                phone = phone.substring(0, length-1);
+                phone = phone.substring(0, length - 1);
             }
         } else {
             phone = "";
@@ -185,7 +230,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         if (StringUtils.isNotBlank(activeAddress)) {
             int length = 20;
             if (activeAddress.length() >= length) {
-                activeAddress = activeAddress.substring(0, length-1);
+                activeAddress = activeAddress.substring(0, length - 1);
             }
         } else {
             activeAddress = "";
@@ -194,7 +239,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         if (StringUtils.isNotBlank(activeName)) {
             int length = 20;
             if (activeName.length() >= length) {
-                activeName = activeName.substring(0, length-1);
+                activeName = activeName.substring(0, length - 1);
             }
         } else {
             activeName = "";
@@ -204,13 +249,11 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         if (StringUtils.isNotBlank(realName)) {
             int length = 10;
             if (realName.length() >= length) {
-                realName = realName.substring(0, length-1);
+                realName = realName.substring(0, length - 1);
             }
         } else {
             realName = "";
         }
-
-
 
 
         String jsonString = "{\n" +
