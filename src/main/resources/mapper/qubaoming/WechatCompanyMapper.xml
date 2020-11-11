@@ -30,5 +30,6 @@
     <result column="company_collection_num" property="companyCollectionNum" jdbcType="INTEGER" />
     <result column="company_used_num" property="companyUsedNum" jdbcType="INTEGER" />
     <result column="company_show_order" property="companyShowOrder" jdbcType="INTEGER" />
+    <result column="company_email" property="companyEmail" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

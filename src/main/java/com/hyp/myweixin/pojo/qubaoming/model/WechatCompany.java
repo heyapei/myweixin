@@ -2,7 +2,10 @@ package com.hyp.myweixin.pojo.qubaoming.model;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 @Data
 @Table(name = "wechat_company")
 public class WechatCompany {
@@ -180,5 +183,11 @@ public class WechatCompany {
         }
     }
 
+
+    /**
+     * 0 标识默认 默认使用的公司主体内容
+     */
+    @Column(name = "company_email")
+    private String companyEmail;
 
 }

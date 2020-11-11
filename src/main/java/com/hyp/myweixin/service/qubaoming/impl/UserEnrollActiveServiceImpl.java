@@ -293,6 +293,8 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
 
     @Async("threadPoolTaskExecutor")
     void sendUserEnrollMail(QubaomingUserSignUp qubaomingUserSignUp) {
+
+
         MailDTO mailDTO = new MailDTO();
         QubaomingWeixinUser qubaomingWeixinUser = null;
         try {
@@ -349,8 +351,40 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
                 + "，报名了活动ID：" + qubaomingUserSignUp.getActiveId() + "（" + activeName + "）,报名填写内容为：" + stringBuilder.toString() + "！请您悉知，感谢您使用趣报名平台！");
         mailDTO.setAttachment(null);
         mailDTO.setTitle("趣报名--用户报名成功通知");
-        mailDTO.setEmail("1004683635@qq.com");
-        mailService.sendTextMailAsync(mailDTO);
+
+        ArrayList<String> emailAddress = new ArrayList<>();
+        emailAddress.add("1004683635@qq.com");
+        emailAddress.add("15518901416@163.com");
+        WechatCompany wechatCompany = wechatCompanyService.selectOneByUserId(qubaomingActiveBase.getActiveCompanyId());
+        if (wechatCompany != null) {
+            if (StringUtils.isNotBlank(wechatCompany.getCompanyEmail())) {
+
+                /**
+                 * 防止给超级管理员重复发送相同内容
+                 */
+                String companyEmail = wechatCompany.getCompanyEmail();
+                if (companyEmail.equalsIgnoreCase("1004683635@qq.com")
+                        || companyEmail.equalsIgnoreCase("15518901416@163.com")) {
+
+                } else {
+                    //定义要匹配的Email地址的正则表达式
+                    //其中\w代表可用作标识符的字符,不包括$. \w+表示多个
+                    //  \\.\\w表示点.后面有\w 括号{2,3}代表这个\w有2至3个
+                    //牵扯到有些邮箱类似com.cn结尾 所以(\\.\\w{2,3})*后面表示可能有另一个2至3位的域名结尾
+                    //*表示重复0次或更多次
+                    String regex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
+                    if (wechatCompany.getCompanyEmail().matches(regex)) {
+                        emailAddress.add(wechatCompany.getCompanyEmail());
+                    }
+                }
+            }
+            emailAddress.add(wechatCompany.getCompanyEmail());
+        }
+
+        for (String address : emailAddress) {
+            mailDTO.setEmail(address);
+            mailService.sendTextMailAsync(mailDTO);
+        }
     }
 
 
