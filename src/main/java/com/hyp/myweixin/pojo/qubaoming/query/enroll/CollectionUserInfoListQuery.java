@@ -19,6 +19,7 @@ public class CollectionUserInfoListQuery {
      * 创建时间
      */
     @ApiModelProperty(value = "活动ID", name = "activeId", required = true)
+    @NotNull(message = "活动ID必填")
     private Integer activeId;
 
 
