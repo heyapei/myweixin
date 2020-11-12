@@ -6,6 +6,7 @@ import com.hyp.myweixin.exception.MyDefinitionException;
 import com.hyp.myweixin.pojo.qubaoming.model.WechatCompany;
 import com.hyp.myweixin.pojo.qubaoming.query.company.CompanyListShowQuery;
 import com.hyp.myweixin.pojo.qubaoming.vo.company.CompanyShowVO;
+import com.hyp.myweixin.service.AdministratorsOptionService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyService;
 import com.hyp.myweixin.service.qubaoming.WechatCompanyShowService;
 import com.hyp.myweixin.utils.MyEntityUtil;
@@ -32,6 +33,9 @@ public class WechatCompanyShowServiceImpl implements WechatCompanyShowService {
     private WechatCompanyService wechatCompanyService;
 
     private static final String SEMICOLON_SEPARATOR = ";";
+
+    @Autowired
+    private AdministratorsOptionService administratorsOptionService;
 
     /**
      * 查看用户名下公司主体详细信息
@@ -116,7 +120,6 @@ public class WechatCompanyShowServiceImpl implements WechatCompanyShowService {
         }
         return companyShowVO;
     }
-
     /**
      * 通过CompanyListShowQuery查询条件分页查询个人所属的公司列表
      * 有排序
@@ -133,7 +136,9 @@ public class WechatCompanyShowServiceImpl implements WechatCompanyShowService {
         }
         Example example = new Example(WechatCompany.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId", companyListShowQuery.getUserId());
+        if (!administratorsOptionService.isQuBaoMingSuperAdministrators(companyListShowQuery.getUserId())) {
+            criteria.andEqualTo("userId", companyListShowQuery.getUserId());
+        }
         example.orderBy("companyShowOrder").desc();
         example.orderBy("companyUsedNum").desc();
         example.orderBy("companyCollectionNum").desc();
