@@ -166,7 +166,7 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
         String accessToken = accessToken1.getString(JSONOBJECT_KEY_WEIXIN_ACCESS_TOKEN);
         String url = MESSAGE_SEND_URL + accessToken;
 
-        log.info("请求地址：{}",url);
+        log.info("请求地址：{}", url);
         String msgCheckResult = null;
         try {
             msgCheckResult = myHttpClientUtil.postJson(url, jsonObject, null);
@@ -248,7 +248,10 @@ public class WeixinSmallContentDetectionApiServiceImpl implements WeixinSmallCon
                 // 发送请求参数
                 JSONObject paramJson = new JSONObject();
                 paramJson.put("scene", scene);
+                //paramJson.put("scene", "activeId=" + scene);
+                //paramJson.put("page", "pages/details/details.html?activeId="+scene);
                 paramJson.put("page", pageTemp);
+
                 paramJson.put("width", 430);
                 paramJson.put("auto_color", true);
                 /**

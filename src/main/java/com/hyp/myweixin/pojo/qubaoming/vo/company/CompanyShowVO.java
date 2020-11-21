@@ -117,4 +117,8 @@ public class CompanyShowVO {
     @ApiModelProperty(value = "默认使用的公司主体内容 多个中最大值为默认的公司选项")
     private Integer companyShowOrder;
 
+
+    @ApiModelProperty(value = "公司邮箱")
+    private String[] companyEmails;
+
 }

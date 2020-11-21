@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.KeyPair;
-import java.util.Vector;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,16 +52,44 @@ public class NoNameTest {
 
     @Test
     public void testLength() {
-        log.info("文字长度{}","温馨提示：请提前10-15分钟进场签到".length());
+        log.info("文字长度{}", "温馨提示：请提前10-15分钟进场签到".length());
     }
 
 
     @Test
     public void testVector() throws Exception {
-        Vector vector = new Vector(16);
+        /*Vector vector = new Vector(16);
         vector.add(null);
-        System.out.println(vector.toString());
+        System.out.println(vector.toString());*/
 
+
+        String s = "112";
+        String[] split = s.split(";");
+        for (String s2 : split) {
+
+            System.out.println("输出文件" + s2.toString());
+        }
+
+        String s1 = "112;";
+        String[] split1 = s.split(";");
+        for (String s2 : split1) {
+
+            System.out.println("输出文件" + s2.toString());
+        }
+
+        ArrayList<String> emailAddress = new ArrayList<>();
+        emailAddress.add("1004683635@qq.com");
+        emailAddress.add("15518901416@163.com");
+        emailAddress.add("15518901416@163.com");
+        emailAddress.add("15518901416@163.com");
+        emailAddress.add("15518901416@163.com");
+
+        List<String> listWithoutDuplicates = emailAddress.stream().distinct().
+                collect(Collectors.toList());
+
+        for (String listWithoutDuplicate : listWithoutDuplicates) {
+            System.out.println(listWithoutDuplicate.toString());
+        }
 
 
     }

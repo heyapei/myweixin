@@ -167,7 +167,7 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
      * @throws MyDefinitionException
      */
     @Override
-    public ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId,String scene,String page) throws MyDefinitionException {
+    public ActiveShareImgVO getActiveShareImgByActiveId(Integer activeId, String scene, String page) throws MyDefinitionException {
         if (activeId == null) {
             throw new MyDefinitionException("参数不能为空");
         }
@@ -185,12 +185,13 @@ public class QubaomingActiveShowServiceImpl implements QubaomingActiveShowServic
         } else {
             String activeImg = qubaomingActiveBase.getActiveShareImg().replaceAll(MySeparatorUtil.SEMICOLON_SEPARATOR, "");
             activeShareImgVO.setActiveImg(activeImg);
-            activeShareImgVO.setActiveName(qubaomingActiveBase.getActiveName().replaceAll("\\n",""));
-            activeShareImgVO.setActiveDesc(qubaomingActiveBase.getActiveDesc().replaceAll("\\n",""));
+            activeShareImgVO.setActiveName(qubaomingActiveBase.getActiveName().replaceAll("\\n", ""));
+            activeShareImgVO.setActiveDesc(qubaomingActiveBase.getActiveDesc().replaceAll("\\n", ""));
 
+            log.info("获取分享二维码的参数：scene：{}，page:{}", scene, page);
             String quBaoMingQrCodeUnlimited = weixinSmallContentDetectionApiService.
                     getQuBaoMingQrCodeUnlimited(scene, page);
-            log.info("查询结果：{}", quBaoMingQrCodeUnlimited);
+            log.info("二维码图片查询结果：{}", quBaoMingQrCodeUnlimited);
             activeShareImgVO.setActiveWechatImg(quBaoMingQrCodeUnlimited);
             QubaomingActiveConfig qubaomingActiveConfigs = qubaomingActiveConfigService.selectOneByActiveId(activeId);
             if (qubaomingActiveConfigs != null) {

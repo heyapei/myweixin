@@ -74,6 +74,11 @@ public class WechatCompanyShowServiceImpl implements WechatCompanyShowService {
             if (StringUtils.isNotBlank(companyShowVO.getWeixinQrCode())) {
                 companyShowVO.setWeixinQrCode(companyShowVO.getWeixinQrCode().split(SEMICOLON_SEPARATOR)[0]);
             }
+
+            if (StringUtils.isNotBlank(wechatCompany.getCompanyEmail())) {
+                companyShowVO.setCompanyEmails(wechatCompany.getCompanyEmail().split(SEMICOLON_SEPARATOR));
+            }
+
         } catch (Exception e) {
             log.error("公司数据转换视图错误，错误理由：{}", e.toString());
             throw new MyDefinitionException("未能将公司主体数据转换为可查看的数据");
@@ -114,12 +119,19 @@ public class WechatCompanyShowServiceImpl implements WechatCompanyShowService {
             if (StringUtils.isNotBlank(companyShowVO.getWeixinQrCode())) {
                 companyShowVO.setWeixinQrCode(companyShowVO.getWeixinQrCode().split(SEMICOLON_SEPARATOR)[0]);
             }
+
+            if (StringUtils.isNotBlank(wechatCompany.getCompanyEmail())) {
+                companyShowVO.setCompanyEmails(wechatCompany.getCompanyEmail().split(SEMICOLON_SEPARATOR));
+            }
+
+
         } catch (Exception e) {
             log.error("公司数据转换视图错误，错误理由：{}", e.toString());
             throw new MyDefinitionException("未能将公司主体数据转换为可查看的数据");
         }
         return companyShowVO;
     }
+
     /**
      * 通过CompanyListShowQuery查询条件分页查询个人所属的公司列表
      * 有排序

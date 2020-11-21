@@ -25,6 +25,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author 何亚培
@@ -333,7 +334,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
                     String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.AGE.getCode()))) {
                 stringBuilder.append(QubaomingActiveConfig.ActiveRequireOptionEnum.AGE.getMsg())
                         .append(":")
-                        .append(signUpInfo[i]).append(";");
+                        .append(signUpInfo[i]).append("岁;");
             } else if (activeRequireOptionList[i].equalsIgnoreCase(
                     String.valueOf(QubaomingActiveConfig.ActiveRequireOptionEnum.PHONE.getCode()))) {
                 stringBuilder.append(QubaomingActiveConfig.ActiveRequireOptionEnum.PHONE.getMsg())
@@ -347,8 +348,11 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
             }
         }
 
-        mailDTO.setContent("您好，用户ID：" + qubaomingUserSignUp.getUserId() + "（" + nickName + "），在" + MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD_HH_MM)
+       /* mailDTO.setContent("您好，用户ID：" + qubaomingUserSignUp.getUserId() + "（" + nickName + "），在" + MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD_HH_MM)
                 + "，报名了活动ID：" + qubaomingUserSignUp.getActiveId() + "（" + activeName + "）,报名填写内容为：" + stringBuilder.toString() + "！请您悉知，感谢您使用趣报名平台！");
+        */
+        mailDTO.setContent("您好，" + "（" + nickName + "），在" + MyDateUtil.DateToString(new Date(), MyDateStyle.YYYY_MM_DD_HH_MM)
+                + "，报名了活动" + "（" + activeName + "）,报名填写内容为：" + stringBuilder.toString() + "！请您悉知，感谢您使用趣报名平台！");
         mailDTO.setAttachment(null);
         mailDTO.setTitle("趣报名--用户报名成功通知");
 
@@ -378,10 +382,17 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
                     }
                 }
             }
-            emailAddress.add(wechatCompany.getCompanyEmail());
+            //emailAddress.add(wechatCompany.getCompanyEmail());
         }
 
-        for (String address : emailAddress) {
+
+        /*去重*/
+        List<String> listWithoutDuplicates = emailAddress.stream().distinct().
+                collect(Collectors.toList());
+
+        for (String address : listWithoutDuplicates) {
+
+
             mailDTO.setEmail(address);
             mailService.sendTextMailAsync(mailDTO);
         }
@@ -654,7 +665,7 @@ public class UserEnrollActiveServiceImpl implements UserEnrollActiveService {
         PageInfo pageInfo = null;
         List<QubaomingActiveUserCollection> qubaomingActiveUserCollectionList = null;
         try {
-             qubaomingActiveUserCollectionList = qubaomingActiveUserCollectionService.selectQubaomingActiveUserCollectionByExample(example);
+            qubaomingActiveUserCollectionList = qubaomingActiveUserCollectionService.selectQubaomingActiveUserCollectionByExample(example);
         } catch (MyDefinitionException e) {
             throw new MyDefinitionException(e.getMessage());
         }
