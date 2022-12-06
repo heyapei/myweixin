@@ -20,7 +20,7 @@
         <java.version>1.8</java.version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <commons-io.version>1.3.2</commons-io.version>
-        <commons-net.version>3.5</commons-net.version>
+        <commons-net.version>3.9.0</commons-net.version>
         <commons-fileupload.version>1.3.2</commons-fileupload.version>
         <!--添加下面两项指定thymeleaf的版本-->
         <thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
